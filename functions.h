@@ -197,6 +197,7 @@ extern void readData_pointer2( FILE *fp, int nseq, char **name, int *nlen, char 
 extern void readData_varlen( FILE *fp, char **name, int *nlen, char **seq );
 extern int countATGC( char *s, int *total );
 extern void getnumlen( FILE *fp );
+extern void getnumlen_nocommonnjob( FILE *fp, int *nn, int *nm ); // this function is only use in profile alignment
 extern void getnumlen_casepreserve( FILE *fp, int *nlenmin );
 extern void getnumlen_nogap( FILE *fp, int *nlenmin );
 extern void getnumlen_nogap_countn( FILE *fp, int *nlenmin, double *nfreq );
@@ -412,3 +413,4 @@ extern void limitlh( int *uselh, Lennum *in, int size, int limit );
 extern double distdp_noalign( char *s1, char *s2, double selfscore1, double selfscore2, int alloclen ); // tbfast.c kara yobareru
 extern void getweightfromname( int n, double *w, char **name );
 extern void readexternalanchors( ExtAnch **extanch, int nseq, int *nogaplen );
+extern void Filecopy( FILE *fp1, FILE *fp2 ); // copy fp1 to fp2, file must be opened

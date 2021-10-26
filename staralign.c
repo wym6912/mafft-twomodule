@@ -39,6 +39,7 @@
 #define D10LENFACD 0.0
 #endif
 
+#ifdef enablemultithread
 typedef struct _Falign_arg
 {
 	char **mseq1, **mseq2;
@@ -51,8 +52,9 @@ typedef struct _merge_arg
 	int id, depth, njob, alloclen;
 	char **centerseq, **bseq, **common;
 } merge_arg;
+#endif
 
-int nmax_shift_factor;
+int nmax_shift_factor, need_align_center;
 void print_help_message()
 {
 	reporterr("Staralign %s help: \n", VERSION);
@@ -75,7 +77,14 @@ void print_help_message()
 	reporterr("-B: Kband in calcuating DP-matrix during the alignment\n");
 	reporterr("-T: Use T threads to run this program\n");
 	reporterr("-s: nmax shift factor, it means the times of the max length\n");
+	reporterr("-q: Center sequence is not in the common file, need alignment on center file and common file\n");
+	reporterr("-v: show program version\n");
 	reporterr("-H, -?: Print this help message and exit\n");
+}
+
+void print_version()
+{
+	reporterr("staralign %s\n", VERSION);
 }
 
 void arguments( int argc, char *argv[] )
@@ -122,6 +131,7 @@ void arguments( int argc, char *argv[] )
 	TMorJTT = JTT;
 	spscoreout = 0;
 	nmax_shift_factor = 1;
+	need_align_center = 0;
 
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
@@ -225,10 +235,15 @@ void arguments( int argc, char *argv[] )
 					nmax_shift_factor = myatoi(*++ argv);
 					-- argc;
 					goto nextoption;
+				case 'q':
+					need_align_center = 1;
+					break;
 				case 'H':
 				case '?':
 					print_help_message();
 					exit(0);
+				case 'v':
+					print_version();
 				default:
 					reporterr(       "illegal option %c\n", c );
 					argc = 0;
@@ -291,6 +306,8 @@ static void WriteOptions( FILE *fp )
 		fprintf( fp, "FFT off\n" );
 	fflush( fp );
 }
+
+#ifdef enablemultithread
 int cnt_OK;
 void *dispatch_Falign(void *arg)
 {
@@ -302,6 +319,7 @@ void *dispatch_Falign(void *arg)
 	if(cnt_OK % 100 == 0 || cnt_OK >= njob || cnt_OK == 1) reporterr("\rSTEP %d / %d ", cnt_OK, njob);
 	return NULL;
 }
+#endif
 
 /* list start from 0 */
 void insertgaplist(char *res, char *src, int *list)
@@ -579,17 +597,20 @@ int main(int argc, char **argv)
 	if( njob > 1000000 )
 	{
 		reporterr(       "The number of sequences must be < %d\n", 1000000 );
-		reporterr(       "Please try the --parttree option for such large data.\n" );
 		exit( 1 );
 	}
-#if 0 // maybe it's useless
-	if( njob < 2 )
+	/* 
+		if common file has only one sequence, please print the common file into output stream
+		also, use an varible to control the argument   
+	 */
+	if( njob < 2 && ! need_align_center )
 	{
-		reporterr("ERROR: Common sequence file %s has only %d sequence. There's no need to use staralign.\n", inputfile, njob);
-		reporterr("Please use disttbfast.\n");
-		exit(1);
+		reporterr("Info: Common sequence file %s has only %d sequence. There's no need to use staralign.\n", inputfile, njob);
+		reporterr("Outputing the common sequence file\n");
+		Filecopy(infp, stdout);
+		fclose(infp); fclose(cefp);
+		return 0;
 	}
-#endif
 
 #if !defined(mingw) && !defined(_MSC_VER)
 	setstacksize( (unsigned long long)1024 * 1024 * 1024 ); // topolorder() de ookime no stack wo shiyou.

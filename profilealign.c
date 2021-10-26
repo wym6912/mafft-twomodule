@@ -26,11 +26,23 @@ static int tuplesize, nunknown, exitval, aligncases;
 #define D10LENFACC 1000000
 #define D10LENFACD 0.0
 
+#ifdef enablemultithread
+typedef struct _merge_file_arg
+{
+	int f1, f2, floor;
+	char *f1name, *f2name;
+	pthread_mutex_t *deplock;
+	pthread_cond_t *cond;
+	Treedep *dep;
+} merge_file_arg;
+#endif
+
 void print_help()
 {
 	reporterr("Profile alignment Version %s help:\n", VERSION);
 	reporterr("-i: sequences file name, every line has a file name without spaces\n");
 	reporterr("-p: center file with FASTA format\n");
+	reporterr("-T: use T threads to run this program\n");
 	reporterr("-f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)\n");
 	reporterr("-Q, -V: penalty_shift_factor(not used), ppenalty_dist\n");
 	reporterr("-b: BLOSUM Matrix\n");
@@ -46,7 +58,13 @@ void print_help()
 	reporterr("-q: Use minimum method to calcuate the UPGMA cluster\n");
 	reporterr("-A: Use Aalign to align sequences\n");
 	reporterr("-F: Use FFT align to align sequences\n");
+	reporterr("-v: show program version and exit\n");
 	reporterr("-H, -?: Print help message and exit\n");
+}
+
+void print_version()
+{
+	reporterr("profilealign %s\n", VERSION);
 }
 
 void arguments( int argc, char *argv[] )
@@ -187,6 +205,9 @@ void arguments( int argc, char *argv[] )
 				case 'H':
 				case '?':
 					print_help();
+					exit(0);
+				case 'v':
+					print_version();
 					exit(0);
 				default:
 					reporterr(       "illegal option %c\n", c );
@@ -344,6 +365,114 @@ void makecompositiontable_p( int *table, int *pointt )
 	while( ( point = *pointt++ ) != END_OF_VEC )
 		table[point]++;
 }
+
+#ifdef enablemultithread
+int finished;
+void *merge_multithread(void *arg)
+{
+#define F(X) (((merge_file_arg *)arg) -> X)
+	char *f1name = F(f1name), *f2name = F(f2name);
+	pthread_mutex_t *deplock = F(deplock);
+	pthread_cond_t *cond = F(cond);
+	int f1 = F(f1), f2 = F(f2), floor = F(floor);
+	Treedep *dep = F(dep);
+#undef F
+	int f1seq, f2seq, j, len1, len2, processlen, alloclen, fftlog;
+	char **seq, **seq2, **name, **name2, *sgap1, *sgap2, *egap1, *egap2;
+	int *nlen, *nlen22;
+	double *eff, *eff2;
+	pthread_mutex_lock(deplock);
+	if(dep[floor].child0 != -1) 
+		while(! dep[dep[floor].child0].done) 
+			pthread_cond_wait(cond, deplock);
+	if(dep[floor].child1 != -1) 
+		while(! dep[dep[floor].child1].done) 
+			pthread_cond_wait(cond, deplock);
+	pthread_mutex_unlock(deplock);
+	// reporterr("Task %d: %s, %s\n", floor, f1name, f2name);
+	FILE *f1fp = fopen(f1name, "r"), *f2fp = fopen(f2name, "r");
+	getnumlen_nocommonnjob(f1fp, &f1seq, &len1);
+	rewind(f1fp);
+	getnumlen_nocommonnjob(f2fp, &f2seq, &len2);
+	rewind(f2fp);
+	processlen = MAX(len1, len2);
+	seq = AllocateCharMtx(f1seq, processlen << 1);
+	name = AllocateCharMtx(f1seq, B);
+	nlen = AllocateIntVec(f1seq);
+	seq2 = AllocateCharMtx(f2seq, processlen << 1);
+	name2 = AllocateCharMtx(f2seq, B);
+	nlen22 = AllocateIntVec(f2seq);
+	readData_pointer2(f1fp, f1seq, name, nlen, seq);
+	readData_pointer2(f2fp, f2seq, name2, nlen22, seq2);
+	fclose(f1fp);
+	fclose(f2fp);
+	// Calcuate the effect value: average of all the sequence
+	eff = AllocateDoubleVec(f1seq);
+	eff2 = AllocateDoubleVec(f2seq);
+	if(f1seq > 0) for(j = 0; j < f1seq; ++ j) eff[j] = 1.0 / f1seq;
+	else 
+	{ 
+		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f1name); 
+		exit(1); 
+		return (void *)-1;
+	}
+	if(f2seq > 0) for(j = 0; j < f2seq; ++ j) eff2[j] = 1.0 / f2seq;
+	else 
+	{ 
+		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f2name);
+		exit(1); 
+		return (void *)-1;
+	}
+	alloclen = len1 + len2 + 10;
+	if(aligncases == 1) 
+	{
+		sgap1 = AllocateCharVec(f1seq + 10);
+		sgap2 = AllocateCharVec(f2seq + 10);
+		egap1 = AllocateCharVec(f1seq + 10);
+		egap2 = AllocateCharVec(f2seq + 10);
+		memset(sgap1, 'o', f1seq * sizeof(char));
+		memset(sgap2, 'o', f2seq * sizeof(char));
+		memset(egap1, 'o', f1seq * sizeof(char));
+		memset(egap2, 'o', f2seq * sizeof(char));
+		A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
+		free(sgap1);
+		free(sgap2);
+		free(egap1);
+		free(egap2);
+	}
+	else if(aligncases == 0) 
+		Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
+	else 
+	{
+		ErrorExit("ERROR: aligncases is error. Please check your command.\n");
+		return (void *)-1;
+	}
+	f1fp = fopen(f1name, "w");
+	writeData_pointer(f1fp, f1seq, name, nlen, seq);
+	writeData_pointer(f1fp, f2seq, name2, nlen22, seq2);
+	fclose(f1fp);
+	f2fp = fopen(f2name, "w");
+	fclose(f2fp);
+
+	pthread_mutex_lock(deplock);
+	dep[floor].done = 1;
+	pthread_cond_broadcast(cond);
+	pthread_mutex_unlock(deplock);
+
+	// reporterr("Task %d done, %d, %d\n", floor, f1, f2);
+	FreeDoubleVec(eff);
+	FreeDoubleVec(eff2);
+	FreeCharMtx(seq);
+	FreeCharMtx(name);
+	FreeIntVec(nlen);
+	FreeCharMtx(seq2);
+	FreeCharMtx(name2);
+	FreeIntVec(nlen22);
+	++ finished;
+	if(finished % 10 == 0 || finished == njob - 1) reporterr("\r   %d / %d", finished, njob - 1);
+	return NULL;
+}
+#endif
 
 int main(int argc, char **argv)
 {
@@ -534,9 +663,9 @@ int main(int argc, char **argv)
 	fixed_musclesupg_double_realloc_nobk_halfmtx_memsave(njob, mtx, topol, nlen2, dep, 1, 0);
 	FreeDoubleHalfMtx( mtx, njob ); mtx = NULL;
 	// FreeDoubleMtx(nlen2); 
-	FreeCharMtx(name);
-	FreeCharMtx(seq);
-	FreeIntVec(nlen);
+	FreeCharMtx(name); name = NULL;
+	FreeCharMtx(seq); seq = NULL;
+	FreeIntVec(nlen); nlen = NULL;
 	reporterr("\ndone. \n");
 
 
@@ -559,6 +688,8 @@ int main(int argc, char **argv)
 		
 	/* Part 2.2: use changed FFT (changed to calcuate density instead of sequence) to align profile data */
 	reporterr("Aligning all the profiles...\n");
+#ifndef enablemultithread
+	// single thread on profile alignment
 	for(i = 0; i < centerseqs - 1; ++ i)
 	{
 		// only need to use topol[i][0][0] && topol[i][1][0]
@@ -642,9 +773,49 @@ int main(int argc, char **argv)
 		reporterr("\r   %d / %d", i + 1, centerseqs - 1);
 	}
 	reporterr("\ndone. \n");
-	/* Part 3: write the answer file */
+	/* Part 3A: write the answer file */
 	writeData_pointer(stdout, f1seq, name, nlen, seq);
 	writeData_pointer(stdout, f2seq, name2, nlen22, seq2);
+#else
+	pthread_mutex_t deplock;
+	pthread_cond_t cond;
+	for(i = 0; i < centerseqs; ++ i) dep[i].done = 0;
+	pthread_cond_init(&cond, NULL);
+	pthread_mutex_init(&deplock, NULL);
+	threadpool_t tp;
+	threadpool_init(&tp, nthread);
+	merge_file_arg *_merge_arg_;
+	_merge_arg_ = malloc(sizeof(merge_file_arg) * centerseqs);
+#if 0
+	reporterr("tree: \n");
+	for(i = 0; i < centerseqs - 1; ++ i)
+		reporterr("floor %d: topol(%d, %d), dep(%d, %d)\n", i, topol[i][0][0], topol[i][1][0], dep[i].child0, dep[i].child1);
+#endif
+	finished = 0;
+	for(i = 0, j; i < centerseqs - 1; ++ i)
+	{
+		f1 = topol[i][0][0], f2 = topol[i][1][0];
+		_merge_arg_[i].f1 = f1;
+		_merge_arg_[i].f2 = f2;
+		_merge_arg_[i].f1name = realfilename2d[f1];
+		_merge_arg_[i].f2name = realfilename2d[f2];
+		_merge_arg_[i].dep = dep;
+		_merge_arg_[i].floor = i;
+		_merge_arg_[i].cond = &cond;
+		_merge_arg_[i].deplock = &deplock;
+		threadpool_add_task(&tp, merge_multithread, _merge_arg_ + i);
+	}
+	threadpool_destroy(&tp);
+	pthread_mutex_destroy(&deplock);
+	pthread_cond_destroy(&cond);
+	free(_merge_arg_);
+	reporterr("\ndone. \n");
+	/* Part 3B: write the answer file */
+	f1fp = fopen(realfilename2d[topol[centerseqs - 2][0][0]], "r");
+	Filecopy(f1fp, stdout);
+	fclose(f1fp);
+#endif
+
 	/* Part end: free and show info */
 #if REPORTCOSTS
 //		use_getrusage();
@@ -656,23 +827,22 @@ int main(int argc, char **argv)
 		if(seq) FreeCharMtx(seq);
 		if(name) FreeCharMtx(name);
 		if(nlen) FreeIntVec(nlen);
-		seq = AllocateCharMtx(f1seq + f2seq, nlenmax << 1);
-		name = AllocateCharMtx(f1seq + f2seq, B);
-		nlen = AllocateIntVec(f1seq + f2seq);
 		f1fp = fopen(realfilename2d[topol[centerseqs - 2][0][0]], "rb");
 		getnumlen(f1fp); rewind(f1fp);
+		seq = AllocateCharMtx(njob, nlenmax << 1);
+		name = AllocateCharMtx(njob, B + 10);
+		nlen = AllocateIntVec(njob);
 		readData_pointer(f1fp, name, nlen, seq);
 		fclose(f1fp);
 		reporterr("SP Scores = %.6f\n", sumofpairsscore(njob, seq));
+		FreeIntVec(nlen);
+		FreeCharMtx(name);
+		FreeCharMtx(seq);
 	}
 	SHOWPROFILEVERSION;
-	FreeIntVec(nlen);
-	FreeIntVec(nlen22);
-	FreeDoubleMtx(nlen2);
-	FreeCharMtx(name);
-	FreeCharMtx(seq);
-	FreeCharMtx(name2);
-	FreeCharMtx(seq2);
+#ifndef enablemultithread
+	reporterr("...but NOT used multi threads in profilealign.\n\n\n");
+#endif
 	FreeCharMtx(realfilename2d);
 	free(dep);
 	FreeIntCub(topol);
