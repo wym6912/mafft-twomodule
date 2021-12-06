@@ -431,6 +431,19 @@ double *AllocateDoubleVec( int ll1 )
 	return( vec );
 }
 
+double *AllocateDoubleVecLarge( unsigned long long ll1 ) // Now is only used in Kband calling
+{
+	double *vec;
+
+	vec = (double *)calloc( ll1, sizeof( double ) );
+	if( vec == NULL )
+	{
+		fprintf( stderr, "Allocation error( %lld double vec )\n", ll1 );
+		exit( 1 );
+	}
+	return( vec );
+}
+
 void FreeDoubleVec( double *vec )
 {
 	free( vec );

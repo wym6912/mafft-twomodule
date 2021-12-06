@@ -61,9 +61,9 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 	static TLS int *query_vec, *move_vec, *max_place_j, *mpjp;
 	static TLS double *val_vec, *homo_matrix, *max_data_j, *mdjp;
 	query_vec = AllocateIntVec(len + 10);
-	move_vec = AllocateIntVec((band << 1 | 1) * len + 10);
-	val_vec = AllocateDoubleVec((band << 1 | 1) * len + 10);
-	homo_matrix = AllocateDoubleVec((band << 1 | 1) * len + 10);
+	move_vec = AllocateIntVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
+	val_vec = AllocateDoubleVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
+	homo_matrix = AllocateDoubleVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
 	max_place_j = AllocateIntVec(len + 10);
 	max_data_j = AllocateDoubleVec(len + 10);
 

@@ -34,6 +34,7 @@ int ***AllocateIntCub( int, int, int );
 void FreeIntCub( int *** );
 
 double *AllocateDoubleVec( int );
+double *AllocateDoubleVecLarge( unsigned long long );
 void FreeDoubleVec( double * );
 
 double **AllocateDoubleHalfMtx( int );
