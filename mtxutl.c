@@ -647,3 +647,20 @@ void FreeShortMtx( short **mtx )
 	free( (char *)mtx );
 }
 
+long long *AllocateLongIntVec( int ll1 )
+{
+	long long *vec;
+
+	vec = (long long *)calloc( ll1, sizeof( short ) );
+	if( vec == NULL )
+	{	
+		fprintf( stderr, "Allocation error( %d long long vec )\n", ll1 );
+		exit( 1 );
+	}
+	return( vec );
+}
+
+void FreeLongIntVec(long long *vec)
+{
+	free( (long long *)vec );
+}

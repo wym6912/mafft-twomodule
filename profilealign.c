@@ -6,6 +6,7 @@
 #define SHOWPROFILEVERSION reporterr( "%s (%s) Version " VERSION "\n%d thread(s)\n\n", progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), nthread )
 
 #define DEBUG 0
+#define TESTCONST 0
 
 #define ITERATIVECYCLE 2
 
@@ -93,6 +94,8 @@ void arguments( int argc, char *argv[] )
 	spscoreout = 0;
 	tuplesize = 6;
 	aligncases = 1;
+	alignband = NOTSPECIFIED;
+	
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
 		while ( (c = *++argv[0]) )
@@ -552,6 +555,9 @@ int main(int argc, char **argv)
 	nlen = AllocateIntVec(njob);
 	seq = AllocateCharMtx(njob, nlenmax + 1);
 	readData_pointer(cefp, name, nlen, seq);
+#if TESTCONST
+	disp = 1;
+#endif
 	constants(njob, seq);
 #if REPORTCOSTS
 		time_t starttime, startclock;
@@ -661,6 +667,7 @@ int main(int argc, char **argv)
 	topol = AllocateIntCub(njob, 2, 0);
 	nlen2 = AllocateDoubleMtx(njob, 2);
 	fixed_musclesupg_double_realloc_nobk_halfmtx_memsave(njob, mtx, topol, nlen2, dep, 1, 0);
+	// fixed_musclesupg_double_treeout(njob, mtx, topol, nlen2, name);
 	FreeDoubleHalfMtx( mtx, njob ); mtx = NULL;
 	// FreeDoubleMtx(nlen2); 
 	FreeCharMtx(name); name = NULL;

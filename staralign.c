@@ -74,10 +74,11 @@ void print_help_message()
 	reporterr("-S: Calcuate SP Scores after alignment\n");
 	reporterr("-d: Print Score Matrix fits the common file and exit\n");
 	reporterr("-z, -w: FFT align arguments: fftthreshold, fftWinSize\n");
-	reporterr("-B: Kband in calcuating DP-matrix during the alignment\n");
+	reporterr("-B: Kband in calcuating DP-matrix during the alignment. If not defined this varible, use auto double\n");
 	reporterr("-T: Use T threads to run this program\n");
 	reporterr("-s: nmax shift factor, it means the times of the max length\n");
 	reporterr("-q: Center sequence is not in the common file, need alignment on center file and common file\n");
+	reporterr("-L: Use legacy gap cost in order to get less gaps\n");
 	reporterr("-v: show program version\n");
 	reporterr("-H, -?: Print this help message and exit\n");
 }
@@ -132,6 +133,8 @@ void arguments( int argc, char *argv[] )
 	spscoreout = 0;
 	nmax_shift_factor = 1;
 	need_align_center = 0;
+	legacygapcost = 0;
+	alignband = NOTSPECIFIED;
 
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
@@ -238,12 +241,16 @@ void arguments( int argc, char *argv[] )
 				case 'q':
 					need_align_center = 1;
 					break;
+				case 'L':
+					legacygapcost = 1;
+					break;
 				case 'H':
 				case '?':
 					print_help_message();
 					exit(0);
 				case 'v':
 					print_version();
+					exit(0);
 				default:
 					reporterr(       "illegal option %c\n", c );
 					argc = 0;
@@ -409,7 +416,7 @@ char **mergeallresult(char **resultseq, char **common, char **center, int njob, 
 		list1[++ p1] = -1; list2[++ p2] = -1;
 #if DEBUG
 		reporterr("%d %d %d %d\n", j, len1, k, len2);
-		reporterr("seqs = \n%s\n%s\n", resultseq[0], center[i]);
+		reporterr("seqs = \n%s\ncenter = %s\ncommon = %s\n", resultseq[0], center[i], common[i]);
 		reporterr("list1 = "); for(l = 0; l <= p1; ++ l, reporterr(" ")) reporterr("%d", list1[l]); reporterr("\n");
 		reporterr("list2 = "); for(l = 0; l <= p2; ++ l, reporterr(" ")) reporterr("%d", list2[l]); reporterr("\n");
 #endif
@@ -436,10 +443,10 @@ char **mergeallresult(char **resultseq, char **common, char **center, int njob, 
 			}
 		} 
 		insertgaplist(resultseq[i + 1], common[i], list2);
-		/*
+#if DEBUG
 		reporterr("After align, resultseq = \n");
 		for(l = 0; l <= i + 1; ++ l) reporterr("%s\n", resultseq[l]);
-		*/
+#endif
 		if(restore)
 		{
 			FreeIntVec(list1);
@@ -621,14 +628,14 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	nlenmax <<= nmax_shift_factor;
-	seq = AllocateCharMtx( njob, nlenmax*1+1 );
+	seq = AllocateCharMtx( njob, nlenmax + 1 );
 #if SAFE
 	mseq1 = AllocateCharMtx(1, 0);
 	mseq2 = AllocateCharMtx(1, 0);
 #endif
 	centerseq = AllocateCharMtx(njob, nlenmax + 10); // when use it, the pointer must get one copy of centerseq 
 	eff = AllocateDoubleVec(1);
-	bseq = AllocateCharMtx(njob + 1, nlenmax + 10);
+	bseq = AllocateCharMtx(njob + 2, nlenmax + 10);
 
 	name = AllocateCharMtx( njob, B+1 );
 	centername = AllocateCharMtx(1, B + 1);
@@ -712,7 +719,12 @@ int main(int argc, char **argv)
 #endif
 	// merge the result
 	reporterr("Start merging...\n");
-#ifndef enablemultithread
+#if 1
+#if DEBUG
+	reporterr("centerseq = "); for(i = 0; i < njob; ++ i) reporterr("%s ", centerseq[i]);
+	reporterr("\ncommonseq = "); for(i = 0; i < njob; ++ i) reporterr("%s ", seq[i]);
+	reporterr("\n");
+#endif
 	bseq = mergeallresult(bseq, seq, centerseq, njob, alloclen);
 #else
 #ifdef ALGORITHM1
@@ -752,24 +764,28 @@ int main(int argc, char **argv)
 	reporterr("done. \n");
 	// in mergeallresult(), the first sequence of bseq is the center sequence, ignore it when processing the following steps
 	int len0 = strlen(bseq[1]);
-	commongappick(njob, &bseq[1]);
-	if(len0 != strlen(bseq[1])) reporterr("\nWarning: the result has common gaps.\n");
+	if(! need_align_center)
+	{
+		commongappick(njob, &bseq[1]);
+		if(len0 != strlen(bseq[1])) reporterr("\nWarning: the result has common gaps.\n");
+	}
 #if REPORTCOSTS
 //	use_getrusage();
 	reporterr( "\nstaralign, real = %f min\n", (float)(time(NULL) - starttime)/60.0 );
 	reporterr( "staralign, user = %f min\n", (float)(clock()-startclock)/CLOCKS_PER_SEC/60);
 #endif
 	reporterr(       "\ndone.\n\n" );
-	
-	len0 = strlen(bseq[1]);
-	for(i = 2; i <= njob; ++ i) 
-		if(strlen(bseq[i]) != len0) 
-		{
-			reporterr("ERROR: NOT ALIGNED. Please concat the author and submit your sequences.\n");
-			exit(1);
-		}
-		
-	// writeData_pointer(stdout, 1, centername, nlencenter, bseq);
+	if(! need_align_center)
+	{
+		len0 = strlen(bseq[1]);
+		for(i = 2; i <= njob; ++ i) 
+			if(strlen(bseq[i]) != len0) 
+			{
+				reporterr("ERROR: NOT ALIGNED. Please concat the author and submit your sequences.\n");
+				exit(1);
+			}
+	}
+	if(need_align_center) writeData_pointer(stdout, 1, centername, nlencenter, bseq);
 	writeData_pointer(stdout, njob, name, nlen, &bseq[1] );
 
 	if( spscoreout ) reporterr( "Unweighted sum-of-pairs score = %10.5f\n", sumofpairsscore( njob + 1, bseq ) );

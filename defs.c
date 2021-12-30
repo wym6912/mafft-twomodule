@@ -105,7 +105,7 @@ int outnumber = 0;
 int legacygapcost = 0;
 double minimumweight = 0.0005;
 int nwildcard = 0;
-int alignband = 20;
+int alignband, useonealign;
 
 char *signalSM;
 FILE *prep_g;

@@ -6,7 +6,7 @@ DESTDIR =
 
 #MNO_CYGWIN = -mno-cygwin
 
-ENABLE_MULTITHREAD = -Denablemultithread
+# ENABLE_MULTITHREAD = -Denablemultithread
 # Comment out the above line if your compiler 
 # does not support TLS (thread-local strage).
 
@@ -57,7 +57,7 @@ SOS = libdisttbfast.so
 DLLS = libdisttbfast.dll
 DYLIBS = libdisttbfast.dylib
 
-SCRIPTS = mafft
+SCRIPTS = 
 OBJSTARALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
 			staralign.o defs.o fft.o fftFunctions.o  \
@@ -70,7 +70,7 @@ ifdef ENABLE_MULTITHREAD
 MULTIOBJ = threadpool.o threadpool_condition.o
 endif
 
-HEADER = mltaln.h mtxutl.h mafft.h 
+HEADER = mltaln.h mtxutl.h 
 ifdef ENABLE_MULTITHREAD
 MULTIHEADER = threadpool.h threadpool_condition.h
 endif

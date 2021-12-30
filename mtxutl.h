@@ -55,3 +55,6 @@ short **AllocateShortMtx( int, int );
 void FreeShortMtx( short ** );
 
 void freeintmtx( int **, int );
+
+long long *AllocateLongIntVec( int );
+void FreeLongIntVec(long long *);

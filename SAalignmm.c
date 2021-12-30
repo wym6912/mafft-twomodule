@@ -3,38 +3,34 @@
 #include "Kband.h"
 
 #define DEBUG 0
-#define protein_score(place1, place2) matrix_query(place1, place2, band, homo_matrix, query_vec)
+#define protein_score(place1, place2) matrix_query(place1, place2, band, homo_matrix, len1 + 1, len2 + 1)
 
 static const double inf = 1e100, eps = 1e-5;
 
 
-void init__protein_score_Aalign(double **cpmx1, double **cpmx2, int len1, int len2, int band, int *query_place, double *ans)
+void init__protein_score_Aalign(double **cpmx1, double **cpmx2, int len1, int len2, int band, double *ans)
 {
-	int i, j, k, l, h;
+	int i, j, k, l;
 	double *scarr = AllocateDoubleVec(nalphabets + 5), *s, tmp;
 	for(i = 0; i <= len1; ++ i)
 	{
 		for(s = scarr, j = 0; j < nalphabets; ++ j, ++ s) *s = cpmx1[j][i]; // NOTICE: cpmx[alphabet][place]
-		for(h = -band; h <= band; ++ h)
+		for(j = left_band(len1 + 1, len2 + 1, i, band); j <= right_band(len1 + 1, len2 + 1, i, band); ++ j)	
 		{
-			j = i + h;
-			if(j >= 0 && j <= len2)
-			{
-				for(s = scarr, k = 0; k < nalphabets; ++ k, ++ s)
-					if (fabs(*s) > eps)
+			for(s = scarr, k = 0; k < nalphabets; ++ k, ++ s)
+				if (fabs(*s) > eps)
+				{
+					for(l = 0; l < nalphabets; ++ l)
 					{
-						for(l = 0; l < nalphabets; ++ l)
+						if(fabs(tmp = cpmx2[l][j]) > eps)
 						{
-							if(fabs(tmp = cpmx2[l][j]) > eps)
-							{
-								// reporterr("(%d, %d) = (%c, %c), val = %f\n", i, j, amino[k], amino[l], amino_dis[(unsigned char)amino[k]][(unsigned char)amino[l]]);
-								matrix_update(i, j, band, 
-							              	  *s * tmp * n_dis[k][l], 
-							                  ans, query_place);
-							}
+							// reporterr("(%d, %d) = (%c, %c), val = %f\n", i, j, amino[k], amino[l], amino_dis[(unsigned char)amino[k]][(unsigned char)amino[l]]);
+							matrix_update(i, j, band, 
+											*s * tmp * n_dis[k][l], 
+											ans, len1 + 1, len2 + 1);
 						}
 					}
-			}
+				}
 		}
 	}
 	FreeDoubleVec(scarr);
@@ -49,7 +45,15 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 	*/
 	//fprintf(stderr, "In Kband, len1 = %d, len2 = %d, band = %d\n", len1, len2, band);
 	//printf( "In Kband, len1 = %d, len2 = %d\n", len1, len2);
-	int i, j, h, k, len = MAX(len1, len2);
+	int i, j, h, k;
+	static TLS int len, swapped = 0;
+	static TLS char *s;
+	if(len1 > len2)
+	{
+		swapped = 1;
+		len = len2; len2 = len1; len1 = len;
+		s = r1; r1 = r2; r2 = s;
+	}
 	/* 
 	   insert node: matrix_set(key, val)
 	   find node: map_t *data = matrix_query(&tree, key)
@@ -58,109 +62,98 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 	static TLS int max_place_i = 0, moveval, tmpval_col, tmpval_row;
 	static TLS double score = 0, tmpval, max_data_i = -inf;
 	static TLS char *tmpr1, *tmpr2;
-	static TLS int *query_vec, *move_vec, *max_place_j, *mpjp;
+	static TLS int *move_vec, *max_place_j, *mpjp;
 	static TLS double *val_vec, *homo_matrix, *max_data_j, *mdjp;
-	query_vec = AllocateIntVec(len + 10);
-	move_vec = AllocateIntVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
-	val_vec = AllocateDoubleVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
-	homo_matrix = AllocateDoubleVecLarge(((unsigned long long)band << 1 | 1ll) * len + 10);
-	max_place_j = AllocateIntVec(len + 10);
-	max_data_j = AllocateDoubleVec(len + 10);
+
+	move_vec = AllocateIntVecLarge((long long)((band << 1 | 1) + (len2 - len1)) * (len2 + 10) + 10);
+	val_vec = AllocateDoubleVecLarge((long long)((band << 1 | 1) + (len2 - len1)) * (len2 + 10) + 10);
+	homo_matrix = AllocateDoubleVecLarge((long long)((band << 1 | 1) + (len2 - len1)) * (len2 + 10) + 10);
+	max_place_j = AllocateIntVec(len2 + 10);
+	max_data_j = AllocateDoubleVec(len2 + 10);
+
 
 	//initial varibles
-	init_allline(len + 2, band, query_vec);
-	init__protein_score_Aalign(cpmx1, cpmx2, len1, len2, band, query_vec, homo_matrix);
+	init__protein_score_Aalign(cpmx1, cpmx2, len1, len2, band, homo_matrix);
 
-#if 0
-	for(i = 0; i < len; ++ i)
-		reporterr("%d ", *(query_vec + i));
-	reporterr("\n");
-#endif
 	memset(r1, '?', sizeof(char) * (len1 + len2));
 	memset(r2, '?', sizeof(char) * (len1 + len2));
 	/* Initial of the matrix */
-	matrix_set(0, 0, band, protein_score(0, 0), val_vec, query_vec);
-	for(i = 1; i <= len1; ++ i) matrix_set(i, 0, band, protein_score(i, 0), val_vec, query_vec);
-	for(i = 1; i <= len2; ++ i) matrix_set(0, i, band, protein_score(0, i), val_vec, query_vec);
+	matrix_set(0, 0, band, protein_score(0, 0), val_vec, len1 + 1, len2 + 1);
+	for(i = 1; i <= len1; ++ i) matrix_set(i, 0, band, protein_score(i, 0), val_vec, len1 + 1, len2 + 1);
+	for(i = 1; i <= len2; ++ i) matrix_set(0, i, band, protein_score(0, i), val_vec, len1 + 1, len2 + 1);
 	/* Score Matrix and move_vec */
 	max_data_i = -inf; max_place_i = 0; // Initial the max_data_i && max_place_i
 	for(mdjp = max_data_j, mpjp = max_place_j, i = 0; i <= len2; ++ mdjp, ++ mpjp, ++ i) // Initial the max_data_j && max_place_j
 	{
-		*mdjp = matrix_query(0, i, band, val_vec, query_vec);
+		*mdjp = matrix_query(0, i, band, val_vec, len1 + 1, len2 + 1);
 		*mpjp = 0;
 	}
 	for(i = 1; i <= len1; ++ i)
 	{
-		max_data_i = matrix_query(i - 1, MAX(i - band, 0), band, val_vec, query_vec) + penalty;
+		max_data_i = matrix_query(i - 1, MAX(i - band, 0), band, val_vec, len1 + 1, len2 + 1) + penalty;
 		max_place_i = MAX(i - band, 0);
-		if(insideband(i - 1, 0, band))
+		if(insideband(i - 1, 0, band, len1 + 1, len2 + 1))
 		{
-			tmpval = matrix_query(i - 1, 0, band, val_vec, query_vec);
+			tmpval = matrix_query(i - 1, 0, band, val_vec, len1 + 1, len2 + 1);
 			if(*max_data_j < tmpval)
 			{
 				*max_data_j = tmpval;
 				*max_place_j = i - 1;
 			}
 		}	
-		for(h = -band; h <= band; ++ h)
+		for(j = left_band(len1 + 1, len2 + 1, i, band); j <= right_band(len1 + 1, len2 + 1, i, band); ++ j)
 		{
-			j = i + h;
-			if(1 <= j && j <= len2)
+			tmpval = matrix_query(i - 1, j - 1, band, val_vec, len1 + 1, len2 + 1);
+			moveval = 0;
+			/* Calcuate now the strategy of moving */
+			if(insideband(i, j - 1, band, len1 + 1, len2 + 1)) 
 			{
-				tmpval = matrix_query(i - 1, j - 1, band, val_vec, query_vec);
-				moveval = 0;
-				/* Calcuate now the strategy of moving */
-				if(insideband(i, j - 1, band)) 
+				if((tmpval_row = max_data_i + penalty) > tmpval)
 				{
-					if((tmpval_row = max_data_i + penalty) > tmpval)
-					{
-						tmpval = tmpval_row;
-						moveval = -(j - max_place_i);
-						// reporterr("Set by i, j - 1, j = %d, max_place_i = %d, val = %f\n", j, max_place_i, tmpval);
-					}
-					
+					tmpval = tmpval_row;
+					moveval = -(j - max_place_i);
+					// reporterr("Set by i, j - 1, j = %d, max_place_i = %d, val = %f\n", j, max_place_i, tmpval);
 				}
-				if(insideband(i - 1, j, band))
+				
+			}
+			if(insideband(i - 1, j, band, len1 + 1, len2 + 1))
+			{
+				if((tmpval_col = *(max_data_j + j) + penalty) > tmpval)
 				{
-					if((tmpval_col = *(max_data_j + j) + penalty) > tmpval)
-					{
-						tmpval = tmpval_col;
-						moveval = +(i - *(max_place_j + j));
-						// reporterr("Set by i - 1, j, i = %d, *(max_place_j + j) = %d, val = %f\n", i, *(max_place_j + j), tmpval);
-					}
+					tmpval = tmpval_col;
+					moveval = +(i - *(max_place_j + j));
+					// reporterr("Set by i - 1, j, i = %d, *(max_place_j + j) = %d, val = %f\n", i, *(max_place_j + j), tmpval);
 				}
-				if(i != len1 && j != len2) matrix_set(i, j, band, tmpval + protein_score(i, j), val_vec, query_vec);
-				else if(j == len2 && i > 1 && insideband(i - 2, j, band)) 
-					matrix_set(i, j, band, tmpval + matrix_query(i - 2, j, band, val_vec, query_vec), val_vec, query_vec);
-				else matrix_set(i, j, band, tmpval, val_vec, query_vec);
-				matrix_set_INT(i, j, band, moveval, move_vec, query_vec);
+			}
+			if(i != len1 && j != len2) matrix_set(i, j, band, tmpval + protein_score(i, j), val_vec, len1 + 1, len2 + 1);
+			else matrix_set(i, j, band, tmpval, val_vec, len1 + 1, len2 + 1);
+			matrix_set_INT(i, j, band, moveval, move_vec, len1 + 1, len2 + 1);
 
 #if DEBUG
-			reporterr("\n(%d, %d) = %d\nmax place i = %d, max data i = %f\nmax place j = ", i, j, matrix_query_INT(i, j, band, move_vec, query_vec), max_place_i, max_data_i);
+			reporterr("\n(%d, %d) = %d\nmax place i = %d, max data i = %f\nmax place j = ", i, j, matrix_query_INT(i, j, band, move_vec, len1 + 1, len2 + 1), max_place_i, max_data_i);
 			for(k = 0; k <= len2; ++ k) reporterr("%6d ", *(max_place_j + k));
 			reporterr("\nmax data j  = ");
 			for(k = 0; k <= len2; ++ k) reporterr("%6.1f ", *(max_data_j + k));
 			reporterr("\n\n");
 #endif
-				tmpval = matrix_query(i - 1, j - 1, band, val_vec, query_vec);
-				/* Calcuate the next */
-				if(insideband(i, j - 1, band))
+			tmpval = matrix_query(i - 1, j - 1, band, val_vec, len1 + 1, len2 + 1);
+			/* Calcuate the next */
+			if(insideband(i, j - 1, band, len1 + 1, len2 + 1))
+			{
+				if((tmpval_row = tmpval + penalty) >= max_data_i)
 				{
-					if((tmpval_row = tmpval + penalty) >= max_data_i)
-					{
-						max_data_i = tmpval_row;
-						max_place_i = j - 1;
-						// reporterr("Max_data_i: (%d, %d) -> %d %f\n", i, j - 1, max_place_i, max_data_i);
-					}
+					max_data_i = tmpval_row;
+					max_place_i = j - 1;
+					// reporterr("Max_data_i: (%d, %d) -> %d %f\n", i, j - 1, max_place_i, max_data_i);
 				}
-				if(insideband(i - 1, j, band))
+			}
+			if(insideband(i - 1, j, band, len1 + 1, len2 + 1))
+			{
+				if((tmpval_col = tmpval + penalty) >= *(max_data_j + j))
 				{
-					if((tmpval_col = tmpval + penalty) >= *(max_data_j + j))
-					{
-						*(max_data_j + j) = tmpval_col;
-						*(max_place_j + j) = i - 1;
-						// reporterr("Max_data_j: (%d, %d) -> %d %f\n", i - 1, j, *(max_place_j + j), *(max_data_j + j));
-					}
+					*(max_data_j + j) = tmpval_col;
+					*(max_place_j + j) = i - 1;
+					// reporterr("Max_data_j: (%d, %d) -> %d %f\n", i - 1, j, *(max_place_j + j), *(max_data_j + j));
 				}
 			}
 		}
@@ -172,15 +165,15 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 			*mpjp = -__INT_MAX__;
 		}
 	}
-	for(i = 0; i <= len1; ++ i) matrix_set_INT(i, 0, band, i + 1, move_vec, query_vec);
-	for(i = 0; i <= len2; ++ i) matrix_set_INT(0, i, band, -(i + 1), move_vec, query_vec);
+	for(i = 0; i <= len1; ++ i) matrix_set_INT(i, 0, band, i + 1, move_vec, len1 + 1, len2 + 1);
+	for(i = 0; i <= len2; ++ i) matrix_set_INT(0, i, band, -(i + 1), move_vec, len1 + 1, len2 + 1);
 
 	/* Traceback */
 	int limk = len1 + len2, nowi = len1, nowj = len2, val, tari, tarj;
 	tmpr1 = r1 - 1, tmpr2 = r2 - 1;
 	for(k = 0; k < limk; ++ k)
 	{
-		val = matrix_query_INT(nowi, nowj, band, move_vec, query_vec);
+		val = matrix_query_INT(nowi, nowj, band, move_vec, len1 + 1, len2 + 1);
 		// calcuate the gaps
 		if(val < 0) // column gap
 		{
@@ -221,8 +214,7 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 	*++ tmpr1 = 0;
 	*++ tmpr2 = 0;
 
-	score = matrix_query(len1, len2, band, val_vec, query_vec);
-	FreeIntVec(query_vec);
+	score = matrix_query(len1, len2, band, val_vec, len1 + 1, len2 + 1);
 	FreeDoubleVec(val_vec);
 	FreeDoubleVec(homo_matrix);
 	FreeIntVec(move_vec);
@@ -231,6 +223,12 @@ double Kband__MSA_Aalign(int icyc, int jcyc, int len1, int len2, double **cpmx1,
 #if DEBUG
 	printf("%s %s\n", r1, r2);
 #endif
+	if(swapped)
+	{
+		len = len2; len2 = len1; len1 = len;
+		s = r1; r1 = r2; r2 = s;
+	}
+
 	return score;
 
 }
@@ -245,7 +243,7 @@ double Aalign( char **seq1, char **seq2, double *eff1, double *eff2, int icyc, i
     register int i, j;
     /* Part 1: Defining the varibles of KBand */
     static TLS double **amino_dynamicmtx = NULL;
-    static TLS int length1, length2, tmplen, band, diff;
+    static TLS int length1, length2, tmplen, band, swapped = 0, swapp, needrerun = 0, mxlength;
 	static TLS char **res1, **res2; // Result array
 	static TLS char *gap1, *gap2, *swapgap; // Gap string '-' has gap 'o' not gap
 	static TLS int gaplen1, gaplen2; // Gap length without '?'
@@ -258,13 +256,14 @@ double Aalign( char **seq1, char **seq2, double *eff1, double *eff2, int icyc, i
 	gappenalty = (double)penalty * 0.5;
     length1 = strlen(seq1[0]);
     length2 = strlen(seq2[0]);
+	mxlength = MAX(length1, length2);
 	gaplen1 = 0;
 	gaplen2 = 0;
     /* Part 4: Exception */
     // No data
     if(length1 == 0 || length2 == 0) return 0.0;
 	
-	/* Part 2.2: Allocing the varibles that using length information */
+	/* Part 2: Allocing the varibles that using length information */
 	length1 += 10;
 	length2 += 10;
 
@@ -282,8 +281,59 @@ double Aalign( char **seq1, char **seq2, double *eff1, double *eff2, int icyc, i
     /* Part 5: KBand algorithm and alloc the matrix */
 	cpmx_calc_new(seq1, cpmx1, eff1, length1, icyc);
 	cpmx_calc_new(seq2, cpmx2, eff2, length2, jcyc);
-	diff = abs(length1 - length2); 
-	val = Kband__MSA_Aalign(icyc, jcyc, length1, length2, cpmx1, cpmx2, gap1, gap2, band + diff, gappenalty);
+	if(alignband != NOTSPECIFIED)
+	{
+		if(length1 < length2) 
+			val = Kband__MSA_Aalign(icyc, jcyc, length1, length2, cpmx1, cpmx2, gap1, gap2, band, gappenalty);
+		else
+			val = Kband__MSA_Aalign(jcyc, icyc, length2, length1, cpmx2, cpmx1, gap2, gap1, band, gappenalty);
+	}
+	else
+	{
+	band = 10;
+	if(length1 < length2)
+	{
+		if(band > mxlength) val = Kband__MSA_Aalign(icyc, jcyc, length1, length2, cpmx1, cpmx2, gap1, gap2, band, gappenalty);
+		while(band <= mxlength)
+		{
+			val = Kband__MSA_Aalign(icyc, jcyc, length1, length2, cpmx1, cpmx2, gap1, gap2, band, gappenalty);
+			if(val == -inf)
+			{
+				band <<= 1;
+			}
+			else if(val < oldval) {band >>= 1; needrerun = 1; break;}
+			else if(val == oldval) {needrerun = 0; break;}
+			else
+			{
+				oldval = val;
+				band <<= 1;
+				if(band > mxlength) break;
+			}
+		}
+		// if(needrerun) Kband__MSA_Aalign(icyc, jcyc, length1, length2, cpmx1, cpmx2, gap1, gap2, band, gappenalty);
+	}
+	else
+	{
+		if(band > mxlength) val = Kband__MSA_Aalign(jcyc, icyc, length2, length1, cpmx2, cpmx1, gap2, gap1, band, gappenalty);
+		while(band <= mxlength)
+		{
+			val = Kband__MSA_Aalign(jcyc, icyc, length2, length1, cpmx2, cpmx1, gap2, gap1, band, gappenalty);
+			if(val == -inf)
+			{
+				band <<= 1;
+			}
+			else if(val < oldval) {band >>= 1; needrerun = 1; break;}
+			else if(val == oldval) {needrerun = 0; break;}
+			else
+			{
+				oldval = val;
+				band <<= 1;
+				if(band > mxlength) break;
+			}
+		}
+		// if(needrerun) Kband__MSA_Aalign(jcyc, icyc, length2, length1, cpmx2, cpmx1, gap2, gap1, band, gappenalty);
+	}
+	}
 
 	for(rev2 = gap1; ((*rev2) && *rev2 != '?'); ++ rev2) ++ gaplen1;
 	for(rev = swapgap; rev2 != gap1; ++ rev) 

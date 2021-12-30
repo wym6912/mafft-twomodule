@@ -6044,11 +6044,11 @@ void setstacksize(rlim_t kStackSize )
 		if (rl.rlim_cur < kStackSize)
 		{
 			rl.rlim_cur = kStackSize;
-			reporterr( "stacksize: %d kb->%d kb\n", originalsize/1024, rl.rlim_cur/1024 );
+			reporterr( "Try to enlarge stacksize: %d kb->%d kb\n", originalsize/1024, rl.rlim_cur/1024 );
 			result = setrlimit(RLIMIT_STACK, &rl);
 			if (result != 0)
 			{
-				reporterr( "Warning: Failed to extend stack size. It's ok in most cases but there may be problems in --pileup and --chainedtree.\n" );
+				reporterr( "Warning: Failed to extend stack size.\n" );
 			}
 		}
 		else
