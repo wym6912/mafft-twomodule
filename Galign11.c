@@ -395,7 +395,7 @@ double G__align11( double **n_dynamicmtx, char **seq1, char **seq2, int alloclen
 	}
 #endif
 
-#ifdef DEBUG
+#if DEBUG
 	printf("After process, s1 = %s, s2 = %s (Line 388 in Galign11.c)\n", s1, s2);
 #endif
 

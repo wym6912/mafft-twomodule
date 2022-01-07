@@ -35,7 +35,7 @@
 
 
 
-#define VERSION "0.7.1 (Modified by wym6912); MAFFT raw v7.471"
+#define VERSION "0.7.2 (Modified by wym6912); MAFFT raw v7.471"
 #define SHOWVERSION reporterr( "%s (%s, %d-bit) Version " VERSION "\nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8, alg, modelname, specificityconsideration, nthread )
 
 #define FFT_THRESHOLD  80
