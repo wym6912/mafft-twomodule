@@ -5,8 +5,8 @@
 #define DEBUG 0
 #define protein_score(place1, place2) matrix_query(place1, place2, band, homo_matrix, len1 + 1, len2 + 1)
 
-static const double inf = 1e100, eps = 1e-5;
-
+#define inf 1e100
+static const double eps = 1e-5;
 
 void init__protein_score_Aalign(double **cpmx1, double **cpmx2, int len1, int len2, int band, double *ans)
 {

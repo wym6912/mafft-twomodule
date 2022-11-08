@@ -14,7 +14,8 @@ const int nscoredalphabets = 20;
 const int max_seq = 100000 + 7;
 #endif
 
-static const double inf = 1e100, eps = 1e-5;
+#define inf 1e100
+static const double eps = 1e-5;
 
 double Kband(char *s1, char *s2, int len1, int len2, double penalty, int band, double **ad, char *r1, char *r2, int headgp, int tailgp)
 {

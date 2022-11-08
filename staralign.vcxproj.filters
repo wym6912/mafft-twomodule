@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="addfunctions.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="blosum.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="constants.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="defs.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Falign.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fft.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fftFunctions.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Galign11.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="io.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JTT.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Kband.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mltaln9.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mtxutl.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SAalignmm.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Salignmm.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="staralign.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tddis.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="threadpool.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="threadpool_condition.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DNA.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="functions.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Kband.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="miyata.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="miyata5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mafft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mltaln.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mtxutl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="threadpool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="threadpool_condition.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="protein.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>资源</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{bd444063-2422-423a-88f4-35fa615e4a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{d25ac253-0525-4493-be1b-253be481fe4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源">
+      <UniqueIdentifier>{587bedb8-90a9-492a-8bed-b543d615435d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="staralign.rc">
+      <Filter>资源</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

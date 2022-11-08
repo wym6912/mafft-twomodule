@@ -1,3 +1,6 @@
+#ifndef __MLTALN__
+#define __MLTALN__
+
 #define USE_XCED 0
 
 #define _XOPEN_SOURCE
@@ -32,10 +35,12 @@
 #include <sys/shm.h> // shared memory
 #include <sys/mman.h> // shm_open
 #endif
+#if (_WIN32 || _WIN64)
+#define __INT_MAX__ INT_MAX
+#endif
 
 
-
-#define VERSION "0.7.2 (Modified by wym6912); MAFFT raw v7.471"
+#define VERSION "0.8.0 (Modified by wym6912); MAFFT raw v7.471"
 #define SHOWVERSION reporterr( "%s (%s, %d-bit) Version " VERSION "\nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8, alg, modelname, specificityconsideration, nthread )
 
 #define FFT_THRESHOLD  80
@@ -45,10 +50,10 @@
 #define DISPSITEI    0
 #define MAXITERATION 500
 #define M  500000       /* njob no saidaiti */
-#define N 5000000       /* nlen no saidaiti */
+#define NLEN 5000000       /* nlen no saidaiti */
 #define MAXSEG 100000
 #define B     256
-#define C     60       /*  1 gyou no mojisuu */
+#define CLEN  60       /*  1 gyou no mojisuu */
 #define D      6
 #define DFORMAT      "%#6.3f"
 #define rnd() ( ( 1.0 / ( RAND_MAX + 1.0 ) ) * rand() )
@@ -387,3 +392,5 @@ extern int specifictarget;
 extern int nadd;
 extern int usenaivescoreinsteadofalignmentscore;
 #define MYBUFSIZE 1000 * 1000 * 100 // 100MB
+
+#endif

@@ -3,8 +3,12 @@
 #include "miyata5.h"
 #include "DNA.h"
 
+#include "protein.h"
+
+#if (defined(__linux__) || defined(__APPLE__))
 #include "JTT.c"
 #include "blosum.c"
+#endif
 
 #define DEBUG 0
 #define TEST 0

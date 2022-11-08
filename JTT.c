@@ -1,10 +1,7 @@
 #if 0
 #include "mltaln.h"
 #endif
-#define DEFAULTGOP_J -1530
-#define DEFAULTGEP_J   -00 
-#define DEFAULTOFS_J  -123  /* +10 -- -50  teido ka ? */
-#define DEFAULTPAMN  200
+#include "protein.h"
 
 void JTTmtx( double **rsr, double *freq, unsigned char locamino[26], char locgrp[26], int isTM )
 {

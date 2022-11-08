@@ -2,6 +2,9 @@
 #define _THREAD_POOL_H_
 
 //线程池头文件
+#if (_WIN32 || _WIN64)
+#include <Windows.h>
+#endif
 
 #include "threadpool_condition.h"
 

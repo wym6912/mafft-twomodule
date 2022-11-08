@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="profilealign.c" />
+    <ClCompile Include="addfunctions.c" />
+    <ClCompile Include="blosum.c" />
+    <ClCompile Include="constants.c" />
+    <ClCompile Include="defs.c" />
+    <ClCompile Include="Falign.c" />
+    <ClCompile Include="fft.c" />
+    <ClCompile Include="fftFunctions.c" />
+    <ClCompile Include="Galign11.c" />
+    <ClCompile Include="io.c" />
+    <ClCompile Include="JTT.c" />
+    <ClCompile Include="Kband.c" />
+    <ClCompile Include="mltaln9.c" />
+    <ClCompile Include="mtxutl.c" />
+    <ClCompile Include="SAalignmm.c" />
+    <ClCompile Include="Salignmm.c" />
+    <ClCompile Include="tddis.c" />
+    <ClCompile Include="threadpool.c" />
+    <ClCompile Include="threadpool_condition.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DNA.h" />
+    <ClInclude Include="dp.h" />
+    <ClInclude Include="fft.h" />
+    <ClInclude Include="functions.h" />
+    <ClInclude Include="Kband.h" />
+    <ClInclude Include="mafft.h" />
+    <ClInclude Include="miyata.h" />
+    <ClInclude Include="miyata5.h" />
+    <ClInclude Include="mltaln.h" />
+    <ClInclude Include="mtxutl.h" />
+    <ClInclude Include="threadpool.h" />
+    <ClInclude Include="threadpool_condition.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="profilealign.rc" />
+  </ItemGroup>
+</Project>

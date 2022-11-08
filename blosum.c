@@ -1,7 +1,7 @@
-#define DEFAULTGOP_B -1530
-#define DEFAULTGEP_B   -00 
-#define DEFAULTOFS_B  -123   /* +10 -- -50  teido ka ? */
+#include <stdio.h>
+#include "protein.h"
 
+extern int nalphabets;
 
 void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char *amino_grp, int *rescalept )
 {
@@ -255,7 +255,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 
 	int i, j, count;
 	double av;
-	double *tmpmtx;
+	double *tmpmtx = NULL;
 
 	if( n == 30 ) tmpmtx = tmpmtx30;
 	else if( n == 45 ) tmpmtx = tmpmtx45;

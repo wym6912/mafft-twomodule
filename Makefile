@@ -176,7 +176,7 @@ Kband.o : Kband.c $(KBANDHEADER)
 	$(CC) $(MYCFLAGS) -c Kband.c
 
 clean :
-	rm -f *.o *.a *.exe *~ $(PROGS) $(SOS) $(DYLIBS) $(DLLS) *.gcda *.gcno $(DASH_CLIENT) pre trace
+	rm -f *.o *.a *.exe *~ $(PROGS) $(SOS) $(DYLIBS) $(DLLS) *.gcda *.gcno $(DASH_CLIENT) pre trace *.aps
 #	rm -f ../binaries/* ../scripts/*
 
 install : all

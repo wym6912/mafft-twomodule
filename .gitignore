@@ -12,3 +12,8 @@ staralign
 binaries/profilealign
 profilealign
 infile.tree
+.vs/*
+x64/*
+bin/*
+obj/*
+*.aps

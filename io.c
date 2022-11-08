@@ -1106,7 +1106,7 @@ void PreRead( FILE *fp, int *locnjob, int *locnlenmax )
 			if( nleni > *locnlenmax ) *locnlenmax = nleni;
 		}
 	}
-	if( *locnlenmax > N )
+	if( *locnlenmax > NLEN )
 	{
 		fprintf( stderr, "TOO LONG SEQUENCE!\n" );
 		exit( 1 );
@@ -1230,10 +1230,10 @@ void FRead( FILE *fp, char name[][B], int nlen[], char **seq )
 #endif
 		fgets( b, B-1, fp ); nlen[i] = atoi( b );      /* seq i no nagasa */
 		seq[i][0] = 0;
-		if( nlen[i] ) for( j=0; j <= (nlen[i]-1)/C; j++ )
+		if( nlen[i] ) for( j=0; j <= (nlen[i]-1)/CLEN; j++ )
 		{
 			getaline_fp_eof_new( b, B-1, fp );
-			/*	b[C] = 0;  */
+			/*	b[CLEN] = 0;  */
 			strcat( seq[i], b );
 		} 
 		seq[i][nlen[i]] = 0;
@@ -1364,7 +1364,7 @@ char *load1SeqWithoutName_realloc_casepreserve( FILE *fpp )
 {
 	int c, b;
 	char *cbuf;
-	int size = N;
+	int size = NLEN;
 	char *val;
 
 	val = malloc( (size+1) * sizeof( char ) );
@@ -1377,7 +1377,7 @@ char *load1SeqWithoutName_realloc_casepreserve( FILE *fpp )
 		*cbuf++ = (char)c;  /* Ĺ�����Ƥ⤷��ʤ� */
 		if( cbuf - val == size )
 		{
-			size += N;
+			size += NLEN;
 			fprintf( stderr, "reallocating...\n" );
 			val = (char *)realloc( val, (size+1) * sizeof( char ) );
 			if( !val )
@@ -1386,7 +1386,7 @@ char *load1SeqWithoutName_realloc_casepreserve( FILE *fpp )
 				exit( 1 );
 			}
 			fprintf( stderr, "done.\n" );
-			cbuf = val + size-N;
+			cbuf = val + size-NLEN;
 		}
 		b = c;
 	}
@@ -1402,7 +1402,7 @@ char *load1SeqWithoutName_realloc( FILE *fpp )
 {
 	int c, b;
 	char *cbuf;
-	int size = N;
+	int size = NLEN;
 	char *val;
 
 	val = malloc( (size+1) * sizeof( char ) );
@@ -1415,7 +1415,7 @@ char *load1SeqWithoutName_realloc( FILE *fpp )
 		*cbuf++ = (char)c;  /* Ĺ�����Ƥ⤷��ʤ� */
 		if( cbuf - val == size )
 		{
-			size += N;
+			size += NLEN;
 			fprintf( stderr, "reallocating...\n" );
 			val = (char *)realloc( val, (size+1) * sizeof( char ) );
 			if( !val )
@@ -1424,7 +1424,7 @@ char *load1SeqWithoutName_realloc( FILE *fpp )
 				exit( 1 );
 			}
 			fprintf( stderr, "done.\n" );
-			cbuf = val + size-N;
+			cbuf = val + size-NLEN;
 		}
 		b = c;
 	}
@@ -1477,7 +1477,7 @@ void readDataforgaln( FILE *fp, char **name, int *nlen, char **seq )
 #if 0
 	if( !tmpseq )
 	{
-		tmpseq = AllocateCharVec( N );
+		tmpseq = AllocateCharVec( NLEN );
 	}
 #endif
 
@@ -1554,7 +1554,7 @@ void readData_pointer2( FILE *fp, int nseq, char **name, int *nlen, char **seq )
 #if 0
 	if( !tmpseq )
 	{
-		tmpseq = AllocateCharVec( N );
+		tmpseq = AllocateCharVec( NLEN );
 	}
 #endif
 
@@ -1615,7 +1615,7 @@ void readData_pointer_casepreserve( FILE *fp, char **name, int *nlen, char **seq
 #if 0
 	if( !tmpseq )
 	{
-		tmpseq = AllocateCharVec( N );
+		tmpseq = AllocateCharVec( NLEN );
 	}
 #endif
 
@@ -1700,7 +1700,7 @@ void readData_pointer( FILE *fp, char **name, int *nlen, char **seq )
 #if 0
 	if( !tmpseq )
 	{
-		tmpseq = AllocateCharVec( N );
+		tmpseq = AllocateCharVec( NLEN );
 	}
 #endif
 
@@ -1760,7 +1760,7 @@ void readData( FILE *fp, char name[][B], int nlen[], char **seq )
 #if 0
 	if( !tmpseq )
 	{
-		tmpseq = AllocateCharVec( N );
+		tmpseq = AllocateCharVec( NLEN );
 	}
 #endif
 
@@ -1805,7 +1805,7 @@ void cutAlignment( FILE *fp, int **regtable, char **revtable, int *outtable, cha
 
 	if( dumname == NULL )
 	{
-		dumname = AllocateCharVec( N );
+		dumname = AllocateCharVec( NLEN );
 	}
 
 	rewind( fp );
@@ -1892,7 +1892,7 @@ void cutData( FILE *fp, int **regtable, char **revtable, int *outtable )
 
 	if( dumname == NULL )
 	{
-		dumname = AllocateCharVec( N );
+		dumname = AllocateCharVec( NLEN );
 	}
 
 	rewind( fp );
@@ -1976,7 +1976,7 @@ void catData( FILE *fp )
 
 	if( dumname == NULL )
 	{
-		dumname = AllocateCharVec( N );
+		dumname = AllocateCharVec( NLEN );
 	}
 
 	rewind( fp );
@@ -2118,7 +2118,7 @@ void getnumlen_casepreserve( FILE *fp, int *nlenminpt )
 	setmode( fileno( stdout ), O_BINARY );
 #endif
 
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2127,7 +2127,7 @@ void getnumlen_casepreserve( FILE *fp, int *nlenminpt )
 	total = 0;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpseq = load1SeqWithoutName_realloc_casepreserve( fp );
 		tmp = strlen( tmpseq );
 		if( tmp > nlenmax ) nlenmax  = tmp;
@@ -2162,7 +2162,7 @@ void getnumlen_nogap_countn( FILE *fp, int *nlenminpt, double *nfreq )
 	int i, tmp;
 	char *tmpseq, *tmpname;
 	double atgcfreq;
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2172,7 +2172,7 @@ void getnumlen_nogap_countn( FILE *fp, int *nlenminpt, double *nfreq )
 	nnum = 0;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpseq = load1SeqWithoutName_realloc( fp );
 		tmp = countnogaplen( tmpseq );
 		if( tmp > nlenmax ) nlenmax  = tmp;
@@ -2213,7 +2213,7 @@ void getnumlen_nogap( FILE *fp, int *nlenminpt )
 	setmode( fileno( fp ), O_BINARY );
 	setmode( fileno( stdout ), O_BINARY );
 #endif
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2222,7 +2222,7 @@ void getnumlen_nogap( FILE *fp, int *nlenminpt )
 	total = 0;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpseq = load1SeqWithoutName_realloc( fp );
 		tmp = countnogaplen( tmpseq );
 		if( tmp > nlenmax ) nlenmax  = tmp;
@@ -2262,7 +2262,7 @@ void getnumlen_nogap_outallreg( FILE *fp, int *nlenminpt )
 	setmode( fileno( fp ), O_BINARY );
 	setmode( fileno( stdout ), O_BINARY );
 #endif
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2271,7 +2271,7 @@ void getnumlen_nogap_outallreg( FILE *fp, int *nlenminpt )
 	total = 0;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		fprintf( stdout, "%s\n", tmpname );
 		tmpseq = load1SeqWithoutName_realloc_casepreserve( fp );
 		tmp = countnogaplen( tmpseq );
@@ -2337,7 +2337,7 @@ static void escapehtml( char *res, char *ori, int maxlen )
 		res++;
 		ori++;
 
-		if( res - res0 -10 > N ) break;
+		if( res - res0 -10 > NLEN ) break;
 	}
 	*res = 0;
 }
@@ -2355,8 +2355,8 @@ void getnumlen_nogap_outallreg_web( FILE *fp, FILE *ofp, int *nlenminpt, int *is
 	setmode( fileno( fp ), O_BINARY );
 	setmode( fileno( stdout ), O_BINARY );
 #endif
-	tmpname = AllocateCharVec( N );
-	tmpname2 = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
+	tmpname2 = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2367,9 +2367,9 @@ void getnumlen_nogap_outallreg_web( FILE *fp, FILE *ofp, int *nlenminpt, int *is
 	*isalignedpt = 1;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpname2[0] = tmpname[0];
-		escapehtml( tmpname2+1, tmpname+1, N );
+		escapehtml( tmpname2+1, tmpname+1, NLEN );
 //		fprintf( stdout, "%s\n", tmpname );
 //		fprintf( stdout, "%s\n", tmpname2 );
 //		exit(1);
@@ -2493,7 +2493,7 @@ void getnumlen( FILE *fp )
 #endif
 
 	
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
 	nlenmax = 0;
@@ -2501,7 +2501,7 @@ void getnumlen( FILE *fp )
 	total = 0;
 	for( i=0; i<njob; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpseq = load1SeqWithoutName_realloc( fp );
 		tmp = strlen( tmpseq );
 		if( tmp > nlenmax ) nlenmax  = tmp;
@@ -2542,13 +2542,13 @@ void getnumlen_nocommonnjob( FILE *fp, int *nn, int *nm )
 	setmode( fileno( stdout ), O_BINARY );
 #endif
 	
-	tmpname = AllocateCharVec( N );
+	tmpname = AllocateCharVec( NLEN );
 	nj = countKUorWA( fp );
 	searchKUorWA( fp );
 	mx = 0;
 	for( i=0; i<nj; i++ )
 	{
-		myfgets( tmpname, N-1, fp );
+		myfgets( tmpname, NLEN-1, fp );
 		tmpseq = load1SeqWithoutName_realloc( fp );
 		tmp = strlen( tmpseq );
 		if( tmp > mx ) mx = tmp;
@@ -2560,11 +2560,11 @@ void getnumlen_nocommonnjob( FILE *fp, int *nn, int *nm )
 
 void WriteGapFill( FILE *fp, int locnjob, char name[][B], int nlen[M], char **aseq )
 {
-	static char b[N];
+	static char b[NLEN];
 	int i, j;
 	int nalen[M];
-	static char gap[N];
-	static char buff[N];
+	static char gap[NLEN];
+	static char buff[NLEN];
 
 #if IODEBUG
 	fprintf( stderr, "IMAKARA KAKU\n" );
@@ -2590,9 +2590,9 @@ void WriteGapFill( FILE *fp, int locnjob, char name[][B], int nlen[M], char **as
 		nalen[i] = strlen( buff );
 		fprintf( fp, "%s\n", name[i] );
 		fprintf( fp, "%5d\n", nalen[i] );
-		for( j=0; j<nalen[i]; j=j+C )
+		for( j=0; j<nalen[i]; j=j+CLEN )
 		{
-			strncpy_caseC( b, buff+j, C ); b[C] = 0;
+			strncpy_caseC( b, buff+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 		}
 	}
@@ -2613,13 +2613,13 @@ void writeDataforgaln( FILE *fp, int locnjob, char **name, int *nlen, char **ase
 	{
 		nalen = strlen( aseq[i] );
 		fprintf( fp, ">%s\n", name[i]+1 );
-		for( j=0; j<nalen; j=j+C )
+		for( j=0; j<nalen; j=j+CLEN )
 		{
 #if 0
-			strncpy( b, aseq[i]+j, C ); b[C] = 0;
+			strncpy( b, aseq[i]+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 #else
-			fprintf( fp, "%.*s\n", C, aseq[i]+j );
+			fprintf( fp, "%.*s\n", CLEN, aseq[i]+j );
 #endif
 		}
 	}
@@ -2637,13 +2637,13 @@ void writeData_pointer( FILE *fp, int locnjob, char **name, int *nlen, char **as
 #endif
 		nalen = strlen( aseq[i] );
 		fprintf( fp, ">%s\n", name[i]+1 );
-		for( j=0; j<nalen; j=j+C )
+		for( j=0; j<nalen; j=j+CLEN )
 		{
 #if 0
-			strncpy( b, aseq[i]+j, C ); b[C] = 0;
+			strncpy( b, aseq[i]+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 #else
-			fprintf( fp, "%.*s\n", C, aseq[i]+j );
+			fprintf( fp, "%.*s\n", CLEN, aseq[i]+j );
 #endif
 		}
 	}
@@ -2661,13 +2661,13 @@ void writeData( FILE *fp, int locnjob, char name[][B], int nlen[], char **aseq )
 #endif
 		nalen = strlen( aseq[i] );
 		fprintf( fp, ">%s\n", name[i]+1 );
-		for( j=0; j<nalen; j=j+C )
+		for( j=0; j<nalen; j=j+CLEN )
 		{
 #if 0
-			strncpy( b, aseq[i]+j, C ); b[C] = 0;
+			strncpy( b, aseq[i]+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 #else
-			fprintf( fp, "%.*s\n", C, aseq[i]+j );
+			fprintf( fp, "%.*s\n", CLEN, aseq[i]+j );
 #endif
 		}
 	}
@@ -2680,8 +2680,8 @@ void write1seq( FILE *fp, char *aseq )
 	int nalen;
 
 	nalen = strlen( aseq );
-	for( j=0; j<nalen; j=j+C )
-		fprintf( fp, "%.*s\n", C, aseq+j );
+	for( j=0; j<nalen; j=j+CLEN )
+		fprintf( fp, "%.*s\n", CLEN, aseq+j );
 }
 
 void readhat2_doublehalf_part_pointer( FILE *fp, int nseq, int nadd, char **name, double **mtx )
@@ -3151,7 +3151,7 @@ int ReadBlastm7_avscore( FILE *fp, double *dis, int nin )
 	double len, sumlen;
 	int qstart, qend, tstart, tend;
 	double scorepersite;
-	static char qal[N], tal[N], al[N];
+	static char qal[NLEN], tal[NLEN], al[NLEN];
 	int nlocalhom;
 
 	junban = calloc( nin, sizeof( int ) );
@@ -3217,7 +3217,7 @@ int ReadBlastm7_avscore( FILE *fp, double *dis, int nin )
 		sumlen += len;
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_qseq>", al, 24 ) ) break;
 
 		strcpy( qal, al+24 );
@@ -3227,7 +3227,7 @@ int ReadBlastm7_avscore( FILE *fp, double *dis, int nin )
 		*pt = 0;
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_hseq>", al, 24 ) ) break;
 
 		strcpy( tal, al+24 );
@@ -3277,7 +3277,7 @@ int ReadBlastm7_scoreonly( FILE *fp, double *dis, int nin )
 	int overlapaa;
 	double score, sumscore;
 	int qstart, qend, tstart, tend;
-	static char qal[N], tal[N], al[N];
+	static char qal[NLEN], tal[NLEN], al[NLEN];
 	int nlocalhom;
 
 	junban = calloc( nin, sizeof( int ) );
@@ -3339,7 +3339,7 @@ int ReadBlastm7_scoreonly( FILE *fp, double *dis, int nin )
 		overlapaa = atoi( pt );
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_qseq>", al, 24 ) ) break;
 
 		strcpy( qal, al+24 );
@@ -3349,7 +3349,7 @@ int ReadBlastm7_scoreonly( FILE *fp, double *dis, int nin )
 		*pt = 0;
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_hseq>", al, 24 ) ) break;
 
 		strcpy( tal, al+24 );
@@ -3394,7 +3394,7 @@ int ReadBlastm7( FILE *fp, double *dis, int qmem, char **name, LocalHom *localho
 	int overlapaa;
 	double score, sumscore;
 	int qstart, qend, tstart, tend;
-	static char qal[N], tal[N], al[N];
+	static char qal[NLEN], tal[NLEN], al[NLEN];
 	int nlocalhom;
 
 
@@ -3457,7 +3457,7 @@ int ReadBlastm7( FILE *fp, double *dis, int qmem, char **name, LocalHom *localho
 		overlapaa = atoi( pt );
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_qseq>", al, 24 ) ) break;
 
 		strcpy( qal, al+24 );
@@ -3467,7 +3467,7 @@ int ReadBlastm7( FILE *fp, double *dis, int qmem, char **name, LocalHom *localho
 		*pt = 0;
 
 
-		while( fgets( al, N-100, fp ) )
+		while( fgets( al, NLEN-100, fp ) )
 			if( !strncmp( "              <Hsp_hseq>", al, 24 ) ) break;
 
 		strcpy( tal, al+24 );
@@ -3542,7 +3542,7 @@ int ReadFasta34m10_nuc( FILE *fp, double *dis, int qmem, char **name, LocalHom *
 	int opt, qstart, qend, tstart, tend;
 	double z, bits;
 	int qal_display_start, tal_display_start;
-	static char qal[N], tal[N];
+	static char qal[NLEN], tal[NLEN];
 	char *qal2, *tal2;
 	int c;
 
@@ -3681,7 +3681,7 @@ int ReadFasta34m10( FILE *fp, double *dis, int qmem, char **name, LocalHom *loca
 	int opt, qstart, qend, tstart, tend;
 	double z, bits;
 	int qal_display_start, tal_display_start;
-	static char qal[N], tal[N];
+	static char qal[NLEN], tal[NLEN];
 	char *qal2, *tal2;
 	int c;
 
@@ -4305,7 +4305,7 @@ void closeFiles( void )
 
 void WriteForFasta( FILE *fp, int locnjob, char **name, int nlen[M], char **aseq )
 {
-    static char b[N];
+    static char b[NLEN];
     int i, j;
     int nalen[M];
 
@@ -4313,9 +4313,9 @@ void WriteForFasta( FILE *fp, int locnjob, char **name, int nlen[M], char **aseq
     {
         nalen[i] = strlen( aseq[i] );
         fprintf( fp, ">%s\n", name[i] );
-        for( j=0; j<nalen[i]; j=j+C ) 
+        for( j=0; j<nalen[i]; j=j+CLEN ) 
         {
-            strncpy( b, aseq[i]+j, C ); b[C] = 0;
+            strncpy( b, aseq[i]+j, CLEN ); b[CLEN] = 0;
             fprintf( fp, "%s\n",b );
         }
     }
@@ -5396,13 +5396,13 @@ void writeData_reorder_pointer( FILE *fp, int locnjob, char **name, int *nlen, c
 #endif
 		nalen = strlen( aseq[k] );
 		fprintf( fp, ">%s\n", name[k]+1 );
-		for( j=0; j<nalen; j=j+C )
+		for( j=0; j<nalen; j=j+CLEN )
 		{
 #if 0
-			strncpy( b, aseq[k]+j, C ); b[C] = 0;
+			strncpy( b, aseq[k]+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 #else
-			fprintf( fp, "%.*s\n", C, aseq[k]+j );
+			fprintf( fp, "%.*s\n", CLEN, aseq[k]+j );
 #endif
 		}
 	}
@@ -5420,13 +5420,13 @@ void writeData_reorder( FILE *fp, int locnjob, char name[][B], int nlen[], char 
 #endif
 		nalen = strlen( aseq[k] );
 		fprintf( fp, ">%s\n", name[k]+1 );
-		for( j=0; j<nalen; j=j+C )
+		for( j=0; j<nalen; j=j+CLEN )
 		{
 #if 0
-			strncpy( b, aseq[k]+j, C ); b[C] = 0;
+			strncpy( b, aseq[k]+j, CLEN ); b[CLEN] = 0;
 			fprintf( fp, "%s\n",b );
 #else
-			fprintf( fp, "%.*s\n", C, aseq[k]+j );
+			fprintf( fp, "%.*s\n", CLEN, aseq[k]+j );
 #endif
 		}
 	}

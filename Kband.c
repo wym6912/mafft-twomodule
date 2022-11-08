@@ -4,7 +4,8 @@
 
 #define DEBUG 0
 
-extern int nalphabets, amino[];
+extern int nalphabets;
+extern unsigned char amino[];
 #define INF (1e+100)
 
 long long __min__(long long x, long long y) { return x > y ? y : x; }

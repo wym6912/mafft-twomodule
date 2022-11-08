@@ -4,7 +4,9 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#if (__linux__ || __APPLE__)
 #include <sys/time.h>
+#endif
 
 
 #ifdef _GNU_SOURCE
@@ -28,6 +30,67 @@
 # define _ATFILE_SOURCE 1
 #endif
 
+#if (_WIN32 || _WIN64)
+// this block code is written by https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
+LARGE_INTEGER getFILETIMEoffset()
+{
+    SYSTEMTIME s;
+    FILETIME f;
+    LARGE_INTEGER t;
+
+    s.wYear = 1970;
+    s.wMonth = 1;
+    s.wDay = 1;
+    s.wHour = 0;
+    s.wMinute = 0;
+    s.wSecond = 0;
+    s.wMilliseconds = 0;
+    SystemTimeToFileTime(&s, &f);
+    t.QuadPart = f.dwHighDateTime;
+    t.QuadPart <<= 32;
+    t.QuadPart |= f.dwLowDateTime;
+    return (t);
+}
+
+int clock_gettime(struct timeval* tv)
+{
+    LARGE_INTEGER           t;
+    FILETIME            f;
+    double                  microseconds;
+    static LARGE_INTEGER    offset;
+    static double           frequencyToMicroseconds;
+    static int              initialized = 0;
+    static BOOL             usePerformanceCounter = 0;
+
+    if (!initialized) {
+        LARGE_INTEGER performanceFrequency;
+        initialized = 1;
+        usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
+        if (usePerformanceCounter) {
+            QueryPerformanceCounter(&offset);
+            frequencyToMicroseconds = (double)performanceFrequency.QuadPart / 1000000.;
+        }
+        else {
+            offset = getFILETIMEoffset();
+            frequencyToMicroseconds = 10.;
+        }
+    }
+    if (usePerformanceCounter) QueryPerformanceCounter(&t);
+    else {
+        GetSystemTimeAsFileTime(&f);
+        t.QuadPart = f.dwHighDateTime;
+        t.QuadPart <<= 32;
+        t.QuadPart |= f.dwLowDateTime;
+    }
+
+    t.QuadPart -= offset.QuadPart;
+    microseconds = (double)t.QuadPart / frequencyToMicroseconds;
+    t.QuadPart = microseconds;
+    tv->tv_sec = t.QuadPart / 1000000;
+    tv->tv_usec = t.QuadPart % 1000000;
+    return (0);
+}
+#endif
 
 //创建的线程执行
 void *thread_routine(void *arg)
@@ -49,13 +112,21 @@ void *thread_routine(void *arg)
             //否则线程阻塞等待
             // printf("thread %d is waiting\n", (int)pthread_self());
             //获取从当前时间，并加上等待时间， 设置进程的超时睡眠时间
-            clock_gettime(CLOCK_REALTIME, &abstime);  
+#if (_WIN32 || _WIN64)
+            clock_gettime(&abstime);
+#else
+            clock_gettime(CLOCK_REALTIME, &abstime);
+#endif
             abstime.tv_sec += 10;
             int status;
             status = condition_timedwait(&pool->ready, &abstime);  //该函数会解锁，允许其他线程访问，当被唤醒时，加锁
             if(status == ETIMEDOUT)
             {
+#if (_WIN32 || _WIN64)
+                printf("thread %d wait timed out\n", pthread_self().x);
+#else
                 printf("thread %d wait timed out\n", (int)pthread_self());
+#endif
                 timeout = 1;
                 break;
             }

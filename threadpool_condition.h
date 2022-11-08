@@ -1,7 +1,11 @@
 #ifndef _CONDITION_H_
 #define _CONDITION_H_
 
+#if (_WIN32 || _WIN64)
+#include "pthread-win32/pthread.h"
+#else
 #include <pthread.h>
+#endif
 
 //封装一个互斥量和条件变量作为状态
 typedef struct condition

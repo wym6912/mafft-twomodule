@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include "mltaln.h"
 
 typedef short int bool;
 

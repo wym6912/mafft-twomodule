@@ -3677,7 +3677,7 @@ static void *kmerresetnearestthread( void *arg )
  	Bchain **acpt = targ->acpt;
  	Bchain *ac = targ->ac;
 
-	int *singlettable1;
+	int *singlettable1 = NULL;
 
 	Bchain *acptbk;
 	Bchain *acptinit;
