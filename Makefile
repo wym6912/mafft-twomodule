@@ -70,7 +70,7 @@ ifdef ENABLE_MULTITHREAD
 MULTIOBJ = threadpool.o threadpool_condition.o
 endif
 
-HEADER = mltaln.h mtxutl.h 
+HEADER = mltaln.h mtxutl.h version.h 
 ifdef ENABLE_MULTITHREAD
 MULTIHEADER = threadpool.h threadpool_condition.h
 endif

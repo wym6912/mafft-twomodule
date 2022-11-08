@@ -65,7 +65,7 @@ void print_help()
 
 void print_version()
 {
-	reporterr("profilealign %s\n", VERSION);
+	reporterr("profilealign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
 }
 
 void arguments( int argc, char *argv[] )

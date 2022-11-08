@@ -99,6 +99,9 @@
     <ClInclude Include="protein.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="头文件">
