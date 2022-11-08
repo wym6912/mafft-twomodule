@@ -1,43 +1,119 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="profilealign.c" />
-    <ClCompile Include="addfunctions.c" />
-    <ClCompile Include="blosum.c" />
-    <ClCompile Include="constants.c" />
-    <ClCompile Include="defs.c" />
-    <ClCompile Include="Falign.c" />
-    <ClCompile Include="fft.c" />
-    <ClCompile Include="fftFunctions.c" />
-    <ClCompile Include="Galign11.c" />
-    <ClCompile Include="io.c" />
-    <ClCompile Include="JTT.c" />
-    <ClCompile Include="Kband.c" />
-    <ClCompile Include="mltaln9.c" />
-    <ClCompile Include="mtxutl.c" />
-    <ClCompile Include="SAalignmm.c" />
-    <ClCompile Include="Salignmm.c" />
-    <ClCompile Include="tddis.c" />
-    <ClCompile Include="threadpool.c" />
-    <ClCompile Include="threadpool_condition.c" />
+    <ClCompile Include="addfunctions.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="blosum.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="constants.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="defs.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Falign.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fft.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fftFunctions.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Galign11.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="io.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JTT.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Kband.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mltaln9.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mtxutl.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="profilealign.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SAalignmm.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Salignmm.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tddis.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="threadpool.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="threadpool_condition.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DNA.h" />
-    <ClInclude Include="dp.h" />
-    <ClInclude Include="fft.h" />
-    <ClInclude Include="functions.h" />
-    <ClInclude Include="Kband.h" />
-    <ClInclude Include="mafft.h" />
-    <ClInclude Include="miyata.h" />
-    <ClInclude Include="miyata5.h" />
-    <ClInclude Include="mltaln.h" />
-    <ClInclude Include="mtxutl.h" />
-    <ClInclude Include="threadpool.h" />
-    <ClInclude Include="threadpool_condition.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="DNA.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="functions.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Kband.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mafft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="miyata.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="miyata5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mltaln.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mtxutl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>资源</Filter>
+    </ClInclude>
+    <ClInclude Include="threadpool_condition.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="threadpool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="profilealign.rc" />
+    <Filter Include="头文件">
+      <UniqueIdentifier>{20ca2f9d-b529-460a-94dc-b7834f4da241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{37983cf0-3ed5-4697-8332-3a25f1ae40ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源">
+      <UniqueIdentifier>{c6e1ded2-807d-427a-b206-2657738eb890}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="profilealign.rc">
+      <Filter>资源</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

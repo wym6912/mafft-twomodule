@@ -1,5 +1,9 @@
 #ifdef enablemultithread
+#if (defined(__GNUC__))
 #define TLS __thread
+#elif (defined(_WIN32) || defined(_WIN64))
+#define TLS __declspec(thread)
+#endif
 #else
 #define TLS 
 #endif

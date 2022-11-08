@@ -23,9 +23,13 @@
 #include <limits.h>
 #include <stdarg.h>
 #ifdef enablemultithread
+#if (defined(__linux__) || defined(__APPLE__))
 #include <pthread.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#else 
+#include "pthread-win32/pthread.h"
+#endif
 #endif
 #ifndef _MSC_VER
 #include <unistd.h>
@@ -40,7 +44,7 @@
 #endif
 
 
-#define VERSION "0.8.0 (Modified by wym6912); MAFFT raw v7.471"
+#define VERSION "0.8.1 (Modified by wym6912); MAFFT raw v7.471"
 #define SHOWVERSION reporterr( "%s (%s, %d-bit) Version " VERSION "\nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8, alg, modelname, specificityconsideration, nthread )
 
 #define FFT_THRESHOLD  80
@@ -343,7 +347,11 @@ typedef struct _extanch
 #include "functions.h"
 
 #ifdef enablemultithread
+#if (defined(__GNUC__))
 #define TLS __thread
+#else
+#define TLS __declspec(thread)
+#endif
 #else
 #define TLS 
 #endif

@@ -4432,7 +4432,7 @@ static void *calcnearestthread( void *arg )
 	double tmpdist, mindist;
 	int progress;
 	int neighbor, i;
-	double (*distfunc)( char *, char *, double, double, int );
+	double (*distfunc)( char *, char *, double, double, int ) = NULL;
 	//if( alg == 'A' ) distfunc = distdp_noalign;
 	//else if( alg == 'L' ) distfunc = distdpL_noalign;
 	//else if( alg == 'N' ) distfunc = distdpN_noalign;
@@ -4567,7 +4567,7 @@ static void *recalcpairs4thread( void *arg )// no TLS
 	int tmpnodepairs;
 	double **dynamicmtx = NULL;
 	double **mtxptr;
-	double (*distfunc)( double **, char *, char *, LocalHom *, double, double, int );
+	double (*distfunc)( double **, char *, char *, LocalHom *, double, double, int ) = NULL;
 	//if( alg == 'A' ) distfunc = distdp;
 	//else if( alg == 'L' ) distfunc = distdpL;
 	//else if( alg == 'N' ) distfunc = distdpN;
@@ -15281,7 +15281,7 @@ static void *readloopthread( void *arg )
 	char *fn;
 	LocalHom lhsingle;
 	int res;
-	void (*movefunc)(char *, char *, LocalHom *, int *, int *, int *, int * );
+	void (*movefunc)(char *, char *, LocalHom *, int *, int *, int *, int * ) = NULL;
 	initlocalhom1( &lhsingle );
 	effijx = 1.0 * fastathreshold;
 //	void *stbuf = NULL;
