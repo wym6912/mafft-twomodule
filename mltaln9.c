@@ -4502,6 +4502,7 @@ static void *calcnearestthread( void *arg )
 	}
 }
 
+
 typedef struct _jobplan
 {
 	int node;
@@ -14846,6 +14847,7 @@ int commonsextet_p( int *table, int *pointt )
 
 	return( value );
 }
+
 
 double distcompact_msa( char *seq1, char *seq2, int *skiptable1, int *skiptable2, int ss1, int ss2 ) // osoi!
 {

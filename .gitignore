@@ -3,14 +3,12 @@
 *.exe
 *.gcda
 *.gcno
-binaries/disttbfast
-disttbfast
 trace
 pre
 order
 staralign
-binaries/profilealign
 profilealign
+fragalign
 infile.tree
 .vs/*
 x64/*

@@ -46,7 +46,7 @@
 #include "version.h"
 #define VERSION " (Modified by wym6912); MAFFT raw v7.471"
 #define SHOWVERSION reporterr( "%s (%s, %d-bit) Version" , progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8 ); \
-					reporterr( "%d\.%d\.%d\.%d", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD ); \
+					reporterr( "%d.%d.%d.%d", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD ); \
                     reporterr( "%s \nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", VERSION, alg, modelname, specificityconsideration, nthread )
 
 #define FFT_THRESHOLD  80

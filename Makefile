@@ -1,22 +1,17 @@
 PREFIX = /usr/local
 LIBDIR = $(PREFIX)/libexec/mafft
 BINDIR = $(PREFIX)/bin
-MANDIR = $(PREFIX)/share/man/man1
 DESTDIR = 
 
 #MNO_CYGWIN = -mno-cygwin
 
-# ENABLE_MULTITHREAD = -Denablemultithread
+ENABLE_MULTITHREAD = -Denablemultithread
 # Comment out the above line if your compiler 
 # does not support TLS (thread-local strage).
 
 #ENABLE_ATOMIC = -Denableatomic
 # Comment out the above line if your compiler 
 # does not support "atomic_int".
-
-#DASH_CLIENT = dash_client
-# Uncomment the above line to use protein 3D 
-# structural information.  Go language is required.
 
 CC = gcc
 #CC = icc
@@ -52,12 +47,8 @@ INSTALL = install
 STRIP = strip
 #STRIP = true # to disable strip
 
-PROGS = staralign profilealign 
-SOS = libdisttbfast.so
-DLLS = libdisttbfast.dll
-DYLIBS = libdisttbfast.dylib
+PROGS = staralign profilealign fragalign 
 
-SCRIPTS = 
 OBJSTARALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
 			staralign.o defs.o fft.o fftFunctions.o  \
@@ -66,6 +57,10 @@ OBJPROFILEALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
 			profilealign.o defs.o fft.o fftFunctions.o  \
 			 Salignmm.o Kband.o $(MULTIOBJ)
+OBJFRAGALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
+		    Falign.o Galign11.o SAalignmm.o \
+			fragalign.o defs.o fft.o fftFunctions.o  \
+			Salignmm.o Kband.o $(MULTIOBJ)
 ifdef ENABLE_MULTITHREAD
 MULTIOBJ = threadpool.o threadpool_condition.o
 endif
@@ -81,19 +76,6 @@ KBANDHEADER = Kband.h
 all : $(PROGS) $(SCRIPTS)
 	@echo done.
 
-sos : $(SOS)
-dylibs : $(DYLIBS)
-dlls : $(DLLS)
-
-$(DASH_CLIENT): dash_client.go
-	go build dash_client.go
-#	go build --ldflags '-extldflags "-static"' dash_client.go
-
-univscript: univscript.tmpl Makefile
-	sed "s:_PROGS:$(PROGS):" univscript.tmpl  > univscript
-
-mafft: mafft.tmpl mltaln.h
-	sed "s:_LIBDIR:$(LIBDIR):" mafft.tmpl  > mafft
 
 mltaln.h : functions.h
 	touch mltaln.h
@@ -108,14 +90,9 @@ staralign: $(OBJSTARALIGN)
 profilealign: $(OBJPROFILEALIGN)
 	$(CC) -o $@ $(OBJPROFILEALIGN) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
-libdisttbfast.so : $(OBJDISTTBFAST)
-	$(CC) -shared -o $@ $(OBJDISTTBFAST) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
+fragalign: $(OBJFRAGALIGN)
+	$(CC) -o $@ $(OBJFRAGALIGN) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
-libdisttbfast.dylib : $(OBJDISTTBFAST)
-	$(CC) -dynamiclib -o $@ $(OBJDISTTBFAST) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
-
-libdisttbfast.dll : $(OBJDISTTBFAST)
-	$(CC) -shared -o $@ $(OBJDISTTBFAST) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
 
 mltaln9.o : mltaln9.c $(HEADER)
@@ -147,6 +124,9 @@ staralign.o : staralign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 
 profilealign.o : profilealign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c profilealign.c
+
+fragalign.o : fragalign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
+	$(CC) $(MYCFLAGS) -c fragalign.c
 
 threadpool_condition.o : threadpool_condition.c $(HEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c threadpool_condition.c
@@ -185,17 +165,6 @@ install : all
 	mkdir -p $(DESTDIR)$(BINDIR)
 	chmod 755 $(DESTDIR)$(BINDIR)
 	chmod 755 $(SCRIPTS)
-	$(INSTALL) $(SCRIPTS)  $(DESTDIR)$(BINDIR)
-	chmod 755 $(PROGS) ||:     # in MinGW, it's ok if this fails
-	$(STRIP) $(PROGS) ||: # may fail for dash_client on mac.
+	chmod 755 $(PROGS)           ||: # in MinGW, it's ok if this fails
+	$(STRIP) $(PROGS)            ||: # may fail for dash_client on mac.
 	$(INSTALL) $(PROGS) $(DESTDIR)$(LIBDIR)
-
-	( cd $(DESTDIR)$(BINDIR); \
-rm -f fftns fftnsi; \
-rm -f mafft-fftns mafft-fftnsi; \
-ln -s mafft fftns; ln -s mafft fftnsi; \
-ln -s mafft mafft-fftns; \
-ln -s mafft mafft-fftnsi;)
-
-	mkdir -p $(DESTDIR)$(MANDIR)
-	chmod 755 $(DESTDIR)$(MANDIR) 

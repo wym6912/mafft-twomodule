@@ -40,7 +40,7 @@ typedef struct _merge_file_arg
 
 void print_help()
 {
-	reporterr("Profile alignment Version %s help:\n", VERSION);
+	reporterr("Profile alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
 	reporterr("-i: sequences file name, every line has a file name without spaces\n");
 	reporterr("-p: center file with FASTA format\n");
 	reporterr("-T: use T threads to run this program\n");

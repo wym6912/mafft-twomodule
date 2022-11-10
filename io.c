@@ -6373,6 +6373,7 @@ void readexternalanchors( ExtAnch **extanch, int nseq, int *nogaplen )
 
 void Filecopy( FILE *fp1, FILE *fp2 )
 {
+	if (fp1 == NULL || fp2 == NULL) { reporterr("Error: File can not open when copying files"); exit(1); }
 	char c;
 	while((c = fgetc(fp1)) != EOF) fputc(c, fp2);
 }

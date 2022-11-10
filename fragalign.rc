@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource_staralign.h"
+#include "resource_fragalign.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(简体，中国) resources
+// 涓枃(绠�浣擄紝涓浗) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -28,13 +28,14 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 
 1 TEXTINCLUDE 
 BEGIN
-    "resource_staralign.h\0"
+    "resource_fragalign.h\0"
 END
 
 2 TEXTINCLUDE 
 BEGIN
     "#include ""winres.h""\r\n"
-    "#include ""version.h""\0"
+    "#include ""version.h""\r\n"
+    "\0"
 END
 
 3 TEXTINCLUDE 
@@ -52,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
- PRODUCTVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
+ FILEVERSION VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD
+ PRODUCTVERSION VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,13 +69,13 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "CompanyName", "Wym6912"
-            VALUE "FileDescription", "Center Star Aligner"
+            VALUE "CompanyName", "wym6912"
+            VALUE "FileDescription", "Fragment Aligner"
             VALUE "FileVersion", VERSION_PROG
-            VALUE "InternalName", "staralign.exe"
+            VALUE "InternalName", "fragalign.exe"
             VALUE "LegalCopyright", "Copyright (C) 2022"
-            VALUE "OriginalFilename", "staralign.exe"
-            //VALUE "ProductName", "Center Star Aligner"
+            VALUE "OriginalFilename", "fragalign.exe"
+            //VALUE "ProductName", "Fragment Alignment"
             //VALUE "ProductVersion", VERSION_PROG
         END
     END
@@ -84,7 +85,7 @@ BEGIN
     END
 END
 
-#endif    // 中文(简体，中国) resources
+#endif    // 涓枃(绠�浣擄紝涓浗) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

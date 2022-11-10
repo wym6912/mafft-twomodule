@@ -57,7 +57,7 @@ typedef struct _merge_arg
 int nmax_shift_factor, need_align_center;
 void print_help_message()
 {
-	reporterr("Staralign %s help: \n", VERSION);
+	reporterr("Staralign %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
 	reporterr("This program is based on MAFFT, you need to give two files to the program:\n");
 	reporterr("- The center file, which has only one sequence, the other sequences must align with it; \n");
 	reporterr("- The common file, which has the other sequences which want to align with the center sequence.\n");
