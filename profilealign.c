@@ -3,7 +3,6 @@
 #include <time.h>
 
 #define REPORTCOSTS 1
-#define SHOWPROFILEVERSION reporterr( "%s (%s) Version " VERSION "\n%d thread(s)\n\n", progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), nthread )
 
 #define DEBUG 0
 #define TESTCONST 0
@@ -40,7 +39,7 @@ typedef struct _merge_file_arg
 
 void print_help()
 {
-	reporterr("Profile alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("Profile alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD, VERSION);
 	reporterr("-i: sequences file name, every line has a file name without spaces\n");
 	reporterr("-p: center file with FASTA format\n");
 	reporterr("-T: use T threads to run this program\n");
@@ -65,7 +64,7 @@ void print_help()
 
 void print_version()
 {
-	reporterr("profilealign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("profilealign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD, VERSION);
 }
 
 void arguments( int argc, char *argv[] )
@@ -538,7 +537,9 @@ int main(int argc, char **argv)
 		fclose(infp);
 
 		writeData_pointer(stdout, njob, name, nlen, seq);
-		SHOWPROFILEVERSION;
+		reporterr( "%s (%s, %d-bit) Version" , progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8 );
+		reporterr( "%d.%d.%d.%d", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD );
+		reporterr( "%s \nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", VERSION, alg, modelname, specificityconsideration, nthread );
 		FreeIntVec(nlen);
 		FreeCharMtx(name);
 		FreeCharMtx(seq);
@@ -846,7 +847,9 @@ int main(int argc, char **argv)
 		FreeCharMtx(name);
 		FreeCharMtx(seq);
 	}
-	SHOWPROFILEVERSION;
+	reporterr( "%s (%s, %d-bit) Version" , progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8 );
+	reporterr( "%d.%d.%d.%d", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD );
+	reporterr( "%s \nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", VERSION, alg, modelname, specificityconsideration, nthread );
 #ifndef enablemultithread
 	reporterr("...but NOT used multi threads in profilealign.\n\n\n");
 #endif

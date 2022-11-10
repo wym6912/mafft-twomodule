@@ -57,7 +57,7 @@ typedef struct _merge_arg
 int nmax_shift_factor, need_align_center;
 void print_help_message()
 {
-	reporterr("Staralign %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("Staralign %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE_STAR, VER_BUILD, VERSION);
 	reporterr("This program is based on MAFFT, you need to give two files to the program:\n");
 	reporterr("- The center file, which has only one sequence, the other sequences must align with it; \n");
 	reporterr("- The common file, which has the other sequences which want to align with the center sequence.\n");
@@ -85,7 +85,7 @@ void print_help_message()
 
 void print_version()
 {
-	reporterr("staralign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("staralign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE_STAR, VER_BUILD, VERSION);
 }
 
 void arguments( int argc, char *argv[] )
@@ -789,7 +789,9 @@ int main(int argc, char **argv)
 	writeData_pointer(stdout, njob, name, nlen, &bseq[1] );
 
 	if( spscoreout ) reporterr( "Unweighted sum-of-pairs score = %10.5f\n", sumofpairsscore( njob + 1, bseq ) );
-	SHOWVERSION;
+	reporterr( "%s (%s, %d-bit) Version" , progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8 );
+	reporterr( "%d.%d.%d.%d", VER_MAJOR, VER_MINOR, VER_RELEASE_STAR, VER_BUILD );
+	reporterr( "%s \nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", VERSION, alg, modelname, specificityconsideration, nthread );
 #ifndef enablemultithread
 	reporterr("...but NOT used multi threads in staralign.\n\n\n");
 #endif

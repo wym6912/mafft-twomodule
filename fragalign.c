@@ -57,7 +57,7 @@ typedef struct _merge_arg
 int nmax_shift_factor, longest_id;
 void print_help_message()
 {
-	reporterr("Fragment Align %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("Fragment Align %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE_FRAG, VER_BUILD, VERSION);
 	reporterr("This program is based on MAFFT, only give one file to the program:\n");
 	reporterr("- The fragment file, which the file has more than two sequences.\n");
 	reporterr("We align this file using FFT local alignment.\n");
@@ -83,7 +83,7 @@ void print_help_message()
 
 void print_version()
 {
-	reporterr("fragalign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE, VER_BUILD, VERSION);
+	reporterr("fragalign %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE_FRAG, VER_BUILD, VERSION);
 }
 
 void arguments( int argc, char *argv[] )
@@ -345,7 +345,6 @@ char** mergeallresult(char** resultseq, char** common, char** center, int njob, 
 	list2 = AllocateIntVec(alloclen);
 	for (i = 1; i < njob; ++i) // resultseq has i sequences
 	{
-		if (i == longest_id) continue;
 		// merge common[i] && center[i] to resultseq
 		len1 = strlen(resultseq[0]); len2 = strlen(center[i]);
 		j = 0, k = 0;
@@ -540,13 +539,10 @@ int main(int argc, char** argv)
 			reporterr("found longest sequence %d\n", longest_id);
 			break;
 		}
-	if (longest_id != -1) { reporterr("Not found longest sequence???"); exit(1); }
+	if (longest_id == -1) { reporterr("Not found longest sequence???"); exit(1); }
 
 	// copy the longest fragment sequence to center sequence, and make center star alignment!
-	for (i = 0; i < njob; ++i)
-	{
-		if (i != longest_id) strcpy(centerseq[i], seq[i]);
-	}
+	for (i = 0; i < njob; ++i) strcpy(centerseq[i], seq[longest_id]);
 
 #if REPORTCOSTS
 	time_t starttime, startclock;
@@ -639,7 +635,7 @@ int main(int argc, char** argv)
 #endif
 #endif
 	reporterr("done. \n");
-	strcpy(bseq[longest_id], centerseq[0]);
+	strcpy(bseq[longest_id + 1], centerseq[0]);
 	// in mergeallresult(), the first sequence of bseq is the center sequence, ignore it when processing the following steps
 #if REPORTCOSTS
 //	use_getrusage();
@@ -648,17 +644,27 @@ int main(int argc, char** argv)
 #endif
 	reporterr(       "\ndone.\n\n" );
 
-	int len0 = strlen(bseq[0]);
-	for(i = 1; i < njob; ++ i) 
-		if (strlen(bseq[i]) != len0)
+	int len0 = strlen(bseq[0]), len1;
+	for (i = 1; i <= njob; ++i)
+	{
+		len1 = strlen(bseq[i]);
+		if (len1 == 0)
+		{
+			for (j = len1; j < len0; ++j) bseq[i][j] = *newgapstr;
+			bseq[i][len0] = 0;
+		}
+		else if (len1 > len0)
 		{
 			reporterr("ERROR: NOT ALIGNED. Please concat the author and submit your sequences.\n");
 			exit(1);
 		}
-	writeData_pointer( stdout, njob, name, nlen, bseq );
+	}
+	writeData_pointer( stdout, njob, name, nlen, &bseq[1] );
 
 	if( spscoreout ) reporterr( "Unweighted sum-of-pairs score = %10.5f\n", sumofpairsscore( njob + 1, bseq ) );
-	SHOWVERSION;
+	reporterr( "%s (%s, %d-bit) Version" , progName( argv[0] ), (dorp=='d')?"nuc":((nblosum==-2)?"text":"aa"), sizeof(int *) * 8 );
+	reporterr( "%d.%d.%d.%d", VER_MAJOR, VER_MINOR, VER_RELEASE_FRAG, VER_BUILD );
+	reporterr( "%s \nalg=%c, model=%s, amax=%3.1f\n%d thread(s)\n\n", VERSION, alg, modelname, specificityconsideration, nthread );
 
 	// FreeCharMtx( bseq );
 	FreeCharMtx(centerseq);
