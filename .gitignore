@@ -9,6 +9,7 @@ order
 staralign
 profilealign
 fragalign
+findsim
 infile.tree
 .vs/*
 x64/*

@@ -96,6 +96,7 @@ int makedistmtx;
 char *inputfile;
 char *addfile;
 char *centerfile;
+char *targetfile;
 int addprofile = 1;
 int rnakozo;
 char rnaprediction;

@@ -17,7 +17,7 @@ void cpmx_calc( char **seq, double **cpmx, double *eff, int lgth, int clus )
 int fastconjuction_noname( int *memlist, char **seq, char **aseq, double *peff, double *eff, char *d, double mineff, double *oritotal  )
 {
 	int m, k, dln;
-	char b[B];
+	char b[BLEN];
 	double total;
 
 #if DEBUG
@@ -139,3 +139,4 @@ void cpmx_calc_add( char **seq, double **cpmx, double *eff, int lgth, int clus )
 	for( j=0; j<lgth; j++ ) cpmx[(unsigned char)amino_n[(unsigned char)seq[newmem][j]]][j] += neweff;
 #endif
 }
+

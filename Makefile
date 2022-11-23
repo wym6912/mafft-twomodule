@@ -47,7 +47,7 @@ INSTALL = install
 STRIP = strip
 #STRIP = true # to disable strip
 
-PROGS = staralign profilealign fragalign 
+PROGS = staralign profilealign fragalign findsim 
 
 OBJSTARALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
@@ -61,6 +61,8 @@ OBJFRAGALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
 			fragalign.o defs.o fft.o fftFunctions.o  \
 			Salignmm.o Kband.o $(MULTIOBJ)
+OBJFINDSIM = mtxutl.o io.o mltaln9.o tddis.o constants.o \
+		    findsim.o defs.o SWAlign11.o $(MULTIOBJ)
 ifdef ENABLE_MULTITHREAD
 MULTIOBJ = threadpool.o threadpool_condition.o
 endif
@@ -93,6 +95,8 @@ profilealign: $(OBJPROFILEALIGN)
 fragalign: $(OBJFRAGALIGN)
 	$(CC) -o $@ $(OBJFRAGALIGN) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
+findsim: $(OBJFINDSIM)
+	$(CC) -o $@ $(OBJFINDSIM) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
 
 mltaln9.o : mltaln9.c $(HEADER)
@@ -113,6 +117,9 @@ Salignmm.o : Salignmm.c $(HEADER)
 Galign11.o : Galign11.c $(HEADER)
 	$(CC) $(MYCFLAGS) -c Galign11.c 
 
+SWAlign11.o : SWAlign11.c $(HEADER)
+	$(CC) $(MYCFLAGS) -c SWAlign11.c 
+
 SAalignmm.o : SAalignmm.c $(HEADER)
 	$(CC) $(MYCFLAGS) -c SAalignmm.c -o SAalignmm.o
 
@@ -121,6 +128,9 @@ disttbfast.o : disttbfast.c $(HEADER) $(FFTHEADER)
 
 staralign.o : staralign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c staralign.c
+
+findsim.o : findsim.c $(HEADER) $(MULTIHEADER)
+	$(CC) $(MYCFLAGS) -c findsim.c
 
 profilealign.o : profilealign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c profilealign.c

@@ -451,7 +451,7 @@ int main(int argc, char** argv)
 	char* tmpseq = NULL;
 	double* eff = NULL;
 	int fftlog;
-	char b[B];
+	char b[BLEN];
 
 	arguments(argc, argv);
 
@@ -505,7 +505,7 @@ int main(int argc, char** argv)
 	bseq = AllocateCharMtx(njob + 2, nlenmax + 10);
 	centerseq = AllocateCharMtx(njob + 2, nlenmax + 10);
 
-	name = AllocateCharMtx(njob, B + 1);
+	name = AllocateCharMtx(njob, BLEN + 1);
 	nlen = AllocateIntVec(njob);
 	readData_pointer(infp, name, nlen, seq);
 	fclose(infp);

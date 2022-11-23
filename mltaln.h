@@ -58,9 +58,8 @@
 #define M  500000       /* njob no saidaiti */
 #define NLEN 5000000       /* nlen no saidaiti */
 #define MAXSEG 100000
-#define B     256
+#define BLEN  256
 #define CLEN  60       /*  1 gyou no mojisuu */
-#define D      6
 #define DFORMAT      "%#6.3f"
 #define rnd() ( ( 1.0 / ( RAND_MAX + 1.0 ) ) * rand() )
 #define MAX(X,Y)    ( ((X)>(Y))?(X):(Y) )
@@ -162,6 +161,7 @@ extern int score_check;
 extern char *inputfile;
 extern char *addfile;
 extern char *centerfile;
+extern char* targetfile;
 extern int addprofile;
 extern double consweight_multi;
 extern double consweight_rna;
@@ -176,60 +176,6 @@ extern char **res_g;
 extern int rnakozo;
 extern char rnaprediction;
 
-/* sengen no ichi ha koko dake de ha nai */
-extern void constants();
-extern char **Calignm1();
-extern char **Dalignm1();
-extern char **align0();
-extern double Cscore_m_1( char **, int, int, double ** );
-extern double score_m_1(  char **, int, int, double ** );
-extern double score_calc0( char **, int, double **, int );
-extern char seqcheck( char ** );
-extern double substitution( char *, char * );
-extern double substitution_score( char *, char * );
-extern double substitution_nid( char *, char * );
-extern double substitution_hosei( char *, char * );
-extern double ipower( double, int );
-extern double translate_and_Calign();
-extern double A__align();
-extern double A__align11();
-extern double A__align_gapmap();
-extern double partA__align();
-extern double L__align11( double **scoringmtx, double scoreoffset, char **seq1, char **seq2, int alloclen, int *off1pt, int *off2pt );
-extern double G__align11();
-extern double Falign();
-extern double Falign_localhom();
-extern double Conalign();
-extern double Aalign();
-extern double imp_match_out_sc( int, int );
-extern double part_imp_match_out_sc( int, int );
-extern void ErrorExit();
-extern void cpmx_calc();
-extern void intergroup_score( char **, char **, double *, double *, int, int, int, double * );
-extern int conjuctionfortbfast();
-extern int fastconjuction();
-extern char seqcheck( char ** );
-extern double Kband__MSA(int p1, int p2, int len1, int len2, int band, double *og1, double *fg1, double *og2, double *fg2, double *gf1, double *gf2, double **cpmx1, double **cpmx2, char *r1, char *r2, double **ad, double hgp1, double hgp2, int headgp, int tailgp);
-
-typedef struct _LocalHom
-{
-	struct _LocalHom *next;
-	struct _LocalHom *last;
-	int start1;
-	int end1;
-	int start2;
-	int end2;
-	double opt;
-	int overlapaa;
-	int extended;
-	double importance;
-	double rimportance;
-//	double fimportance;
-//	double wimportance;
-	char korh;
-	int nokori;
-} LocalHom;
-
 typedef struct _NodeInCub
 {
 	int step;
@@ -238,12 +184,12 @@ typedef struct _NodeInCub
 
 typedef struct _Node
 {
-	struct _Node *children[3];
+	struct _Node* children[3];
 	int tmpChildren[3];
 	double length[3];
-	double *weightptr[3];
+	double* weightptr[3];
 	int top[3];
-	int *members[3];
+	int* members[3];
 } Node;
 
 typedef struct _Segment
@@ -254,7 +200,7 @@ typedef struct _Segment
 	double score;
 	int skipForeward;
 	int skipBackward;
-	struct _Segment *pair;
+	struct _Segment* pair;
 	int  number;
 } Segment;
 
@@ -268,8 +214,8 @@ typedef struct _Segments
 
 typedef struct _Bchain
 {
-	struct _Bchain *next;
-	struct _Bchain *prev;
+	struct _Bchain* next;
+	struct _Bchain* prev;
 	int pos;
 } Bchain;
 
@@ -277,14 +223,14 @@ typedef struct _Achain
 {
 	int next;
 	int prev;
-//	int curr;
+	//	int curr;
 } Achain;
 
 
 typedef struct _Fukusosuu
 {
-    double R;
-    double I;
+	double R;
+	double I;
 } Fukusosuu;
 
 typedef struct _Gappattern
@@ -315,7 +261,7 @@ typedef struct _Addtree
 {
 	int nearest;
 	double dist1;
-	char *neighbors;
+	char* neighbors;
 	double dist2;
 } Addtree;
 
@@ -343,6 +289,44 @@ typedef struct _extanch
 	int endj;
 	int score;
 } ExtAnch;
+
+typedef struct _local_align_pair
+{
+	int start, end;
+} local_align_pair;
+
+/* sengen no ichi ha koko dake de ha nai */
+extern void constants();
+extern char **Calignm1();
+extern char **Dalignm1();
+extern char **align0();
+extern double Cscore_m_1( char **, int, int, double ** );
+extern double score_m_1(  char **, int, int, double ** );
+extern double score_calc0( char **, int, double **, int );
+extern char seqcheck( char ** );
+extern double substitution( char *, char * );
+extern double substitution_score( char *, char * );
+extern double substitution_nid( char *, char * );
+extern double substitution_hosei( char *, char * );
+extern double ipower( double, int );
+extern double translate_and_Calign();
+extern double A__align();
+extern double A__align11();
+extern double A__align_gapmap();
+extern double partA__align();
+extern double L__align11( double **scoringmtx, double scoreoffset, char **seq1, char **seq2, int alloclen, int *off1pt, int *off2pt );
+extern double G__align11();
+extern local_align_pair SWAlign11(double** n_dynamicmtx, char** seq1, char** seq2, int alloclen);
+extern double Falign();
+extern double Aalign();
+extern void ErrorExit();
+extern void cpmx_calc();
+extern void intergroup_score( char **, char **, double *, double *, int, int, int, double * );
+extern int conjuctionfortbfast();
+extern int fastconjuction();
+extern char seqcheck( char ** );
+extern double Kband__MSA(int p1, int p2, int len1, int len2, int band, double *og1, double *fg1, double *og2, double *fg2, double *gf1, double *gf2, double **cpmx1, double **cpmx2, char *r1, char *r2, double **ad, double hgp1, double hgp2, int headgp, int tailgp);
+
 
 #include "fft.h"
 #include "dp.h"

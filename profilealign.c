@@ -399,10 +399,10 @@ void *merge_multithread(void *arg)
 	rewind(f2fp);
 	processlen = MAX(len1, len2);
 	seq = AllocateCharMtx(f1seq, processlen << 1);
-	name = AllocateCharMtx(f1seq, B);
+	name = AllocateCharMtx(f1seq, BLEN);
 	nlen = AllocateIntVec(f1seq);
 	seq2 = AllocateCharMtx(f2seq, processlen << 1);
-	name2 = AllocateCharMtx(f2seq, B);
+	name2 = AllocateCharMtx(f2seq, BLEN);
 	nlen22 = AllocateIntVec(f2seq);
 	readData_pointer2(f1fp, f1seq, name, nlen, seq);
 	readData_pointer2(f2fp, f2seq, name2, nlen22, seq2);
@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 	char *sgap1 = NULL, *sgap2 = NULL, *egap1 = NULL, *egap2 = NULL;
 	Treedep *dep; 
 	double bunbo, lenfac, longer, shorter;
-	char b[B];
+	char b[BLEN];
 	FILE *infp = NULL, *cefp = NULL, *f1fp = NULL, *f2fp = NULL;
 	arguments(argc, argv);
 	if(inputfile && centerfile)
@@ -530,7 +530,7 @@ int main(int argc, char **argv)
 		infp = fopen(realfilename, "rb");
 		getnumlen(infp);
 		rewind(infp);
-		name = AllocateCharMtx(njob, nlenmax + 1);
+		name = AllocateCharMtx(njob, BLEN + 1);
 		nlen = AllocateIntVec(njob);
 		seq = AllocateCharMtx(njob, nlenmax + 1);
 		readData_pointer(infp, name, nlen, seq);
@@ -552,7 +552,7 @@ int main(int argc, char **argv)
 	if( dorp == 'd' && tuplesize != 6 && tuplesize != 10 )
 		reporterr( "tuplesize must be 6 or 10 for DNA/RNA sequence\n" );
 
-	name = AllocateCharMtx(njob, nlenmax + 1);
+	name = AllocateCharMtx(njob, BLEN + 1);
 	nlen = AllocateIntVec(njob);
 	seq = AllocateCharMtx(njob, nlenmax + 1);
 	readData_pointer(cefp, name, nlen, seq);
@@ -838,7 +838,7 @@ int main(int argc, char **argv)
 		f1fp = fopen(realfilename2d[topol[centerseqs - 2][0][0]], "rb");
 		getnumlen(f1fp); rewind(f1fp);
 		seq = AllocateCharMtx(njob, nlenmax << 1);
-		name = AllocateCharMtx(njob, B + 10);
+		name = AllocateCharMtx(njob, BLEN + 10);
 		nlen = AllocateIntVec(njob);
 		readData_pointer(f1fp, name, nlen, seq);
 		fclose(f1fp);

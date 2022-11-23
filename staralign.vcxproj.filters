@@ -21,4 +21,9 @@
       <Filter>资源</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource_staralign.h">
+      <Filter>资源</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
