@@ -474,6 +474,13 @@ int main(int argc, char** argv)
 	getnumlen(infp);
 	rewind(infp);
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
+	if (_setmode(fileno(stdout), O_BINARY) == -1) ErrorExit("Error: Cannot change the mode. Program will exit");
+#endif
+
 	/* fragment aligner support for more than 2 fragments alignment */
 	if (njob == 0)
 	{
