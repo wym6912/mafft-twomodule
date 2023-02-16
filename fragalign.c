@@ -546,7 +546,22 @@ int main(int argc, char** argv)
 			reporterr("found longest sequence %d\n", longest_id);
 			break;
 		}
-	if (longest_id == -1) { reporterr("Not found longest sequence???"); exit(1); }
+
+	if (longest_id == -1) { reporterr("Not found longest sequence???\n"); exit(1); }
+
+	if (strlen(seq[i]) == 0) 
+	{ 
+		reporterr("Info: The longest length of sequence file %s is 0. There is no need to use Fragment alignment.\n", inputfile);
+		infp = fopen(inputfile, "rb");
+		if (!infp)
+		{
+			reporterr("Cannot open sequence file %s\n", inputfile);
+			exit(1);
+		}
+		Filecopy(infp, stdout); 
+		fclose(infp);
+		exit(0); 
+	}
 
 	// copy the longest fragment sequence to center sequence, and make center star alignment!
 	for (i = 0; i < njob; ++i) strcpy(centerseq[i], seq[longest_id]);
