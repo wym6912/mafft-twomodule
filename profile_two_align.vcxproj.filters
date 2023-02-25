@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{20ca2f9d-b529-460a-94dc-b7834f4da241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{37983cf0-3ed5-4697-8332-3a25f1ae40ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源">
+      <UniqueIdentifier>{c6e1ded2-807d-427a-b206-2657738eb890}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource_profile_two_align.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="profile_two_align.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="profile_two_align.rc">
+      <Filter>资源</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

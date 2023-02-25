@@ -1,6 +1,6 @@
 # MAFFT Module
 
-This is the modified part of `mafft` modified by [gitee@wym6912](https://gitee.com/wym6912) / [github@wym6912](https://github.com/wym6912), which is a module of the other program. It has four subprograms: `staralign`, `profilealign`, `fragalign` and `findsim`.
+This is the modified part of `mafft` modified by [gitee@wym6912](https://gitee.com/wym6912) / [github@wym6912](https://github.com/wym6912), which is a module of the other program. It has five subprograms: `staralign`, `profilealign`, `profile_two_align`, `fragalign` and `findsim`.
 
 ## How to compile
 

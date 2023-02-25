@@ -47,7 +47,7 @@ INSTALL = install
 STRIP = strip
 #STRIP = true # to disable strip
 
-PROGS = staralign profilealign fragalign findsim 
+PROGS = staralign profilealign fragalign findsim profile_two_align 
 
 OBJSTARALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    Falign.o Galign11.o SAalignmm.o \
@@ -63,6 +63,10 @@ OBJFRAGALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 			Salignmm.o Kband.o $(MULTIOBJ)
 OBJFINDSIM = mtxutl.o io.o mltaln9.o tddis.o constants.o \
 		    findsim.o defs.o SWAlign11.o $(MULTIOBJ)
+OBJ2PROFILEALIGN = mtxutl.o io.o mltaln9.o tddis.o constants.o \
+		    Falign.o Galign11.o SAalignmm.o \
+			profile_two_align.o defs.o fft.o fftFunctions.o  \
+			Salignmm.o Kband.o
 ifdef ENABLE_MULTITHREAD
 MULTIOBJ = threadpool.o threadpool_condition.o
 endif
@@ -98,6 +102,8 @@ fragalign: $(OBJFRAGALIGN)
 findsim: $(OBJFINDSIM)
 	$(CC) -o $@ $(OBJFINDSIM) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
+profile_two_align: $(OBJ2PROFILEALIGN)
+	$(CC) -o $@ $(OBJ2PROFILEALIGN) $(MYCFLAGS) $(LDFLAGS) $(LIBS)
 
 mltaln9.o : mltaln9.c $(HEADER)
 	$(CC) $(MYCFLAGS) -c mltaln9.c
@@ -134,6 +140,9 @@ findsim.o : findsim.c $(HEADER) $(MULTIHEADER)
 
 profilealign.o : profilealign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c profilealign.c
+
+profile_two_align.o: profile_two_align.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
+	$(CC) $(MYCFLAGS) -c profile_two_align.c
 
 fragalign.o : fragalign.c $(HEADER) $(FFTHEADER) $(MULTIHEADER)
 	$(CC) $(MYCFLAGS) -c fragalign.c

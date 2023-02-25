@@ -721,10 +721,10 @@ int main(int argc, char **argv)
 		reporterr("%d, %d\n", f1seq, f2seq);
 #endif
 		seq = AllocateCharMtx(f1seq, nlenmax << 1);
-		name = AllocateCharMtx(f1seq, B);
+		name = AllocateCharMtx(f1seq, BLEN);
 		nlen = AllocateIntVec(f1seq);
 		seq2 = AllocateCharMtx(f2seq, nlenmax << 1);
-		name2 = AllocateCharMtx(f2seq, B);
+		name2 = AllocateCharMtx(f2seq, BLEN);
 		nlen22 = AllocateIntVec(f2seq);
 		readData_pointer2(f1fp, f1seq, name, nlen, seq);
 		readData_pointer2(f2fp, f2seq, name2, nlen22, seq2);

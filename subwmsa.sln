@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "staralign", "staralign.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profilealign", "profilealign.vcxproj", "{E718F259-FB0A-EADE-DC41-A8DC8DF74DF6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profile_two_align", "profile_two_align.vcxproj", "{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pthread_dll", "pthread-win32\windows\VS2022\pthread.2022.vcxproj", "{5D459BA0-5EEB-47D3-A1C4-6B55C8D37EC0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fragalign", "fragalign.vcxproj", "{62CC7636-7779-454C-9316-12416BD79C5C}"
@@ -39,6 +41,14 @@ Global
 		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF6}.Release|x64.Build.0 = Release|x64
 		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF6}.Release|x86.ActiveCfg = Release|Win32
 		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF6}.Release|x86.Build.0 = Release|Win32
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Debug|x64.ActiveCfg = Debug|x64
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Debug|x64.Build.0 = Debug|x64
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Debug|x86.ActiveCfg = Debug|Win32
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Debug|x86.Build.0 = Debug|Win32
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Release|x64.ActiveCfg = Release|x64
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Release|x64.Build.0 = Release|x64
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Release|x86.ActiveCfg = Release|Win32
+		{E718F259-FB0A-EADE-DC41-A8DC8DF74DF7}.Release|x86.Build.0 = Release|Win32
 		{5D459BA0-5EEB-47D3-A1C4-6B55C8D37EC0}.Debug|x64.ActiveCfg = Debug|x64
 		{5D459BA0-5EEB-47D3-A1C4-6B55C8D37EC0}.Debug|x64.Build.0 = Debug|x64
 		{5D459BA0-5EEB-47D3-A1C4-6B55C8D37EC0}.Debug|x86.ActiveCfg = Debug|Win32
