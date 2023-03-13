@@ -8,13 +8,14 @@
 
 #define END_OF_VEC -1
 
-static int nunknown, exitval, aligncases;
+static int nunknown, exitval, aligncases, print_to_two_files;
 
 char *profilename1, *profilename2;
 
 void print_help()
 {
 	reporterr("2-profiles alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD, VERSION);
+	reporterr("make alignment between profile 1 and profile 2, and write result to profile 1 without -M argument.\n");
 	reporterr("-p: profile 1 file name\n");
 	reporterr("-q: profile 2 file name\n");
 	reporterr("-f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)\n");
@@ -29,6 +30,7 @@ void print_help()
 	reporterr("-A: Use Aalign to align sequences\n");
 	reporterr("-F: Use FFT align to align sequences\n");
 	reporterr("-v: show program version and exit\n");
+	reporterr("-M: print profile result to two profiles\n");
 	reporterr("-H, -?: Print help message and exit\n");
 }
 
@@ -60,6 +62,7 @@ void arguments( int argc, char *argv[] )
 	spscoreout = 0;
 	aligncases = 1;
 	alignband = NOTSPECIFIED;
+	print_to_two_files = 0;
 
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
@@ -148,6 +151,9 @@ void arguments( int argc, char *argv[] )
 				case 'F':
 					aligncases = 0; // Falign
 					reporterr("Use FFT Align\n");
+					break;
+				case 'M':
+					print_to_two_files = 1;
 					break;
 				case 'H':
 				case '?':
@@ -265,14 +271,16 @@ int main(int argc, char **argv)
 	else if(aligncases == 0)
 		Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
 	else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
-	reporterr("Writing alignment to %s...\n", profilename1);
+	if(! print_to_two_files) reporterr("Writing alignment to %s...\n", profilename1);
+	else reporterr("Writing alignment into %s and %s ...\n", profilename1, profilename2);
 	prof1 = fopen(profilename1, "w");
 	if(prof1 == NULL) { reporterr("ERROR: can not write answer into %s.\n", profilename1); exit(1); }
 	writeData_pointer(prof1, f1seq, name, nlen, seq);
-	writeData_pointer(prof1, f2seq, name2, nlen22, seq2);
+	if(! print_to_two_files) writeData_pointer(prof1, f2seq, name2, nlen22, seq2);
 	fclose(prof1);
 	prof2 = fopen(profilename2, "w");
 	if(prof1 == NULL) { reporterr("ERROR: can not write answer into %s.\n", profilename2); exit(1); }
+	if(print_to_two_files) writeData_pointer(prof2, f2seq, name2, nlen22, seq2);
 	fclose(prof2);
 	FreeDoubleVec(eff);
 	FreeDoubleVec(eff2);

@@ -1,6 +1,8 @@
 cp test/profilealign-test1/raw test/profilealign-test1/sample # use backup
 ./profile_two_align -p test/profilealign-test1/sample/tmp_0.clstr.res -q test/profilealign-test1/sample/tmp_1.clstr.res 
 # The alignment will we written in tmp_0.clstr.res
+./profile_two_align -p test/profilealign-test1/sample/tmp_0.clstr.res -q test/profilealign-test1/sample/tmp_1.clstr.res -M
+# The alignment will we written in tmp_0.clstr.res and tmp_1.clstr.res
 
 Arguments:
 -p: profile 1 file name
@@ -17,4 +19,5 @@ Arguments:
 -A: Use Aalign to align sequences
 -F: Use FFT align to align sequences
 -v: show program version and exit
+-M: print profile result to two profiles
 -H, -?: Print help message and exit
