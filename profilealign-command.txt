@@ -4,6 +4,7 @@ cp test/profilealign-test1/raw test/profilealign-test1/sample # use backup
 Arguments:
 -i: sequences file name, every line has a file name without spaces
 -p: center file with FASTA format
+-T: use T threads to run this program
 -f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)
 -Q, -V: penalty_shift_factor(not used), ppenalty_dist
 -b: BLOSUM Matrix

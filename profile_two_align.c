@@ -220,6 +220,34 @@ int main(int argc, char **argv)
 	getnumlen(prof2);
 	rewind(prof2);
 	f2seq = njob;
+	if (f1seq == 0 || f2seq == 0)
+	{
+		reporterr("Warning: one profile has only 0 sequences. There is no need to make 2-profiles align.\n");
+		if(! print_to_two_files && f1seq == 0)
+		{
+			// move f2 to f1
+			reporterr("Move profile %s to %s...\n", profilename2, profilename1);
+			fclose(prof1); fclose(prof2);
+			prof1 = fopen(profilename1, "wb");
+			prof2 = fopen(profilename2, "rb");
+			if(prof1 == NULL || prof2 == NULL)
+			{
+				reporterr("Error: can not move profile %s to %s.\n", profilename2, profilename1);
+				exit(1);
+			}
+			Filecopy(prof2, prof1);
+			fclose(prof1); fclose(prof2);
+			prof2 = fopen(profilename2, "wb");
+			if(prof2 == NULL)
+			{
+				reporterr("Warning: can not clean profile %s. Please clean in manually.\n", profilename2);
+				exit(0);
+			}
+			// do nothing for cleaning prof2
+			fclose(prof2);
+		}
+		exit(0);
+	}
 	maxlen = MAX(maxlen, nlenmax);
 	nlenmax = maxlen;
 	seq = AllocateCharMtx(f1seq, nlenmax << 1);
