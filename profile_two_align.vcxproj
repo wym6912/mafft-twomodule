@@ -19,11 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="common_lib.vcxproj">
-      <Project>{716ace2b-16d8-4a15-8d4c-b4c652abea30}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="resource_profile_two_align.h" />
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +26,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="profile_two_align.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="common_lib_single.vcxproj">
+      <Project>{716ace2b-16d8-4a15-8d4c-b4c652abea31}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -91,6 +91,10 @@
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <AllProjectBMIsArePublic>false</AllProjectBMIsArePublic>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
