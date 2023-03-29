@@ -300,12 +300,12 @@ int main(int argc, char **argv)
 	else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
 	if(! print_to_two_files) reporterr("Writing alignment to %s...\n", profilename1);
 	else reporterr("Writing alignment into %s and %s ...\n", profilename1, profilename2);
-	prof1 = fopen(profilename1, "w");
+	prof1 = fopen(profilename1, "wb");
 	if(prof1 == NULL) { reporterr("ERROR: can not write answer into %s.\n", profilename1); exit(1); }
 	writeData_pointer(prof1, f1seq, name, nlen, seq);
 	if(! print_to_two_files) writeData_pointer(prof1, f2seq, name2, nlen22, seq2);
 	fclose(prof1);
-	prof2 = fopen(profilename2, "w");
+	prof2 = fopen(profilename2, "wb");
 	if(prof1 == NULL) { reporterr("ERROR: can not write answer into %s.\n", profilename2); exit(1); }
 	if(print_to_two_files) writeData_pointer(prof2, f2seq, name2, nlen22, seq2);
 	fclose(prof2);
