@@ -540,7 +540,7 @@ int main(int argc, char** argv)
 	//find the longest fragment sequence
 	longest_id = -1;
 	for (i = 0; i < njob; ++i)
-		if (strlen(seq[i]) == (nlenmax >> nmax_shift_factor))
+		if (nlen[i] == (nlenmax >> nmax_shift_factor))
 		{
 			longest_id = i;
 			reporterr("found longest sequence %d\n", longest_id);
@@ -657,7 +657,7 @@ int main(int argc, char** argv)
 #endif
 #endif
 	reporterr("done. \n");
-	strcpy(bseq[longest_id + 1], centerseq[0]);
+	// strcpy(bseq[longest_id + 1], centerseq[0]);
 	// in mergeallresult(), the first sequence of bseq is the center sequence, ignore it when processing the following steps
 #if REPORTCOSTS
 //	use_getrusage();
@@ -679,6 +679,10 @@ int main(int argc, char** argv)
 		{
 			reporterr("ERROR: NOT ALIGNED. Please concat the author and submit your sequences.\n");
 			exit(1);
+		}
+		else if (len1 < len0)
+		{
+			reporterr("Info: Sequence %d is shorter than other sequences.\n", i);
 		}
 	}
 	writeData_pointer( stdout, njob, name, nlen, &bseq[1] );

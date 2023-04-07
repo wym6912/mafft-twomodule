@@ -248,7 +248,8 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 	maxlen = MAX(maxlen, nlenmax);
-	nlenmax = maxlen;
+	nlenmax = maxlen; 
+	++ nlenmax;
 	seq = AllocateCharMtx(f1seq, nlenmax << 1);
 	name = AllocateCharMtx(f1seq, BLEN);
 	nlen = AllocateIntVec(f1seq);
@@ -272,32 +273,69 @@ int main(int argc, char **argv)
 	f2len = nlen22[0];
 	for(j = 1; j < f2seq; ++ j) f2len = MAX(nlen22[j], f2len);
 
+	// if one profile length is 0, print gaps
+	if(f1len == 0 || f2len == 0)
+	{
+		if(f1len == 0 && f2len == 0) 
+		{
+			reporterr("Warning: two profiles has 0 length. There is no need to make 2-profile alignment.\n");
+			exit(0);
+		}
+		reporterr("Warning: one profile has 0 length.\n");
+		if(f1len == 0)
+		{
+			// write f1 file
+			for(j = 0; j < f1seq; ++ j)
+			{
+				memset(seq[j], *newgapstr, sizeof(char) * f2len);
+				seq[j][f2len] = 0;
+			}
+		}
+		if(f2len == 0)
+		{
+			// write f2 file
+			for(j = 0; j < f2seq; ++ j)
+			{
+				memset(seq2[j], *newgapstr, sizeof(char) * f1len);
+				seq2[j][f1len] = 0;
+			}
+		}
+	}
+	else
+	{
+		// make alignment
 #if REPORTCOSTS
-	time_t starttime, startclock;
-	starttime = time(NULL);
-	startclock = clock();
+		time_t starttime, startclock;
+		starttime = time(NULL);
+		startclock = clock();
 #endif
 
-	alloclen = f1len + f2len + 10;
-	if(aligncases == 1)
-	{
-		sgap1 = AllocateCharVec(f1seq + 10);
-		sgap2 = AllocateCharVec(f2seq + 10);
-		egap1 = AllocateCharVec(f1seq + 10);
-		egap2 = AllocateCharVec(f2seq + 10);
-		memset(sgap1, 'o', f1seq * sizeof(char));
-		memset(sgap2, 'o', f2seq * sizeof(char));
-		memset(egap1, 'o', f1seq * sizeof(char));
-		memset(egap2, 'o', f2seq * sizeof(char));
-		A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
-		free(sgap1);
-		free(sgap2);
-		free(egap1);
-		free(egap2);
+		alloclen = f1len + f2len + 10;
+		if(aligncases == 1)
+		{
+			sgap1 = AllocateCharVec(f1seq + 10);
+			sgap2 = AllocateCharVec(f2seq + 10);
+			egap1 = AllocateCharVec(f1seq + 10);
+			egap2 = AllocateCharVec(f2seq + 10);
+			memset(sgap1, 'o', f1seq * sizeof(char));
+			memset(sgap2, 'o', f2seq * sizeof(char));
+			memset(egap1, 'o', f1seq * sizeof(char));
+			memset(egap2, 'o', f2seq * sizeof(char));
+			A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
+			free(sgap1);
+			free(sgap2);
+			free(egap1);
+			free(egap2);
+		}
+		else if(aligncases == 0)
+			Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
+		else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
+#if REPORTCOSTS
+//		use_getrusage();
+		reporterr( "\n2-profiles align, real = %f min\n", (float)(time(NULL) - starttime)/60.0 );
+		reporterr( "2-profiles align, user = %f min\n", (float)(clock()-startclock)/CLOCKS_PER_SEC/60);
+#endif
 	}
-	else if(aligncases == 0)
-		Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
-	else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
 	if(! print_to_two_files) reporterr("Writing alignment to %s...\n", profilename1);
 	else reporterr("Writing alignment into %s and %s ...\n", profilename1, profilename2);
 	prof1 = fopen(profilename1, "wb");
@@ -309,21 +347,21 @@ int main(int argc, char **argv)
 	if(prof1 == NULL) { reporterr("ERROR: can not write answer into %s.\n", profilename2); exit(1); }
 	if(print_to_two_files) writeData_pointer(prof2, f2seq, name2, nlen22, seq2);
 	fclose(prof2);
-	FreeDoubleVec(eff);
-	FreeDoubleVec(eff2);
 
 	reporterr("\ndone. \n");
 
-#if REPORTCOSTS
-//		use_getrusage();
-		reporterr( "\n2-profiles align, real = %f min\n", (float)(time(NULL) - starttime)/60.0 );
-		reporterr( "2-profiles align, user = %f min\n", (float)(clock()-startclock)/CLOCKS_PER_SEC/60);
-#endif
+	FreeDoubleVec(eff);
+	FreeDoubleVec(eff2);
+	FreeIntVec(nlen);
+	FreeIntVec(nlen22);
+	FreeCharMtx(seq);
+	FreeCharMtx(seq2);
+	FreeCharMtx(name);
+	FreeCharMtx(name2);
+
+
 	if(spscoreout)
 	{
-		if(seq) FreeCharMtx(seq);
-		if(name) FreeCharMtx(name);
-		if(nlen) FreeIntVec(nlen);
 		prof1 = fopen(profilename1, "rb");
 		getnumlen(prof1); rewind(prof1);
 		seq = AllocateCharMtx(njob, nlenmax + 10);

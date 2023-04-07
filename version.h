@@ -3,8 +3,8 @@
 #define VER_MAJOR 0
 #define VER_MINOR 10
 #define VER_RELEASE_STAR 0
-#define VER_RELEASE_PROF 7
-#define VER_RELEASE_FRAG 2
+#define VER_RELEASE_PROF 8
+#define VER_RELEASE_FRAG 8
 #define VER_RELEASE_SIM 0
 #define VER_BUILD 0
 
