@@ -3,6 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerCommand>$(TargetPath) </LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-i test/fragalign-test4/seq.fasta -T 2</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-i ./test/fragalign-test7/seq.fasta -T 12</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

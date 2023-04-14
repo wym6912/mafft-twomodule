@@ -167,6 +167,28 @@ double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
 
 	nlen2 = nlen/2; nlen4 = nlen2 / 2;
 
+	if(len1 == 0 || len2 == 0)
+	{
+		if(len1 == 0 && len2 == 0) return;
+		else if(len1 == 0)
+		{
+			for(i = 0; i < clus1; ++ i)
+			{
+				for(j = 0; j < len2; ++ j) seq1[i][j] = *newgapstr;
+				seq1[i][len2] = 0;
+			}
+			return;
+		}
+		else //len2 == 0
+		{
+			for(i = 0; i < clus2; ++ i)
+			{
+				for(j = 0; j < len1; ++ j) seq2[i][j] = *newgapstr;
+				seq2[i][len1] = 0;
+			}
+			return;
+		}
+	}
 
 	result1 = AllocateCharMtx( clus1, alloclen );
 	result2 = AllocateCharMtx( clus2, alloclen );

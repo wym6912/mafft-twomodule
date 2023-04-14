@@ -389,7 +389,7 @@ char** mergeallresult(char** resultseq, char** common, char** center, int njob, 
 		}
 
 		list1[++p1] = -1; list2[++p2] = -1;
-#if DEBUG
+#if _DEBUG
 		reporterr("%d %d %d %d\n", j, len1, k, len2);
 		reporterr("seqs = \n%s\ncenter = %s\ncommon = %s\n", resultseq[0], center[i], common[i]);
 		reporterr("list1 = "); for (l = 0; l <= p1; ++l, reporterr(" ")) reporterr("%d", list1[l]); reporterr("\n");
@@ -670,8 +670,9 @@ int main(int argc, char** argv)
 	for (i = 1; i <= njob; ++i)
 	{
 		len1 = strlen(bseq[i]);
-		if (len1 == 0)
+		if (len1 < len0)
 		{
+			reporterr("Info: Sequence %d is shorter than other sequences.\n", i);
 			for (j = len1; j < len0; ++j) bseq[i][j] = *newgapstr;
 			bseq[i][len0] = 0;
 		}
@@ -679,10 +680,6 @@ int main(int argc, char** argv)
 		{
 			reporterr("ERROR: NOT ALIGNED. Please concat the author and submit your sequences.\n");
 			exit(1);
-		}
-		else if (len1 < len0)
-		{
-			reporterr("Info: Sequence %d is shorter than other sequences.\n", i);
 		}
 	}
 	writeData_pointer( stdout, njob, name, nlen, &bseq[1] );
