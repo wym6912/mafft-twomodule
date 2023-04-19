@@ -225,7 +225,7 @@ double Kband(char *s1, char *s2, int len1, int len2, double penalty, int band, d
 	}
 	*++ tmpr1 = 0;
 	*++ tmpr2 = 0;
-	// reporterr("%s %s\n", r1, r2);
+	//if(strlen(r1) != strlen(r2)) reporterr("%s %s\n", r1, r2);
 	score = matrix_query(len1, len2, band, val_vec, len1 + 1, len2 + 1);
 	
 	FreeIntVec(move_vec);
@@ -235,49 +235,67 @@ double Kband(char *s1, char *s2, int len1, int len2, double penalty, int band, d
 	return score;
 }
 
-double G__align11( double **n_dynamicmtx, char **seq1, char **seq2, int alloclen, int headgp, int tailgp )
+double G__align11(double** n_dynamicmtx, char** seq1, char** seq2, int alloclen, int headgp, int tailgp)
 {
-    //puts("In G__align11");
-    /* 
-        Kband Algorithm: align **two** sequences
-        Return: Alignment Score. The sequence seq1 & seq2 must be aligned.
-    */
-    // Part -1: loop varibles
-    int i, j;
+	//puts("In G__align11");
+	/*
+		Kband Algorithm: align **two** sequences
+		Return: Alignment Score. The sequence seq1 & seq2 must be aligned.
+	*/
+	// Part -1: loop varibles
+	int i, j;
 # ifndef NOTPRINT
-    // Part 0: Print some arguments
-    printf("nalphabets = %d\n", nalphabets);
-    for(i = 0; i < nalphabets; ++ i, puts(""))
-        for(j = 0; j < nalphabets; ++ j, putchar(' '))
-            printf("%f", n_dynamicmtx[i][j]);
-    puts(seq1[0]);
-    puts(seq2[0]);
-    printf("alloclen = %d, headgp = %d, tailgp = %d\n", alloclen, headgp, tailgp);
-    // Protein alphabets
-    for(i = 0; i < nscoredalphabets; ++ i, putchar(' ')) printf("%c", amino[i]); puts("");
-    // Gap char
+	// Part 0: Print some arguments
+	printf("nalphabets = %d\n", nalphabets);
+	for (i = 0; i < nalphabets; ++i, puts(""))
+		for (j = 0; j < nalphabets; ++j, putchar(' '))
+			printf("%f", n_dynamicmtx[i][j]);
+	puts(seq1[0]);
+	puts(seq2[0]);
+	printf("alloclen = %d, headgp = %d, tailgp = %d\n", alloclen, headgp, tailgp);
+	// Protein alphabets
+	for (i = 0; i < nscoredalphabets; ++i, putchar(' ')) printf("%c", amino[i]); puts("");
+	// Gap char
 	printf("Newgapstr = %s\n", newgapstr);
 	//Gap penalty
 	printf("Gap penalty = %d\n", ppenalty);
 # endif
 
-    /* Part 1: Defining the varibles of KBand */
-    static TLS double **amino_dynamicmtx = NULL;
-    static TLS int length1, length2, mxlength, band, needrerun;
-	static TLS char *s1, *s2, *tmp, *res1, *res2, *tmp2;
+	/* Part 1: Defining the varibles of KBand */
+	static TLS double** amino_dynamicmtx = NULL;
+	static TLS int length1, length2, mxlength, band, needrerun;
+	static TLS char* s1, * s2, * tmp, * res1, * res2, * tmp2;
 	static TLS double oldval, val, gappenalty;
-    
-    /* Part 2: Allocing the varibles of KBand */
-    amino_dynamicmtx = AllocateDoubleMtx(0x100, 0x100);
 
-    /* Part 3: Give initial varibles of the varibles of Part 1 */
-    //amino__dynamicmtx: weight of protein sequence
-    for(i = 0; i < nalphabets; ++ i)
-        for(j = 0; j < nalphabets; ++ j)
-            amino_dynamicmtx[(unsigned char)amino[i]][(unsigned char)amino[j]] = (double)n_dynamicmtx[i][j];
-    //lenght1, length2: length of sequence
-    length1 = strlen(seq1[0]);
-    length2 = strlen(seq2[0]);
+	/* Part 2: Allocing the varibles of KBand */
+	amino_dynamicmtx = AllocateDoubleMtx(0x100, 0x100);
+
+	/* Part 3: Give initial varibles of the varibles of Part 1 */
+	//amino__dynamicmtx: weight of protein sequence
+	for (i = 0; i < nalphabets; ++i)
+		for (j = 0; j < nalphabets; ++j)
+			amino_dynamicmtx[(unsigned char)amino[i]][(unsigned char)amino[j]] = (double)n_dynamicmtx[i][j];
+	//lenght1, length2: length of sequence
+	length1 = strlen(seq1[0]);
+	length2 = strlen(seq2[0]);
+
+	if (length1 == 0 || length2 == 0)
+	{
+		if (length1 == 0 && length2 == 0) return 0.0;
+		else if (length1 == 0)
+		{
+			for (j = 0; j < length2; ++j) seq1[0][j] = *newgapstr;
+			seq1[0][length2] = 0;
+			return 0.0;
+		}
+		else //len2 == 0
+		{
+			for (j = 0; j < length1; ++j) seq2[0][j] = *newgapstr;
+			seq2[0][length1] = 0;
+			return 0.0;
+		}
+	}
+
 	mxlength = MAX(length1, length2);
 	oldval = -inf;
 	s1 = seq1[0];
@@ -285,97 +303,97 @@ double G__align11( double **n_dynamicmtx, char **seq1, char **seq2, int alloclen
 	band = alignband;
 	gappenalty = (double)penalty;
 
-    /* Part 4: Exception */
-    // No data
-    if(length1 == 0 || length2 == 0) 
+	/* Part 4: Exception */
+	// No data
+	if (length1 == 0 || length2 == 0)
 	{
 		FreeDoubleMtx(amino_dynamicmtx);
 		return 0.0;
 	}
 
-    /* Part 5: KBand algorithm and alloc the matrix */
+	/* Part 5: KBand algorithm and alloc the matrix */
 	res1 = AllocateCharVec((MAX(length1, length2) << 1) + 10);
 	res2 = AllocateCharVec((MAX(length1, length2) << 1) + 10);
 
 
-	if(alignband != NOTSPECIFIED) 
+	if (alignband != NOTSPECIFIED)
 	{
-		if(length1 < length2)
+		if (length1 < length2)
 			val = Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
-		else 
+		else
 			val = Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
 	}
 	else
 	{
-	band = 10;
-	if(length1 > length2)
-	{
-		// reporterr("Swapped\n");
-		if(band > mxlength) val = Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
-		while(band <= mxlength)
+		band = 10;
+		if (length1 > length2)
 		{
-			// According to the paper, band must be larger than abs(length1 - length2)
-			val = Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
+			// reporterr("Swapped\n");
+			if (band > mxlength) val = Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
+			while (band <= mxlength)
+			{
+				// According to the paper, band must be larger than abs(length1 - length2)
+				val = Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
 #if DEBUG
-			reporterr("Score = %f, band = %d\n", val, band);
+				reporterr("Score = %f, band = %d\n", val, band);
 #endif
-			if(val == -inf)
-			{
-				band <<= 1;
+				if (val == -inf)
+				{
+					band <<= 1;
+				}
+				else if (val < oldval) { band >>= 1; needrerun = 1; break; }
+				else if (val == oldval) { needrerun = 0; break; }
+				else
+				{
+					oldval = val;
+					band <<= 1;
+					if (band > mxlength) break;
+				}
 			}
-			else if(val < oldval) {band >>= 1; needrerun = 1; break;}
-			else if(val == oldval) {needrerun = 0; break;}
-			else
-			{
-				oldval = val;
-				band <<= 1;
-				if(band > mxlength) break;
-			}
+			// if(needrerun) Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
 		}
-		// if(needrerun) Kband(s2, s1, length2, length1, gappenalty, band, amino_dynamicmtx, res2, res1, headgp, tailgp);
-	}
-	else
-	{
-		if(band > mxlength) val = Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
-		while(band <= mxlength)
+		else
 		{
-			// According to the paper, band must be larger than abs(length1 - length2)
-			val = Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
+			if (band > mxlength) val = Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
+			while (band <= mxlength)
+			{
+				// According to the paper, band must be larger than abs(length1 - length2)
+				val = Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
 #if DEBUG
-			reporterr("Score = %f, band = %d\n", val, band);
+				reporterr("Score = %f, band = %d\n", val, band);
 #endif
-			if(val == -inf)
-			{
-				band <<= 1;
+				if (val == -inf)
+				{
+					band <<= 1;
+				}
+				else if (val < oldval) { band >>= 1; needrerun = 1; break; }
+				else if (val == oldval) { needrerun = 0; break; }
+				else
+				{
+					oldval = val;
+					band <<= 1;
+					if (band > mxlength) break;
+				}
 			}
-			else if(val < oldval) {band >>= 1; needrerun = 1; break;}
-			else if(val == oldval) {needrerun = 0; break;}
-			else
-			{
-				oldval = val;
-				band <<= 1;
-				if(band > mxlength) break;
-			}
+			// if(needrerun) Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
 		}
-		// if(needrerun) Kband(s1, s2, length1, length2, gappenalty, band, amino_dynamicmtx, res1, res2, headgp, tailgp);
-	}
 	}
 
-	
+
 #if DEBUG
 	printf("After alignment, s1 = %s, s2 = %s (Line 356 in Galign11.c)\n", res1, res2);
 #endif
 
 #if 1 // reverse tmp1, tmp2
-	for(tmp2 = res1; *tmp2; ++ tmp2);
-	for(tmp = s1; tmp2 != res1; ++ tmp) 
-	{ 
+	for (tmp2 = res1; *tmp2; ++tmp2);
+	for (tmp = s1; tmp2 != res1; ++tmp)
+	{
 		*tmp = *--tmp2;
 		//printf("%s\n", s1);
 	}
 	*tmp = 0;
-	for(tmp2 = res2; *tmp2; ++ tmp2);
-	for(tmp = s2; tmp2 != res2; ++ tmp) 
+	for (tmp2 = res2; *tmp2; ++tmp2);
+	for (tmp = s2; tmp2 != res2; ++tmp)
 	{
 		//printf("%d %s\n", *tmp, res2);
 		*tmp = *--tmp2;
@@ -387,8 +405,8 @@ double G__align11( double **n_dynamicmtx, char **seq1, char **seq2, int alloclen
 	strncpy(s2, res2, strlen(res2));
 #endif
 
-#ifndef NOTPRINTLEN
-	if(strlen(s1) != strlen(res1))
+#if _DEBUG
+	if (strlen(s1) != strlen(res1) || strlen(s2) != strlen(res2))
 	{
 		reporterr("In G__align11, aligned length = (%d, %d)\n", strlen(s1), strlen(s2));
 		if(strlen(s1) != strlen(s2)) reporterr("%s\n%s\n", s1, s2);

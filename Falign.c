@@ -169,7 +169,7 @@ double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
 
 	if(len1 == 0 || len2 == 0)
 	{
-		if(len1 == 0 && len2 == 0) return;
+		if(len1 == 0 && len2 == 0) return 0.0;
 		else if(len1 == 0)
 		{
 			for(i = 0; i < clus1; ++ i)
@@ -177,7 +177,7 @@ double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
 				for(j = 0; j < len2; ++ j) seq1[i][j] = *newgapstr;
 				seq1[i][len2] = 0;
 			}
-			return;
+			return 0.0;
 		}
 		else //len2 == 0
 		{
@@ -186,7 +186,7 @@ double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
 				for(j = 0; j < len1; ++ j) seq2[i][j] = *newgapstr;
 				seq2[i][len1] = 0;
 			}
-			return;
+			return 0.0;
 		}
 	}
 
@@ -739,18 +739,21 @@ fclose( fftfp );
 		for( j=0; j<clus1; j++ ) strcat( result1[j], tmpres1[j] );
 		for( j=0; j<clus2; j++ ) strcat( result2[j], tmpres2[j] );
 		totallen += nlen;
-#if 0
-		fprintf( stderr, "$#####$$$$ i=%d", i );
-		fprintf( stderr, "%4d\n", totallen );
-		fprintf( stderr, "\n\n" );
-		for( j=0; j<clus1; j++ ) 
+#if _DEBUG
+		if(strlen(tmpres1[0]) != strlen(tmpres2[0]))
 		{
-			fprintf( stderr, "%s\n", tmpres1[j] );
-		}
-		fprintf( stderr, "-------\n" );
-		for( j=0; j<clus2; j++ ) 
-		{
-			fprintf( stderr, "%s\n", tmpres2[j] );
+			fprintf(stderr, "$#####$$$$ i=%d", i);
+			fprintf(stderr, "%4d\n", totallen);
+			fprintf(stderr, "\n\n");
+			for (j = 0; j < clus1; j++)
+			{
+				fprintf(stderr, "%s\n", tmpres1[j]);
+			}
+			fprintf(stderr, "-------\n");
+			for (j = 0; j < clus2; j++)
+			{
+				fprintf(stderr, "%s\n", tmpres2[j]);
+			}
 		}
 #endif
 	}

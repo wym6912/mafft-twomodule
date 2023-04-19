@@ -2,9 +2,9 @@
 #define __VERSION_H__
 #define VER_MAJOR 0
 #define VER_MINOR 11
-#define VER_RELEASE_STAR 0
-#define VER_RELEASE_PROF 0
-#define VER_RELEASE_FRAG 0
+#define VER_RELEASE_STAR 1
+#define VER_RELEASE_PROF 1
+#define VER_RELEASE_FRAG 1
 #define VER_RELEASE_SIM 0
 #define VER_BUILD 0
 

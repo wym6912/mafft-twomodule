@@ -348,6 +348,24 @@ double A__align( double **n_dynamicmtx, int penalty_l, int penalty_ex_l, char **
     //lenght1, length2: length of sequence
     length1 = strlen(seq1[0]);
     length2 = strlen(seq2[0]);
+
+	if (length1 == 0 || length2 == 0)
+	{
+		if (length1 == 0 && length2 == 0) return 0.0;
+		else if (length1 == 0)
+		{
+			for (j = 0; j < length2; ++j) seq1[0][j] = *newgapstr;
+			seq1[0][length2] = 0;
+			return 0.0;
+		}
+		else //len2 == 0
+		{
+			for (j = 0; j < length1; ++j) seq2[0][j] = *newgapstr;
+			seq2[0][length1] = 0;
+			return 0.0;
+		}
+	}
+
 	mxlength = MAX(length1, length2);
 	oldval = -inf;
 	band = alignband;

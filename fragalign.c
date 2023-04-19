@@ -2,6 +2,10 @@
 #include "threadpool.h"
 #include <time.h>
 
+#if _DEBUG
+#include <assert.h>
+#endif
+
 
 #define REPORTCOSTS 1
 
@@ -324,6 +328,10 @@ void* dispatch_Falign(void* arg)
 {
 #define F(X) (((Falign_arg *)arg) -> X)
 	Falign(NULL, NULL, n_dis_consweight_multi, F(mseq1), F(mseq2), F(eff), F(eff), NULL, NULL, 1, 1, F(alloclen), &F(fftlog), NULL, 0, NULL);
+	if (strlen(F(mseq1)[0]) != strlen(F(mseq2)[0]))
+	{
+		reporterr("assert failed: %s != %s\n(%llu != %llu)\n", F(mseq1)[0], F(mseq2)[0], strlen(F(mseq1)[0]), strlen(F(mseq2)[0]));
+	}
 #undef F
 
 	++ cnt_OK;
@@ -421,6 +429,8 @@ char** mergeallresult(char** resultseq, char** common, char** center, int njob, 
 #if DEBUG
 		reporterr("After align, resultseq = \n");
 		for (l = 0; l <= i + 1; ++l) reporterr("%s\n", resultseq[l]);
+		reporterr("After align, centerseq = \n");
+		reporterr("%s\n%s\n", resultseq[0], center[i]);
 #endif
 		if (restore)
 		{
