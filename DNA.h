@@ -1,6 +1,6 @@
 #define DEFAULTGOP_N -1530
 #define DEFAULTGEP_N  0
-#define DEFAULTOFS_N -369 
+#define DEFAULTOFS_N -369
 #define DEFAULTPAMN  200
 
 #define DEFAULTRNAGOP_N -1530
@@ -9,18 +9,18 @@
 
 //  -h 0.11150 -> all positive
 
-double ribosum4[4][4] = 
+double ribosum4[4][4] =
 {
-//   a       g       c       t     
+//   a       g       c       t
 {    2.22,  -1.46,  -1.86,  -1.39, }, // a
 {   -1.46,   1.03,  -2.48,  -1.74, }, // g
 {   -1.86,  -2.48,   1.16,  -1.05, }, // c
 {   -1.39,  -1.74,  -1.05,   1.65, }, // t
 };
 
-double ribosum16[16][16] = 
+double ribosum16[16][16] =
 {
-//   aa      ag      ac      at      ga      gg      gc      gt      ca      cg      cc      ct      ta      tg      tc      tt    
+//   aa      ag      ac      at      ga      gg      gc      gt      ca      cg      cc      ct      ta      tg      tc      tt
 {   -2.49,  -8.24,  -7.04,  -4.32,  -6.86,  -8.39,  -5.03,  -5.84,  -8.84,  -4.68, -14.37, -12.64,  -4.01,  -6.16, -11.32,  -9.05, }, // aa
 {   -8.24,  -0.80,  -8.89,  -5.13,  -8.61,  -5.38,  -5.77,  -6.60, -10.41,  -4.57, -14.53, -10.14,  -5.43,  -5.94,  -8.87, -11.07, }, // ag
 {   -7.04,  -8.89,  -2.11,  -2.04,  -9.73, -11.05,  -3.81,  -4.72,  -9.37,  -5.86,  -9.08, -10.45,  -5.33,  -6.93,  -8.67,  -7.83, }, // ac
@@ -41,14 +41,14 @@ double ribosum16[16][16] =
 
 int locpenaltyn = -1750;
 char locaminon[] = "agctuAGCTUnNbdhkmnrsvwyx-O";
-char locgrpn[] = 
+char locgrpn[] =
 {
 	0, 1, 2, 3, 3, 0, 1, 2, 3, 3,
-	4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 
-	5, 5, 5, 5, 5, 5 
+	4, 4, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5
 };
 int exgpn = +00;
-int locn_disn[26][26] = 
+int locn_disn[26][26] =
 /* u ha constants.c no nakade shori */
 /* 0 - 4 dake yomareru.             */
         {

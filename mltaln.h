@@ -27,7 +27,7 @@
 #include <pthread.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#else 
+#else
 #include "pthread-win32/pthread.h"
 #endif
 #endif
@@ -55,11 +55,11 @@
 #define DISPSEQF  60
 #define DISPSITEI    0
 #define MAXITERATION 500
-#define M  500000       /* njob no saidaiti */
-#define NLEN 5000000       /* nlen no saidaiti */
+#define M      500000       /* njob no saidaiti */
+#define NLEN   5000000       /* nlen no saidaiti */
 #define MAXSEG 100000
-#define BLEN  256
-#define CLEN  60       /*  1 gyou no mojisuu */
+#define BLEN   256
+#define CLEN   60       /*  1 gyou no mojisuu */
 #define DFORMAT      "%#6.3f"
 #define rnd() ( ( 1.0 / ( RAND_MAX + 1.0 ) ) * rand() )
 #define MAX(X,Y)    ( ((X)>(Y))?(X):(Y) )
@@ -71,7 +71,7 @@
 #define GETA2 0.001
 #define GETA3 0.001
 #define NOTSPECIFIED  100009
-#define SUEFF   0.1  /* upg/(spg+upg)  -> sueff.sed */ 
+#define SUEFF   0.1  /* upg/(spg+upg)  -> sueff.sed */
 #define DIVLOCAL 0
 #define INTMTXSCALE 1000000.0
 #define JTT 201
@@ -297,11 +297,6 @@ typedef struct _local_align_pair
 
 /* sengen no ichi ha koko dake de ha nai */
 extern void constants();
-extern char **Calignm1();
-extern char **Dalignm1();
-extern char **align0();
-extern double Cscore_m_1( char **, int, int, double ** );
-extern double score_m_1(  char **, int, int, double ** );
 extern double score_calc0( char **, int, double **, int );
 extern char seqcheck( char ** );
 extern double substitution( char *, char * );
@@ -309,24 +304,21 @@ extern double substitution_score( char *, char * );
 extern double substitution_nid( char *, char * );
 extern double substitution_hosei( char *, char * );
 extern double ipower( double, int );
-extern double translate_and_Calign();
-extern double A__align();
-extern double A__align11();
-extern double A__align_gapmap();
-extern double partA__align();
-extern double L__align11( double **scoringmtx, double scoreoffset, char **seq1, char **seq2, int alloclen, int *off1pt, int *off2pt );
-extern double G__align11();
 extern local_align_pair SWAlign11(double** n_dynamicmtx, char** seq1, char** seq2, int alloclen);
-extern double Falign();
-extern double Aalign();
 extern void ErrorExit();
 extern void cpmx_calc();
 extern void intergroup_score( char **, char **, double *, double *, int, int, int, double * );
 extern int conjuctionfortbfast();
 extern int fastconjuction();
 extern char seqcheck( char ** );
-extern double Kband__MSA(int p1, int p2, int len1, int len2, int band, double *og1, double *fg1, double *og2, double *fg2, double *gf1, double *gf2, double **cpmx1, double **cpmx2, char *r1, char *r2, double **ad, double hgp1, double hgp2, int headgp, int tailgp);
 
+// Kband modified function
+extern void copy_protein_score(); // in tddis.c
+extern double A__align();
+extern double G__align11();
+extern double Falign();
+extern double Aalign();
+extern double A_align_Kband();
 
 #include "fft.h"
 #include "dp.h"
@@ -339,7 +331,7 @@ extern double Kband__MSA(int p1, int p2, int len1, int len2, int band, double *o
 #define TLS __declspec(thread)
 #endif
 #else
-#define TLS 
+#define TLS
 #endif
 
 extern TLS int commonAlloc1;

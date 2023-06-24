@@ -7,7 +7,7 @@
 
 #define END_OF_VEC -1
 
-static int nunknown, exitval, aligncases, print_to_two_files;
+static int nunknown, exitval, print_to_two_files;
 
 char *profilename1, *profilename2;
 
@@ -15,21 +15,30 @@ void print_help()
 {
 	reporterr("2-profiles alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD, VERSION);
 	reporterr("make alignment between profile 1 and profile 2, and write result to profile 1 without -M argument.\n");
-	reporterr("-p: profile 1 file name\n");
-	reporterr("-q: profile 2 file name\n");
-	reporterr("-f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)\n");
-	reporterr("-Q, -V: penalty_shift_factor(not used), ppenalty_dist\n");
-	reporterr("-b: BLOSUM Matrix\n");
-	reporterr("-j: use jtt/kimura model, pamN is needed\n");
-	reporterr("-m: use tm model, pamN is needed\n");
+    reporterr("Arguments: \nInput: \n");
+	reporterr("-p File1: profile 1 file name\n");
+	reporterr("-q File2: profile 2 file name\n");
+    reporterr("Align mode: \n");
+    reporterr("-F: use FFT align (default)\n");
+    reporterr("-G: do not use FFT align, just make it simpler\n");
+    reporterr("-A: Use gap open and extension mode to align sequences\n");
+    reporterr("-N: Use simple align mode to align sequences\n");
+    reporterr("-L: Use legacy gap cost in order to get less gaps\n");
+    reporterr("-e: use memsave mode for alignment\n");
+    reporterr("Alignment arugments: \n");
+	reporterr("-f p, -g pex: ppenalty, ppenalty_ex (only used in -A)\n");
 	reporterr("-D, -P: -D the sequence is DNA, -P the sequence is Protein\n");
+   	reporterr("-z threshold, -w Winsize: FFT align arguments: fftthreshold, fftWinSize\n");
+	reporterr("-B band: Kband in calcuating DP-matrix during the alignment\n");
+    reporterr("Scoring matrix: \n");
+	reporterr("-b pamN: BLOSUM[pamN] Matrix\n");
+	reporterr("-j pamN: use jtt/kimura model, pamN is needed\n");
+	reporterr("-m pamN: use tm model, pamN is needed\n");
+    reporterr("Other arugments: \n");
+    reporterr("-M: print profile result to two profiles\n");
 	reporterr("-S: Calcuate SP Scores after alignment\n");
-	reporterr("-z, -w: FFT align arguments: fftthreshold, fftWinSize\n");
-	reporterr("-B: Kband in calcuating DP-matrix during the alignment\n");
-	reporterr("-A: Use Aalign to align sequences\n");
-	reporterr("-F: Use FFT align to align sequences\n");
+    reporterr("-d: Print Score Matrix fits the file1 and exit\n");
 	reporterr("-v: show program version and exit\n");
-	reporterr("-M: print profile result to two profiles\n");
 	reporterr("-H, -?: Print help message and exit\n");
 }
 
@@ -44,24 +53,23 @@ void arguments( int argc, char *argv[] )
 	alg = 'A';
 	nthread = 1;
 	outnumber = 0;
-	nevermemsave = 0;
+	nevermemsave = 1;
 	inputfile = NULL;
 	nblosum = 62;
 	scoremtx = 1;
-	kobetsubunkatsu = 0;
 	dorp = NOTSPECIFIED;
-	ppenalty = -1530;
+    disp = 0;
+	ppenalty = -470;
 	penalty_shift_factor = 1000.0;
-	poffset = -123;
 	kimuraR = NOTSPECIFIED;
 	pamN = NOTSPECIFIED;
 	fftWinSize = NOTSPECIFIED;
 	fftThreshold = NOTSPECIFIED;
 	TMorJTT = JTT;
 	spscoreout = 0;
-	aligncases = 1;
 	alignband = NOTSPECIFIED;
 	print_to_two_files = 0;
+    force_fft = 1;
 
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
@@ -69,6 +77,7 @@ void arguments( int argc, char *argv[] )
 		{
 			switch( c )
 			{
+                // File I/O
 				case 'p':
 					profilename1 = *++ argv;
 					reporterr( "profile 1 file = %s\n", profilename1 );
@@ -79,13 +88,33 @@ void arguments( int argc, char *argv[] )
 					reporterr( "profile 2 file = %s\n", profilename2 );
 					-- argc;
 					goto nextoption;
+                // Align mode
+				case 'F':
+					force_fft = 1; // force FFT
+					reporterr("Use FFT Align\n");
+					break;
+                case 'G':
+                    force_fft = 0; // no use FFT
+                    reporterr("No use FFT\n");
+                    break;
+				case 'A':
+                    alg = 'A';
+					reporterr("Use gap open and extension mode to align\n");
+					break;
+                case 'N':
+                    alg = 'a';
+                    reporterr("Use simple mode to align\n");
+                    break;
+                case 'L':
+					legacygapcost = 1;
+					break;
+				case 'e':
+					nevermemsave = 0;
+					break;
+                // Alignment arugments
 				case 'f':
 					ppenalty = (int)( myatof( *++argv ) * 1000 - 0.5 );
 					reporterr(       "ppenalty = %d\n", ppenalty );
-					--argc;
-					goto nextoption;
-				case 'Q':
-					penalty_shift_factor = myatof( *++argv );
 					--argc;
 					goto nextoption;
 				case 'g':
@@ -93,16 +122,25 @@ void arguments( int argc, char *argv[] )
 					reporterr(       "ppenalty_ex = %d\n", ppenalty_ex );
 					--argc;
 					goto nextoption;
-				case 'h':
-					poffset = (int)( myatof( *++argv ) * 1000 - 0.5 );
-//					reporterr(       "poffset = %d\n", poffset );
+				case 'D':
+					dorp = 'd';
+					break;
+				case 'P':
+					dorp = 'p';
+					break;
+   				case 'z':
+					fftThreshold = myatoi( *++argv );
 					--argc;
 					goto nextoption;
-				case 'k':
-					kimuraR = myatoi( *++argv );
-					reporterr(       "kimura model, kappa = %d\n", kimuraR );
+				case 'w':
+					fftWinSize = myatoi( *++argv );
 					--argc;
 					goto nextoption;
+				case 'B':
+					alignband = myatoi( *++argv );
+					-- argc;
+					goto nextoption;
+                // Scoring matrix
 				case 'b':
 					nblosum = myatoi( *++argv );
 					reporterr(       "blosum %d / kimura 200 \n", nblosum );
@@ -122,37 +160,15 @@ void arguments( int argc, char *argv[] )
 					reporterr(       "tm %d\n", pamN );
 					--argc;
 					goto nextoption;
-				case 'D':
-					dorp = 'd';
-					break;
-				case 'P':
-					dorp = 'p';
-					break;
-				case 'S' :
-					spscoreout = 1; // 2014/Dec/30, sp score
-					break;
-				case 'z':
-					fftThreshold = myatoi( *++argv );
-					--argc;
-					goto nextoption;
-				case 'w':
-					fftWinSize = myatoi( *++argv );
-					--argc;
-					goto nextoption;
-				case 'B':
-					alignband = myatoi( *++argv );
-					-- argc;
-					goto nextoption;
-				case 'A':
-					aligncases = 1; // A__align11
-					reporterr("Use Aalign\n");
-					break;
-				case 'F':
-					aligncases = 0; // Falign
-					reporterr("Use FFT Align\n");
-					break;
+                // Other arugments
 				case 'M':
 					print_to_two_files = 1;
+					break;
+				case 'S':
+					spscoreout = 1; // 2014/Dec/30, sp score
+					break;
+                case 'd':
+					disp = 1;
 					break;
 				case 'H':
 				case '?':
@@ -248,7 +264,7 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 	maxlen = MAX(maxlen, nlenmax);
-	nlenmax = maxlen; 
+	nlenmax = maxlen;
 	++ nlenmax;
 	seq = AllocateCharMtx(f1seq, nlenmax << 1);
 	name = AllocateCharMtx(f1seq, BLEN);
@@ -276,7 +292,7 @@ int main(int argc, char **argv)
 	// if one profile length is 0, print gaps
 	if(f1len == 0 || f2len == 0)
 	{
-		if(f1len == 0 && f2len == 0) 
+		if(f1len == 0 && f2len == 0)
 		{
 			reporterr("Warning: two profiles has 0 length. There is no need to make 2-profile alignment.\n");
 			exit(0);
@@ -311,25 +327,30 @@ int main(int argc, char **argv)
 #endif
 
 		alloclen = f1len + f2len + 10;
-		if(aligncases == 1)
-		{
-			sgap1 = AllocateCharVec(f1seq + 10);
-			sgap2 = AllocateCharVec(f2seq + 10);
-			egap1 = AllocateCharVec(f1seq + 10);
-			egap2 = AllocateCharVec(f2seq + 10);
-			memset(sgap1, 'o', f1seq * sizeof(char));
-			memset(sgap2, 'o', f2seq * sizeof(char));
-			memset(egap1, 'o', f1seq * sizeof(char));
-			memset(egap2, 'o', f2seq * sizeof(char));
-			A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
-			free(sgap1);
-			free(sgap2);
-			free(egap1);
-			free(egap2);
-		}
-		else if(aligncases == 0)
+		if(! force_fft)
+        {
+            if(alg == 'A')
+            {
+                sgap1 = AllocateCharVec(f1seq + 10);
+                sgap2 = AllocateCharVec(f2seq + 10);
+                egap1 = AllocateCharVec(f1seq + 10);
+                egap2 = AllocateCharVec(f2seq + 10);
+                memset(sgap1, 'o', f1seq * sizeof(char));
+                memset(sgap2, 'o', f2seq * sizeof(char));
+                memset(egap1, 'o', f1seq * sizeof(char));
+                memset(egap2, 'o', f2seq * sizeof(char));
+                A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
+                free(sgap1);
+                free(sgap2);
+                free(egap1);
+                free(egap2);
+            }
+            else if(alg == 'a')
+                Aalign(seq, seq2, eff, eff2, f1seq, f2seq, alloclen);
+            else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
+        }
+		else // must be force_fft
 			Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
-		else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
 #if REPORTCOSTS
 //		use_getrusage();
 		reporterr( "\n2-profiles align, real = %f min\n", (float)(time(NULL) - starttime)/60.0 );

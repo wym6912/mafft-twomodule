@@ -7,11 +7,9 @@
 #define DEBUG 0
 #define TESTCONST 0
 
-#define ITERATIVECYCLE 2
-
 #define END_OF_VEC -1
 
-static int tuplesize, nunknown, exitval, aligncases;
+static int tuplesize, nunknown, exitval;
 
 #define PLENFACA 0.01
 #define PLENFACB 10000
@@ -40,24 +38,35 @@ typedef struct _merge_file_arg
 void print_help()
 {
 	reporterr("Profile alignment %d.%d.%d.%d%s Help:\n", VER_MAJOR, VER_MINOR, VER_RELEASE_PROF, VER_BUILD, VERSION);
+    reporterr("make alignment between profiles, use center sequences make trees\n");
+    reporterr("Arguments: \nInput: \n");
 	reporterr("-i: sequences file name, every line has a file name without spaces\n");
 	reporterr("-p: center file with FASTA format\n");
-	reporterr("-T: use T threads to run this program\n");
-	reporterr("-f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)\n");
-	reporterr("-Q, -V: penalty_shift_factor(not used), ppenalty_dist\n");
-	reporterr("-b: BLOSUM Matrix\n");
-	reporterr("-j: use jtt/kimura model, pamN is needed\n");
-	reporterr("-m: use tm model, pamN is needed\n");
+    reporterr("Align mode: \n");
+    reporterr("-F: use FFT align (default)\n");
+    reporterr("-G: do not use FFT align, just make it simpler\n");
+    reporterr("-A: Use gap open and extension mode to align sequences\n");
+    reporterr("-N: Use simple align mode to align sequences\n");
+    reporterr("-L: Use legacy gap cost in order to get less gaps\n");
+    reporterr("-e: use memsave mode for alignment\n");
+    reporterr("Alignment arugments: \n");
+    reporterr("-f p, -g pex: ppenalty, ppenalty_ex (only used in -A)\n");
 	reporterr("-D, -P: -D the sequence is DNA, -P the sequence is Protein\n");
-	reporterr("-S: Calcuate SP Scores after alignment\n");
-	reporterr("-z, -w: FFT align arguments: fftthreshold, fftWinSize\n");
-	reporterr("-B: Kband in calcuating DP-matrix during the alignment\n");
-	reporterr("-W: tuplesize on UPGMA (6 or 10, 10 is only for DNA/RNA sequences)\n");
-	reporterr("-X: Use mix method to calcuate the UPGMA cluster, the sub effect is needed, it must be in (0, 1)\n");
+   	reporterr("-z threshold, -w Winsize: FFT align arguments: fftthreshold, fftWinSize\n");
+	reporterr("-B band: Kband in calcuating DP-matrix during the alignment\n");
+    reporterr("Scoring matrix: \n");
+    reporterr("-b pamN: BLOSUM[pamN] Matrix\n");
+	reporterr("-j pamN: use jtt/kimura model, pamN is needed\n");
+	reporterr("-m pamN: use tm model, pamN is needed\n");
+    reporterr("Guide tree construction: \n");
+   	reporterr("-W: tuplesize on UPGMA (6 or 10, 10 is only for DNA/RNA sequences)\n");
+	reporterr("-X sub: Use mix method to calcuate the UPGMA cluster, the sub effect is needed, it must be in (0, 1)\n");
 	reporterr("-E: Use average method to calcuate the UPGMA cluster\n");
 	reporterr("-q: Use minimum method to calcuate the UPGMA cluster\n");
-	reporterr("-A: Use Aalign to align sequences\n");
-	reporterr("-F: Use FFT align to align sequences\n");
+    reporterr("Other arugments: \n");
+    reporterr("-S: Calcuate SP Scores after alignment\n");
+    reporterr("-d: Print Score Matrix fits the file1 and exit\n");
+	reporterr("-T: use T threads to run this program\n");
 	reporterr("-v: show program version and exit\n");
 	reporterr("-H, -?: Print help message and exit\n");
 }
@@ -73,7 +82,8 @@ void arguments( int argc, char *argv[] )
 	alg = 'A';
 	nthread = 1;
 	outnumber = 0;
-	nevermemsave = 0;
+	nevermemsave = 1;
+    disp = 0;
 	inputfile = NULL;
 	nblosum = 62;
 	treemethod = 'X';
@@ -82,7 +92,7 @@ void arguments( int argc, char *argv[] )
 	scoremtx = 1;
 	kobetsubunkatsu = 0;
 	dorp = NOTSPECIFIED;
-	ppenalty = -1530;
+	ppenalty = -470;
 	penalty_shift_factor = 1000.0;
 	poffset = -123;
 	kimuraR = NOTSPECIFIED;
@@ -92,15 +102,17 @@ void arguments( int argc, char *argv[] )
 	TMorJTT = JTT;
 	spscoreout = 0;
 	tuplesize = 6;
-	aligncases = 1;
+	force_fft = 1;
 	alignband = NOTSPECIFIED;
-	
+    legacygapcost = 0;
+
 	while( --argc > 0 && (*++argv)[0] == '-' )
 	{
 		while ( (c = *++argv[0]) )
 		{
 			switch( c )
 			{
+                // File I/O
 				case 'i': // common sequence file per line, must not have space(s)
 					inputfile = *++argv;
 					reporterr( "file list file = %s\n", inputfile );
@@ -111,13 +123,33 @@ void arguments( int argc, char *argv[] )
 					reporterr("center sequence file = %s\n", centerfile );
 					-- argc;
 					goto nextoption;
+                // Align mode
+                case 'F':
+					force_fft = 1; // Falign
+					reporterr("Use FFT Align\n");
+					break;
+                case 'G':
+                    force_fft = 0;
+                    reporterr("Not use FFT Align\n");
+                    break;
+                case 'A':
+					alg = 'A'; // A__align11
+					reporterr("Use gap open and extension mode to align\n");
+					break;
+				case 'N':
+                    alg = 'a'; // Aalign
+                    reporterr("Use simple mode to align\n");
+                    break;
+                case 'L':
+					legacygapcost = 1;
+					break;
+				case 'e':
+					nevermemsave = 0;
+					break;
+                // Alignment arugments
 				case 'f':
 					ppenalty = (int)( myatof( *++argv ) * 1000 - 0.5 );
 					reporterr(       "ppenalty = %d\n", ppenalty );
-					--argc;
-					goto nextoption;
-				case 'Q':
-					penalty_shift_factor = myatof( *++argv );
 					--argc;
 					goto nextoption;
 				case 'g':
@@ -125,16 +157,25 @@ void arguments( int argc, char *argv[] )
 					reporterr(       "ppenalty_ex = %d\n", ppenalty_ex );
 					--argc;
 					goto nextoption;
-				case 'h':
-					poffset = (int)( myatof( *++argv ) * 1000 - 0.5 );
-//					reporterr(       "poffset = %d\n", poffset );
+   				case 'D':
+					dorp = 'd';
+					break;
+				case 'P':
+					dorp = 'p';
+					break;
+                case 'z':
+					fftThreshold = myatoi( *++argv );
 					--argc;
 					goto nextoption;
-				case 'k':
-					kimuraR = myatoi( *++argv );
-					reporterr(       "kimura model, kappa = %d\n", kimuraR );
+				case 'w':
+					fftWinSize = myatoi( *++argv );
 					--argc;
 					goto nextoption;
+				case 'B':
+					alignband = myatoi( *++argv );
+					-- argc;
+					goto nextoption;
+                // Scoring matrix
 				case 'b':
 					nblosum = myatoi( *++argv );
 					reporterr(       "blosum %d / kimura 200 \n", nblosum );
@@ -154,18 +195,12 @@ void arguments( int argc, char *argv[] )
 					reporterr(       "tm %d\n", pamN );
 					--argc;
 					goto nextoption;
-				case 'T':
-					nthread = myatoi( *++argv );
-					reporterr(       "nthread = %d\n", nthread );
-					-- argc; 
+                // Guide tree construction
+				case 'W':
+					tuplesize = myatoi( *++argv );
+					--argc;
 					goto nextoption;
-				case 'D':
-					dorp = 'd';
-					break;
-				case 'P':
-					dorp = 'p';
-					break;
-				case 'X':
+                case 'X':
 					treemethod = 'X';
 					sueff_global = atof( *++argv );
 					fprintf( stderr, "sueff_global = %f\n", sueff_global );
@@ -177,33 +212,18 @@ void arguments( int argc, char *argv[] )
 				case 'q':
 					treemethod = 'q'; // minimum
 					break;
-				case 'S' :
+                // Other arugments
+				case 'S':
 					spscoreout = 1; // 2014/Dec/30, sp score
 					break;
-				case 'z':
-					fftThreshold = myatoi( *++argv );
-					--argc; 
-					goto nextoption;
-				case 'w':
-					fftWinSize = myatoi( *++argv );
-					--argc;
-					goto nextoption;
-				case 'W':
-					tuplesize = myatoi( *++argv );
-					--argc;
-					goto nextoption;
-				case 'B':
-					alignband = myatoi( *++argv );
+                case 'd':
+					disp = 1;
+					break;
+				case 'T':
+					nthread = myatoi( *++argv );
+					reporterr(       "nthread = %d\n", nthread );
 					-- argc;
 					goto nextoption;
-				case 'A':
-					aligncases = 1; // A__align11
-					reporterr("Use Aalign\n");
-					break;
-				case 'F':
-					aligncases = 0; // Falign
-					reporterr("Use FFT Align\n");
-					break;
 				case 'H':
 				case '?':
 					print_help();
@@ -220,7 +240,7 @@ void arguments( int argc, char *argv[] )
 		nextoption:
 			;
 	}
-	if( argc != 0 ) 
+	if( argc != 0 )
 	{
 		reporterr( "options: Check source file !\n" );
 		exit( 1 );
@@ -384,11 +404,11 @@ void *merge_multithread(void *arg)
 	int *nlen, *nlen22;
 	double *eff, *eff2;
 	pthread_mutex_lock(deplock);
-	if(dep[floor].child0 != -1) 
-		while(! dep[dep[floor].child0].done) 
+	if(dep[floor].child0 != -1)
+		while(! dep[dep[floor].child0].done)
 			pthread_cond_wait(cond, deplock);
-	if(dep[floor].child1 != -1) 
-		while(! dep[dep[floor].child1].done) 
+	if(dep[floor].child1 != -1)
+		while(! dep[dep[floor].child1].done)
 			pthread_cond_wait(cond, deplock);
 	pthread_mutex_unlock(deplock);
 	// reporterr("Task %d: %s, %s\n", floor, f1name, f2name);
@@ -412,43 +432,47 @@ void *merge_multithread(void *arg)
 	eff = AllocateDoubleVec(f1seq);
 	eff2 = AllocateDoubleVec(f2seq);
 	if(f1seq > 0) for(j = 0; j < f1seq; ++ j) eff[j] = 1.0 / f1seq;
-	else 
-	{ 
-		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f1name); 
-		exit(1); 
+	else
+	{
+		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f1name);
+		exit(1);
 		return (void *)-1;
 	}
 	if(f2seq > 0) for(j = 0; j < f2seq; ++ j) eff2[j] = 1.0 / f2seq;
-	else 
-	{ 
+	else
+	{
 		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f2name);
-		exit(1); 
+		exit(1);
 		return (void *)-1;
 	}
 	alloclen = len1 + len2 + 10;
-	if(aligncases == 1) 
+	if(! force_fft)
 	{
-		sgap1 = AllocateCharVec(f1seq + 10);
-		sgap2 = AllocateCharVec(f2seq + 10);
-		egap1 = AllocateCharVec(f1seq + 10);
-		egap2 = AllocateCharVec(f2seq + 10);
-		memset(sgap1, 'o', f1seq * sizeof(char));
-		memset(sgap2, 'o', f2seq * sizeof(char));
-		memset(egap1, 'o', f1seq * sizeof(char));
-		memset(egap2, 'o', f2seq * sizeof(char));
-		A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
-		free(sgap1);
-		free(sgap2);
-		free(egap1);
-		free(egap2);
+        if(alg == 'A')
+        {
+            sgap1 = AllocateCharVec(f1seq + 10);
+            sgap2 = AllocateCharVec(f2seq + 10);
+            egap1 = AllocateCharVec(f1seq + 10);
+            egap2 = AllocateCharVec(f2seq + 10);
+            memset(sgap1, 'o', f1seq * sizeof(char));
+            memset(sgap2, 'o', f2seq * sizeof(char));
+            memset(egap1, 'o', f1seq * sizeof(char));
+            memset(egap2, 'o', f2seq * sizeof(char));
+            A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
+            free(sgap1);
+            free(sgap2);
+            free(egap1);
+            free(egap2);
+        }
+        else if(alg == 'a') Aalign(seq, seq2, eff, eff2, f1seq, f2seq, alloclen);
+        else
+	    {
+		    ErrorExit("ERROR: aligncases is error. Please check your command.\n");
+		    return (void *)-1;
+	    }
 	}
-	else if(aligncases == 0) 
+	else
 		Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
-	else 
-	{
-		ErrorExit("ERROR: aligncases is error. Please check your command.\n");
-		return (void *)-1;
-	}
 	f1fp = fopen(f1name, "w");
 	writeData_pointer(f1fp, f1seq, name, nlen, seq);
 	writeData_pointer(f1fp, f2seq, name2, nlen22, seq2);
@@ -488,7 +512,7 @@ int main(int argc, char **argv)
 	char *tmpseq = NULL, *align1 = NULL, *align2 = NULL;
 	double *eff = NULL, **mtx = NULL, **nlen2 = NULL, *eff2 = NULL;
 	char *sgap1 = NULL, *sgap2 = NULL, *egap1 = NULL, *egap2 = NULL;
-	Treedep *dep; 
+	Treedep *dep;
 	double bunbo, lenfac, longer, shorter;
 	char b[BLEN];
 	FILE *infp = NULL, *cefp = NULL, *f1fp = NULL, *f2fp = NULL;
@@ -546,7 +570,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	centerseqs = njob;
-	
+
 	if( dorp == 'p' && tuplesize != 6 )
 		ErrorExit( "tuplesize must be 6 for amino acid sequence\n" );
 	if( dorp == 'd' && tuplesize != 6 && tuplesize != 10 )
@@ -589,7 +613,7 @@ int main(int argc, char **argv)
 		lenfacc = D10LENFACC;
 		lenfacd = D10LENFACD;
 	}
-	else    
+	else
 	{
 		lenfaca = PLENFACA;
 		lenfacb = PLENFACB;
@@ -597,7 +621,7 @@ int main(int argc, char **argv)
 		lenfacd = PLENFACD;
 	}
 	maxl = 0;
-	for( i=0; i<njob; i++ ) 
+	for( i=0; i<njob; i++ )
 	{
 		gappick0( tmpseq, seq[i] );
 		nogaplen[i] = strlen( tmpseq );
@@ -628,16 +652,16 @@ int main(int argc, char **argv)
 		}
 		makecompositiontable_p( table1, pointt[i] );
 
-		for( j=i; j<njob; j++ ) 
+		for( j=i; j<njob; j++ )
 		{
 			mtx[i][j-i] = (double)commonsextet_p( table1, pointt[j] );
-		} 
+		}
 		free( table1 ); table1 = NULL;
 	}
-	
+
 	for( i = 0; i < njob - 1; ++ i)
 	{
-		for( j = i + 1; j < njob; ++ j ) 
+		for( j = i + 1; j < njob; ++ j )
 		{
 			if( nogaplen[i] > nogaplen[j] )
 			{
@@ -657,7 +681,7 @@ int main(int argc, char **argv)
 				mtx[i][j-i] = ( 1.0 - mtx[i][j-i] / bunbo ) * lenfac * 2.0;
 		}
 	}
-	FreeIntVec(nogaplen); nogaplen = NULL; 
+	FreeIntVec(nogaplen); nogaplen = NULL;
 	FreeIntMtx( pointt ); pointt = NULL;
 	free( grpseq ); grpseq = NULL;
 	free( tmpseq ); tmpseq = NULL;
@@ -670,7 +694,7 @@ int main(int argc, char **argv)
 	fixed_musclesupg_double_realloc_nobk_halfmtx_memsave(njob, mtx, topol, nlen2, dep, 1, 0);
 	// fixed_musclesupg_double_treeout(njob, mtx, topol, nlen2, name);
 	FreeDoubleHalfMtx( mtx, njob ); mtx = NULL;
-	// FreeDoubleMtx(nlen2); 
+	// FreeDoubleMtx(nlen2);
 	FreeCharMtx(name); name = NULL;
 	FreeCharMtx(seq); seq = NULL;
 	FreeIntVec(nlen); nlen = NULL;
@@ -693,7 +717,7 @@ int main(int argc, char **argv)
 		}
 		fclose(f1fp);
 	}
-		
+
 	/* Part 2.2: use changed FFT (changed to calcuate density instead of sequence) to align profile data */
 	reporterr("Aligning all the profiles...\n");
 #ifndef enablemultithread
@@ -742,25 +766,30 @@ int main(int argc, char **argv)
 		f2len = nlen22[0];
 		for(j = 1; j < f2seq; ++ j) f2len = MAX(nlen22[j], f2len);
 		alloclen = f1len + f2len + 10;
-		if(aligncases == 1) 
+		if(! force_fft)
 		{
-			sgap1 = AllocateCharVec(f1seq + 10);
-			sgap2 = AllocateCharVec(f2seq + 10);
-			egap1 = AllocateCharVec(f1seq + 10);
-			egap2 = AllocateCharVec(f2seq + 10);
-			memset(sgap1, 'o', f1seq * sizeof(char));
-			memset(sgap2, 'o', f2seq * sizeof(char));
-			memset(egap1, 'o', f1seq * sizeof(char));
-			memset(egap2, 'o', f2seq * sizeof(char));
-			A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
-			free(sgap1);
-			free(sgap2);
-			free(egap1);
-			free(egap2);
+            if(alg == 'A')
+            {
+                sgap1 = AllocateCharVec(f1seq + 10);
+                sgap2 = AllocateCharVec(f2seq + 10);
+                egap1 = AllocateCharVec(f1seq + 10);
+                egap2 = AllocateCharVec(f2seq + 10);
+                memset(sgap1, 'o', f1seq * sizeof(char));
+                memset(sgap2, 'o', f2seq * sizeof(char));
+                memset(egap1, 'o', f1seq * sizeof(char));
+                memset(egap2, 'o', f2seq * sizeof(char));
+                A__align(n_dis_consweight_multi, penalty, penalty_ex, seq, seq2, eff, eff2, f1seq, f2seq, alloclen, sgap1, sgap2, egap1, egap2, 1, 1);
+                free(sgap1);
+                free(sgap2);
+                free(egap1);
+                free(egap2);
+            }
+            else if(alg == 'a') Aalign(seq, seq2, eff, eff2, f1seq, f2seq, alloclen);
+            else ErrorExit("ERROR: align mode (-F/-G/-A/-N) is error. Please check your command.\n");
 		}
-		else if(aligncases == 0) 
+		else
 			Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
-		else ErrorExit("ERROR: aligncases is error. Please check your command.\n");
+
 		f1fp = fopen(realfilename2d[f1], "w");
 		writeData_pointer(f1fp, f1seq, name, nlen, seq);
 		writeData_pointer(f1fp, f2seq, name2, nlen22, seq2);
@@ -830,7 +859,7 @@ int main(int argc, char **argv)
 		reporterr( "\nprofilealign, real = %f min\n", (float)(time(NULL) - starttime)/60.0 );
 		reporterr( "profilealign, user = %f min\n", (float)(clock()-startclock)/CLOCKS_PER_SEC/60);
 #endif
-	if(spscoreout) 
+	if(spscoreout)
 	{
 		if(seq) FreeCharMtx(seq);
 		if(name) FreeCharMtx(name);

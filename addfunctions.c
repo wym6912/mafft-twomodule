@@ -77,7 +77,7 @@ void eq2dash( char *s )
 {
 	while( *s )
 	{
-		if( *s == '=' ) 
+		if( *s == '=' )
 		{
 			*s = '-';
 		}
@@ -89,7 +89,7 @@ static void plus2gapchar( char *s, char gapchar )
 {
 	while( *s )
 	{
-		if( *s == '+' ) 
+		if( *s == '+' )
 		{
 			*s = gapchar;
 		}
@@ -101,15 +101,15 @@ void findnewgaps( int n, int rep, char **seq, int *gaplen )
 {
 	int i, pos, len, len1;
 
-	len = strlen( seq[0] );	
+	len = strlen( seq[0] );
 //	for( i=0; i<len; i++ ) gaplen[i] = 0; // calloc de shokika sareteirukara hontou ha iranai
 	len1 = len + 1;
 	for( i=0; i<len1; i++ ) gaplen[i] = 0; // realloc de shokika sareteirukara iru!
-	
+
 	pos = 0;
 	for( i=0; i<len; i++ )
 	{
-		if( seq[rep][i] == '=' ) 
+		if( seq[rep][i] == '=' )
 		{
 			if( disp ) fprintf( stderr, "Newgap! pos = %d\n", pos );
 			gaplen[pos]++;
@@ -132,12 +132,12 @@ void findnewgaps( int n, int rep, char **seq, int *gaplen )
 void findcommongaps( int n, char **seq, int *gapmap )
 {
 	int i, j, pos, len, len1;
-	len = strlen( seq[0] );	
+	len = strlen( seq[0] );
 	len1 = len+1;
 
 //	fprintf( stderr, "seq[0] = %s\n", seq[0] );
 	for( i=0; i<len1; i++ ) gapmap[i] = 0;
-	
+
 	pos = 0;
 	for( i=0; i<len; i++ )
 	{
@@ -292,7 +292,7 @@ static int smoothing1rightmulti( int len, char *ref ) // osoi!
 
 		val += 1;
 		shiftfrom = hit[k];
-		if( ref[shiftto] != '=' ) // atode sakujo 
+		if( ref[shiftto] != '=' ) // atode sakujo
 		{
 			reporterr( "Error in smoothing1left!\n" );
 			exit( 1 );
@@ -355,14 +355,14 @@ static int smoothing1leftmulti( int len, char *ref ) // osoi!
 
 		val += 1;
 		shiftfrom = hit[k];
-		if( ref[shiftto] != '=' ) // atode sakujo 
+		if( ref[shiftto] != '=' ) // atode sakujo
 		{
 			reporterr( "Error in smoothing1left!\n" );
 			exit( 1 );
 		}
 		ref[shiftto] = ref[shiftfrom];
 		ref[shiftfrom] = '=';
-	
+
 	}
 	free( hit );
 
@@ -383,7 +383,7 @@ void restorecommongapssmoothly( int njob, int n0, char **seq, int *ex1, int *ex2
 	int *tmpgapmap;
 	int i, j, k, len, rep1, rep2, len1, klim, leninserted;
 	int totalres;
-	
+
 	if( n0 == 0 ) return;
 
 
@@ -440,7 +440,7 @@ void restorecommongapssmoothly( int njob, int n0, char **seq, int *ex1, int *ex2
 	leninserted = strlen( seq[rep1] );
 #if 0
 	reporterr( "gapmap =\n" );
-	for(j=0; j<len1; j++) 
+	for(j=0; j<len1; j++)
 	{
 		reporterr( "%d", gapmap[j] );
 		for( i=gapmap[j]; i>0; i-- ) reporterr( "-" );
@@ -491,7 +491,7 @@ void restorecommongapssmoothly( int njob, int n0, char **seq, int *ex1, int *ex2
 	reporterr( "seq[rep1] = \n%s\n", seq[rep1] );
 	reporterr( "seq[rep2] = \n%s\n", seq[rep2] );
 	reporterr( "gapmap =\n" );
-	for(j=0; j<len1; j++) 
+	for(j=0; j<len1; j++)
 	{
 		reporterr( "%d", gapmap[j] );
 		for( i=gapmap[j]; i>0; i-- ) reporterr( "-" );
@@ -525,7 +525,7 @@ void restorecommongaps( int njob, int n0, char **seq, int *ex1, int *ex2, int *g
 	int *iptr;
 	int *tmpgapmap;
 	int i, j, k, len, rep, len1, klim;
-	
+
 
 	if( n0 == 0 ) return;
 
@@ -606,7 +606,7 @@ int deletenewinsertions_whole_eq( int on, int an, char **oseq, char **aseq, int 
 			tmpc = oseq[j][i];
 			if( tmpc != '-' && tmpc != '=' ) break;
 		}
-		if( j == on ) 
+		if( j == on )
 			allgap = 1;
 
 		if( allgap )
@@ -631,7 +631,7 @@ int deletenewinsertions_whole_eq( int on, int an, char **oseq, char **aseq, int 
 			for( i=0,q=0; i<len; i++ )
 			{
 				tmpc = aseq[j][i];
-				if( tmpc != '-' && tmpc != '=' ) 
+				if( tmpc != '-' && tmpc != '=' )
 				{
 					if( eqseq[i] == '=' )
 					{
@@ -696,7 +696,7 @@ int deletenewinsertions_whole( int on, int an, char **oseq, char **aseq, int **d
 			tmpc = oseq[j][i];
 			if( tmpc != '-' ) break;
 		}
-		if( j == on ) 
+		if( j == on )
 			allgap = 1;
 
 		if( allgap )
@@ -721,7 +721,7 @@ int deletenewinsertions_whole( int on, int an, char **oseq, char **aseq, int **d
 			for( i=0,q=0; i<len; i++ )
 			{
 				tmpc = aseq[j][i];
-				if( tmpc != '-' ) 
+				if( tmpc != '-' )
 				{
 					if( eqseq[i] == '=' )
 					{
@@ -823,7 +823,7 @@ exit( 1 );
 	}
 	reporterr( "s1[0]            = %s\n", s1[0] );
 	reporterr( "tmpnew           = %s\n", tmpnew );
-	
+
 }
 
 #endif
@@ -838,7 +838,7 @@ int recordoriginalgaps( char *originallygapped, int n, char **s )
 	{
 		for( j=0; j<n; j++ ) if( s[j][i] != '-' ) break;
 
-		if( j == n ) 
+		if( j == n )
 			originallygapped[i] = '-';
 		else
 			originallygapped[i] = 'o';

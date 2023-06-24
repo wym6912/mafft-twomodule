@@ -1,12 +1,12 @@
 int locpenaltym = -1440;
 int exgpm = +0;  /* != 0 nisuruto kowareru. exgp ha constants.c de kurikomu */
 char locaminom[] = "ARNDCQEGHILKMFPSTWYVBZX.-J";
-char locgrpm[] = 
+char locgrpm[] =
 {
 	0, 3, 2, 2, 5, 2, 2, 0, 3, 1, 1, 3, 1, 4, 0, 0, 0, 4, 4, 1, 2, 2,
 	6, 6, 6, 1,
 };
-int locn_dism[26][26] = 
+int locn_dism[26][26] =
     {
 	{
   600, -235,   91,  -78,  202,   51, -103,  340,  -21, -169,

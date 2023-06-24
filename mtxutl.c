@@ -17,10 +17,10 @@ void MtxmltDouble( double **mtx1, double **mtx2, int n )
     double s, *tmp;
 
 	tmp = (double *)calloc( n, sizeof( double ) );
-    for( i=0; i<n; i++ ) 
+    for( i=0; i<n; i++ )
     {
         for( k=0; k<n; k++ ) tmp[k] = mtx1[i][k];
-        for( j=0; j<n; j++ ) 
+        for( j=0; j<n; j++ )
         {
             s = 0.0;
             for( k=0; k<n; k++ ) s += tmp[k] * mtx2[k][j];
@@ -33,7 +33,7 @@ void MtxmltDouble( double **mtx1, double **mtx2, int n )
 char *AllocateCharVec( int l1 )
 {
 	char *cvec;
-	
+
 	cvec = (char *)calloc( l1, sizeof( char ) );
 	if( cvec == NULL )
 	{
@@ -42,7 +42,7 @@ char *AllocateCharVec( int l1 )
 	}
 	return( cvec );
 }
-	
+
 #if 0
 void ReallocateCharMtx( char **mtx, int l1, int l2 )
 {
@@ -53,7 +53,7 @@ void ReallocateCharMtx( char **mtx, int l1, int l2 )
 		fprintf( stderr, "Cannot allocate bk in ReallocateCharMtx\n" );
 		exit( 1 );
 	}
-	for( i=0; i<l1; i++ ) 
+	for( i=0; i<l1; i++ )
 	{
 #if 1
 		strcpy( bk, mtx[i] );
@@ -75,12 +75,12 @@ void ReallocateCharMtx( char **mtx, int l1, int l2 )
 #endif
 	}
 	free( bk ); // hontou ha iranai
-} 
+}
 #else
 void ReallocateCharMtx( char **mtx, int l1, int l2 )
 {
 	int i;
-	for( i=0; i<l1; i++ ) 
+	for( i=0; i<l1; i++ )
 	{
 		mtx[i] = (char *)realloc( mtx[i], (l2+1) * sizeof( char ) );
 		if( mtx[i] == NULL )
@@ -88,30 +88,30 @@ void ReallocateCharMtx( char **mtx, int l1, int l2 )
 			fprintf( stderr, "Cannot reallocate %d x %d character matrix.\n", l1, l2 );
 		}
 	}
-} 
+}
 #endif
 
 char **AllocateCharMtx( int l1, int l2 )
 {
 	int i;
 	char **cmtx;
-	
+
 	cmtx = (char **)calloc( (l1+1), sizeof( char * ) );
 	if( cmtx == NULL )
 	{
 		fprintf( stderr, "Cannot allocate %d x %d character matrix.\n", l1, l2 );
 		exit( 1 );
-	}   
+	}
 	if( l2 )
 	{
-		for( i=0; i<l1; i++ ) 
+		for( i=0; i<l1; i++ )
 		{
 			cmtx[i] = AllocateCharVec( l2 );
 		}
 	}
 	cmtx[l1] = NULL;
 	return( cmtx );
-} 
+}
 
 void FreeCharMtx( char **mtx )
 {
@@ -122,7 +122,7 @@ void FreeCharMtx( char **mtx )
 	free( mtx );
 */
 	int i;
-	for( i=0; mtx[i]; i++ ) 
+	for( i=0; mtx[i]; i++ )
 	{
 		//reporterr("%p %d\n", mtx[i], strlen(mtx[i]));
 		free( mtx[i] );
@@ -204,7 +204,7 @@ void FreeFloatHalfMtx( double **mtx, int n )
 {
 	int i;
 
-	for( i=0; i<n; i++ ) 
+	for( i=0; i<n; i++ )
 	{
 		if( mtx[i] ) FreeFloatVec( mtx[i] ); mtx[i] = NULL;
 	}
@@ -214,7 +214,7 @@ void FreeFloatMtx( double **mtx )
 {
 	int i;
 
-	for( i=0; mtx[i]; i++ ) 
+	for( i=0; mtx[i]; i++ )
 	{
 		if( mtx[i] ) FreeFloatVec( mtx[i] ); mtx[i] = NULL;
 	}
@@ -227,12 +227,12 @@ int *AllocateIntVecLarge( unsigned long long ll1 )
 
 	vec = (int *)calloc( ll1, sizeof( int ) );
 	if( vec == NULL )
-	{	
+	{
 		fprintf( stderr, "Allocation error( %lld int vec )\n", ll1 );
 		exit( 1 );
 	}
 	return( vec );
-}	
+}
 
 int *AllocateIntVec( int ll1 )
 {
@@ -240,12 +240,12 @@ int *AllocateIntVec( int ll1 )
 
 	vec = (int *)calloc( ll1, sizeof( int ) );
 	if( vec == NULL )
-	{	
+	{
 		fprintf( stderr, "Allocation error( %d int vec )\n", ll1 );
 		exit( 1 );
 	}
 	return( vec );
-}	
+}
 
 void FreeIntVec( int *vec )
 {
@@ -263,12 +263,12 @@ double **AllocateFloatTri( int ll1 )
 		fprintf( stderr, "Allocation error ( double tri )\n" );
 		exit( 1 );
 	}
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 	{
 		tri[i] = AllocateFloatVec( i+3 );
 	}
 	tri[ll1] = NULL;
-		
+
 	return( tri );
 }
 
@@ -281,11 +281,11 @@ void FreeFloatTri( double **tri )
 	free( x );
 */
 	int i;
-	for( i=0; tri[i]; i++ ) 
+	for( i=0; tri[i]; i++ )
 		free( tri[i] );
 	free( tri );
 }
-		
+
 int **AllocateIntMtx( int ll1, int ll2 )
 {
 	int i;
@@ -342,7 +342,7 @@ void FreeIntMtx( int **mtx )
 	free( x );
 *
 	int i;
-	for( i=0; mtx[i] != NULL; i++ ) 
+	for( i=0; mtx[i] != NULL; i++ )
 		free( (char *)mtx[i] );
 	free( (char *)mtx );
 }
@@ -354,14 +354,14 @@ char ***AllocateCharCub( int ll1, int ll2, int  ll3 )
 	char ***cub;
 
 	cub = (char ***)calloc( ll1+1, sizeof( char ** ) );
-	if( !cub ) 
+	if( !cub )
 	{
 		fprintf( stderr, "Allocation error( %d x %d x %d char cube\n", ll1, ll2, ll3 );
 		exit( 1 );
 	}
 	if( ll2 )
 	{
-		for( i=0; i<ll1; i++ ) 
+		for( i=0; i<ll1; i++ )
 		{
 			cub[i] = AllocateCharMtx( ll2, ll3 );
 		}
@@ -374,7 +374,7 @@ void FreeCharCub( char ***cub )
 {
 	int i;
 
-	for( i=0; cub[i]; i++ ) 
+	for( i=0; cub[i]; i++ )
 	{
 		FreeCharMtx( cub[i] );
 	}
@@ -388,12 +388,12 @@ void freeintmtx( int **mtx, int ll1 )
     for( i=0; i<ll1; i++ ) free( (char *)mtx[i] );
     free( (char *)mtx );
 }
-      
+
 void FreeIntMtx( int **mtx )
 {
 	int i;
 
-	for( i=0; mtx[i]; i++ ) 
+	for( i=0; mtx[i]; i++ )
 	{
 		if( mtx[i] ) free( (char *)mtx[i] ); mtx[i] = NULL;
 	}
@@ -407,7 +407,7 @@ char ****AllocateCharHcu( int ll1, int ll2, int ll3, int ll4 )
 
 	hcu = (char ****)calloc( ll1+1, sizeof( char *** ) );
 	if( hcu == NULL ) exit( 1 );
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 		hcu[i] = AllocateCharCub( ll2, ll3, ll4 );
 	hcu[ll1] = NULL;
 	return( hcu );
@@ -460,7 +460,7 @@ int ***AllocateIntCub( int ll1, int ll2, int ll3 )
 		fprintf( stderr, "cannot allocate IntCub\n" );
 		exit( 1 );
 	}
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 		cub[i] = AllocateIntMtx( ll2, ll3 );
 	cub[ll1] = NULL;
 
@@ -470,7 +470,7 @@ int ***AllocateIntCub( int ll1, int ll2, int ll3 )
 void FreeIntCub( int ***cub )
 {
 	int i;
-	for( i=0; cub[i]; i++ ) 
+	for( i=0; cub[i]; i++ )
 	{
 		if( cub[i] ) FreeIntMtx( cub[i] ); cub[i] = NULL;
 	}
@@ -513,7 +513,7 @@ double **AllocateDoubleMtx( int ll1, int ll2 )
 	}
 	if( ll2 )
 	{
-		for( i=0; i<ll1; i++ ) 
+		for( i=0; i<ll1; i++ )
 			mtx[i] = AllocateDoubleVec( ll2 );
 	}
 	mtx[ll1] = NULL;
@@ -525,7 +525,7 @@ void FreeDoubleHalfMtx( double **mtx, int n )
 {
 	int i;
 
-	for( i=0; i<n; i++ ) 
+	for( i=0; i<n; i++ )
 	{
 		if( mtx[i] ) FreeFloatVec( mtx[i] ); mtx[i] = NULL;
 	}
@@ -545,12 +545,12 @@ double ***AllocateFloatCub( int ll1, int ll2, int  ll3 )
 	double ***cub;
 
 	cub = (double ***)calloc( ll1+1, sizeof( double ** ) );
-	if( !cub ) 
+	if( !cub )
 	{
 		fprintf( stderr, "cannot allocate double cube.\n" );
 		exit( 1 );
 	}
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 	{
 		cub[i] = AllocateFloatMtx( ll2, ll3 );
 	}
@@ -562,7 +562,7 @@ void FreeFloatCub( double ***cub )
 {
 	int i;
 
-	for( i=0; cub[i]; i++ ) 
+	for( i=0; cub[i]; i++ )
 	{
 		FreeFloatMtx( cub[i] );
 	}
@@ -575,12 +575,12 @@ double ***AllocateDoubleCub( int ll1, int ll2, int  ll3 )
 	double ***cub;
 
 	cub = (double ***)calloc( ll1+1, sizeof( double ** ) );
-	if( !cub ) 
+	if( !cub )
 	{
 		fprintf( stderr, "cannot allocate double cube.\n" );
 		exit( 1 );
 	}
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 	{
 		cub[i] = AllocateDoubleMtx( ll2, ll3 );
 	}
@@ -592,7 +592,7 @@ void FreeDoubleCub( double ***cub )
 {
 	int i;
 
-	for( i=0; cub[i]; i++ ) 
+	for( i=0; cub[i]; i++ )
 	{
 		FreeDoubleMtx( cub[i] );
 	}
@@ -606,12 +606,12 @@ short *AllocateShortVec( int ll1 )
 
 	vec = (short *)calloc( ll1, sizeof( short ) );
 	if( vec == NULL )
-	{	
+	{
 		fprintf( stderr, "Allocation error( %d short vec )\n", ll1 );
 		exit( 1 );
 	}
 	return( vec );
-}	
+}
 
 void FreeShortVec( short *vec )
 {
@@ -630,7 +630,7 @@ short **AllocateShortMtx( int ll1, int ll2 )
 		fprintf( stderr, "Allocation error( %d x %d short mtx ) \n", ll1, ll2 );
 		exit( 1 );
 	}
-	for( i=0; i<ll1; i++ ) 
+	for( i=0; i<ll1; i++ )
 	{
 		mtx[i] = AllocateShortVec( ll2 );
 	}
@@ -642,7 +642,7 @@ void FreeShortMtx( short **mtx )
 {
 	int i;
 
-	for( i=0; mtx[i]; i++ ) 
+	for( i=0; mtx[i]; i++ )
 		free( (char *)mtx[i] );
 	free( (char *)mtx );
 }
@@ -653,7 +653,7 @@ long long *AllocateLongIntVec( int ll1 )
 
 	vec = (long long *)calloc( ll1, sizeof( short ) );
 	if( vec == NULL )
-	{	
+	{
 		fprintf( stderr, "Allocation error( %d long long vec )\n", ll1 );
 		exit( 1 );
 	}

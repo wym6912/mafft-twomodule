@@ -1,42 +1,42 @@
 #ifndef _THREAD_POOL_H_
 #define _THREAD_POOL_H_
 
-//çº¿ç¨‹æ± å¤´æ–‡ä»¶
+//Ïß³Ì³ØÍ·ÎÄ¼ş
 #if (_WIN32 || _WIN64)
 #include <Windows.h>
 #endif
 
 #include "threadpool_condition.h"
 
-//å°è£…çº¿ç¨‹æ± ä¸­çš„å¯¹è±¡éœ€è¦æ‰§è¡Œçš„ä»»åŠ¡å¯¹è±¡
+//·â×°Ïß³Ì³ØÖĞµÄ¶ÔÏóĞèÒªÖ´ĞĞµÄÈÎÎñ¶ÔÏó
 typedef struct task
 {
-    void *(*run)(void *args);  //å‡½æ•°æŒ‡é’ˆï¼Œéœ€è¦æ‰§è¡Œçš„ä»»åŠ¡
-    void *arg;              //å‚æ•°
-    struct task *next;      //ä»»åŠ¡é˜Ÿåˆ—ä¸­ä¸‹ä¸€ä¸ªä»»åŠ¡
+    void *(*run)(void *args);  //º¯ÊıÖ¸Õë£¬ĞèÒªÖ´ĞĞµÄÈÎÎñ
+    void *arg;              //²ÎÊı
+    struct task *next;      //ÈÎÎñ¶ÓÁĞÖĞÏÂÒ»¸öÈÎÎñ
 }task_t;
 
 
-//ä¸‹é¢æ˜¯çº¿ç¨‹æ± ç»“æ„ä½“
+//ÏÂÃæÊÇÏß³Ì³Ø½á¹¹Ìå
 typedef struct threadpool
 {
-    condition_t ready;    //çŠ¶æ€é‡
-    task_t *first;       //ä»»åŠ¡é˜Ÿåˆ—ä¸­ç¬¬ä¸€ä¸ªä»»åŠ¡
-    task_t *last;        //ä»»åŠ¡é˜Ÿåˆ—ä¸­æœ€åä¸€ä¸ªä»»åŠ¡
-    int counter;         //çº¿ç¨‹æ± ä¸­å·²æœ‰çº¿ç¨‹æ•°
-    int idle;            //çº¿ç¨‹æ± ä¸­ç©ºé—²çº¿ç¨‹æ•°
-    int max_threads;     //çº¿ç¨‹æ± æœ€å¤§çº¿ç¨‹æ•°
-    int quit;            //æ˜¯å¦é€€å‡ºæ ‡å¿—
+    condition_t ready;    //×´Ì¬Á¿
+    task_t *first;       //ÈÎÎñ¶ÓÁĞÖĞµÚÒ»¸öÈÎÎñ
+    task_t *last;        //ÈÎÎñ¶ÓÁĞÖĞ×îºóÒ»¸öÈÎÎñ
+    int counter;         //Ïß³Ì³ØÖĞÒÑÓĞÏß³ÌÊı
+    int idle;            //Ïß³Ì³ØÖĞ¿ÕÏĞÏß³ÌÊı
+    int max_threads;     //Ïß³Ì³Ø×î´óÏß³ÌÊı
+    int quit;            //ÊÇ·ñÍË³ö±êÖ¾
 }threadpool_t;
 
 
-//çº¿ç¨‹æ± åˆå§‹åŒ–
+//Ïß³Ì³Ø³õÊ¼»¯
 void threadpool_init(threadpool_t *pool, int threads);
 
-//å¾€çº¿ç¨‹æ± ä¸­åŠ å…¥ä»»åŠ¡
+//ÍùÏß³Ì³ØÖĞ¼ÓÈëÈÎÎñ
 void threadpool_add_task(threadpool_t *pool, void *(*run)(void *arg), void *arg);
 
-//æ‘§æ¯çº¿ç¨‹æ± 
+//´İ»ÙÏß³Ì³Ø
 void threadpool_destroy(threadpool_t *pool);
 
 #endif

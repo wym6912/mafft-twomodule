@@ -92,7 +92,7 @@ int clock_gettime(struct timeval* tv)
 }
 #endif
 
-//åˆ›å»ºçš„çº¿ç¨‹æ‰§è¡Œ
+//´´½¨µÄÏß³ÌÖ´ĞĞ
 void *thread_routine(void *arg)
 {
     struct timespec abstime;
@@ -102,16 +102,16 @@ void *thread_routine(void *arg)
     while(1)
     {
         timeout = 0;
-        //è®¿é—®çº¿ç¨‹æ± ä¹‹å‰éœ€è¦åŠ é”
+        //·ÃÎÊÏß³Ì³ØÖ®Ç°ĞèÒª¼ÓËø
         condition_lock(&pool->ready);
-        //ç©ºé—²
+        //¿ÕÏĞ
         pool->idle++;
-        //ç­‰å¾…é˜Ÿåˆ—æœ‰ä»»åŠ¡åˆ°æ¥ æˆ–è€… æ”¶åˆ°çº¿ç¨‹æ± é”€æ¯é€šçŸ¥
+        //µÈ´ı¶ÓÁĞÓĞÈÎÎñµ½À´ »òÕß ÊÕµ½Ïß³Ì³ØÏú»ÙÍ¨Öª
         while(pool->first == NULL && !pool->quit)
         {
-            //å¦åˆ™çº¿ç¨‹é˜»å¡ç­‰å¾…
+            //·ñÔòÏß³Ì×èÈûµÈ´ı
             // printf("thread %d is waiting\n", (int)pthread_self());
-            //è·å–ä»å½“å‰æ—¶é—´ï¼Œå¹¶åŠ ä¸Šç­‰å¾…æ—¶é—´ï¼Œ è®¾ç½®è¿›ç¨‹çš„è¶…æ—¶ç¡çœ æ—¶é—´
+            //»ñÈ¡´Óµ±Ç°Ê±¼ä£¬²¢¼ÓÉÏµÈ´ıÊ±¼ä£¬ ÉèÖÃ½ø³ÌµÄ³¬Ê±Ë¯ÃßÊ±¼ä
 #if (_WIN32 || _WIN64)
             clock_gettime(&abstime);
 #else
@@ -119,7 +119,7 @@ void *thread_routine(void *arg)
 #endif
             abstime.tv_sec += 10;
             int status;
-            status = condition_timedwait(&pool->ready, &abstime);  //è¯¥å‡½æ•°ä¼šè§£é”ï¼Œå…è®¸å…¶ä»–çº¿ç¨‹è®¿é—®ï¼Œå½“è¢«å”¤é†’æ—¶ï¼ŒåŠ é”
+            status = condition_timedwait(&pool->ready, &abstime);  //¸Ãº¯Êı»á½âËø£¬ÔÊĞíÆäËûÏß³Ì·ÃÎÊ£¬µ±±»»½ĞÑÊ±£¬¼ÓËø
             if(status == ETIMEDOUT)
             {
 #if (_WIN32 || _WIN64)
@@ -131,28 +131,28 @@ void *thread_routine(void *arg)
                 break;
             }
         }
-        
+
         pool->idle--;
         if(pool->first != NULL)
         {
-            //å–å‡ºç­‰å¾…é˜Ÿåˆ—æœ€å‰çš„ä»»åŠ¡ï¼Œç§»é™¤ä»»åŠ¡ï¼Œå¹¶æ‰§è¡Œä»»åŠ¡
+            //È¡³öµÈ´ı¶ÓÁĞ×îÇ°µÄÈÎÎñ£¬ÒÆ³ıÈÎÎñ£¬²¢Ö´ĞĞÈÎÎñ
             task_t *t = pool->first;
             pool->first = t->next;
-            //ç”±äºä»»åŠ¡æ‰§è¡Œéœ€è¦æ¶ˆè€—æ—¶é—´ï¼Œå…ˆè§£é”è®©å…¶ä»–çº¿ç¨‹è®¿é—®çº¿ç¨‹æ± 
+            //ÓÉÓÚÈÎÎñÖ´ĞĞĞèÒªÏûºÄÊ±¼ä£¬ÏÈ½âËøÈÃÆäËûÏß³Ì·ÃÎÊÏß³Ì³Ø
             condition_unlock(&pool->ready);
-            //æ‰§è¡Œä»»åŠ¡
+            //Ö´ĞĞÈÎÎñ
             t->run(t->arg);
-            //æ‰§è¡Œå®Œä»»åŠ¡é‡Šæ”¾å†…å­˜
+            //Ö´ĞĞÍêÈÎÎñÊÍ·ÅÄÚ´æ
             free(t);
-            //é‡æ–°åŠ é”
+            //ÖØĞÂ¼ÓËø
             condition_lock(&pool->ready);
         }
-        
-        //é€€å‡ºçº¿ç¨‹æ± 
+
+        //ÍË³öÏß³Ì³Ø
         if(pool->quit && pool->first == NULL)
         {
-            pool->counter--;//å½“å‰å·¥ä½œçš„çº¿ç¨‹æ•°-1
-            //è‹¥çº¿ç¨‹æ± ä¸­æ²¡æœ‰çº¿ç¨‹ï¼Œé€šçŸ¥ç­‰å¾…çº¿ç¨‹ï¼ˆä¸»çº¿ç¨‹ï¼‰å…¨éƒ¨ä»»åŠ¡å·²ç»å®Œæˆ
+            pool->counter--;//µ±Ç°¹¤×÷µÄÏß³ÌÊı-1
+            //ÈôÏß³Ì³ØÖĞÃ»ÓĞÏß³Ì£¬Í¨ÖªµÈ´ıÏß³Ì£¨Ö÷Ïß³Ì£©È«²¿ÈÎÎñÒÑ¾­Íê³É
             if(pool->counter == 0)
             {
                 condition_signal(&pool->ready);
@@ -160,27 +160,27 @@ void *thread_routine(void *arg)
             condition_unlock(&pool->ready);
             break;
         }
-        //è¶…æ—¶ï¼Œè·³å‡ºé”€æ¯çº¿ç¨‹
+        //³¬Ê±£¬Ìø³öÏú»ÙÏß³Ì
         if(timeout == 1)
         {
-            pool->counter--;//å½“å‰å·¥ä½œçš„çº¿ç¨‹æ•°-1
+            pool->counter--;//µ±Ç°¹¤×÷µÄÏß³ÌÊı-1
             condition_unlock(&pool->ready);
             break;
         }
-        
+
         condition_unlock(&pool->ready);
     }
-    
+
     // printf("thread %d is exiting\n", (int)pthread_self());
     return NULL;
-    
+
 }
 
 
-//çº¿ç¨‹æ± åˆå§‹åŒ–
+//Ïß³Ì³Ø³õÊ¼»¯
 void threadpool_init(threadpool_t *pool, int threads)
 {
-    
+
     condition_init(&pool->ready);
     pool->first = NULL;
     pool->last =NULL;
@@ -188,69 +188,69 @@ void threadpool_init(threadpool_t *pool, int threads)
     pool->idle =0;
     pool->max_threads = threads;
     pool->quit =0;
-    
+
 }
 
 
-//å¢åŠ ä¸€ä¸ªä»»åŠ¡åˆ°çº¿ç¨‹æ± 
+//Ôö¼ÓÒ»¸öÈÎÎñµ½Ïß³Ì³Ø
 void threadpool_add_task(threadpool_t *pool, void *(*run)(void *arg), void *arg)
 {
-    //äº§ç”Ÿä¸€ä¸ªæ–°çš„ä»»åŠ¡
+    //²úÉúÒ»¸öĞÂµÄÈÎÎñ
     task_t *newtask = (task_t *)malloc(sizeof(task_t));
     newtask->run = run;
     newtask->arg = arg;
-    newtask->next=NULL;//æ–°åŠ çš„ä»»åŠ¡æ”¾åœ¨é˜Ÿåˆ—å°¾ç«¯
-    
-    //çº¿ç¨‹æ± çš„çŠ¶æ€è¢«å¤šä¸ªçº¿ç¨‹å…±äº«ï¼Œæ“ä½œå‰éœ€è¦åŠ é”
+    newtask->next=NULL;//ĞÂ¼ÓµÄÈÎÎñ·ÅÔÚ¶ÓÁĞÎ²¶Ë
+
+    //Ïß³Ì³ØµÄ×´Ì¬±»¶à¸öÏß³Ì¹²Ïí£¬²Ù×÷Ç°ĞèÒª¼ÓËø
     condition_lock(&pool->ready);
-    
-    if(pool->first == NULL)//ç¬¬ä¸€ä¸ªä»»åŠ¡åŠ å…¥
+
+    if(pool->first == NULL)//µÚÒ»¸öÈÎÎñ¼ÓÈë
     {
         pool->first = newtask;
-    }        
-    else    
+    }
+    else
     {
         pool->last->next = newtask;
     }
-    pool->last = newtask;  //é˜Ÿåˆ—å°¾æŒ‡å‘æ–°åŠ å…¥çš„çº¿ç¨‹
-    
-    //çº¿ç¨‹æ± ä¸­æœ‰çº¿ç¨‹ç©ºé—²ï¼Œå”¤é†’
+    pool->last = newtask;  //¶ÓÁĞÎ²Ö¸ÏòĞÂ¼ÓÈëµÄÏß³Ì
+
+    //Ïß³Ì³ØÖĞÓĞÏß³Ì¿ÕÏĞ£¬»½ĞÑ
     if(pool->idle > 0)
     {
         condition_signal(&pool->ready);
     }
-    //å½“å‰çº¿ç¨‹æ± ä¸­çº¿ç¨‹ä¸ªæ•°æ²¡æœ‰è¾¾åˆ°è®¾å®šçš„æœ€å¤§å€¼ï¼Œåˆ›å»ºä¸€ä¸ªæ–°çš„çº¿ç¨‹
+    //µ±Ç°Ïß³Ì³ØÖĞÏß³Ì¸öÊıÃ»ÓĞ´ïµ½Éè¶¨µÄ×î´óÖµ£¬´´½¨Ò»¸öĞÂµÄÏß³Ì
     else if(pool->counter < pool->max_threads)
     {
         pthread_t tid;
         pthread_create(&tid, NULL, thread_routine, pool);
         pool->counter++;
     }
-    //ç»“æŸï¼Œè®¿é—®
+    //½áÊø£¬·ÃÎÊ
     condition_unlock(&pool->ready);
 }
 
-//çº¿ç¨‹æ± é”€æ¯
+//Ïß³Ì³ØÏú»Ù
 void threadpool_destroy(threadpool_t *pool)
 {
-    //å¦‚æœå·²ç»è°ƒç”¨é”€æ¯ï¼Œç›´æ¥è¿”å›
+    //Èç¹ûÒÑ¾­µ÷ÓÃÏú»Ù£¬Ö±½Ó·µ»Ø
     if(pool->quit)
     {
     return;
     }
-    //åŠ é”
+    //¼ÓËø
     condition_lock(&pool->ready);
-    //è®¾ç½®é”€æ¯æ ‡è®°ä¸º1
+    //ÉèÖÃÏú»Ù±ê¼ÇÎª1
     pool->quit = 1;
-    //çº¿ç¨‹æ± ä¸­çº¿ç¨‹ä¸ªæ•°å¤§äº0
+    //Ïß³Ì³ØÖĞÏß³Ì¸öÊı´óÓÚ0
     if(pool->counter > 0)
     {
-        //å¯¹äºç­‰å¾…çš„çº¿ç¨‹ï¼Œå‘é€ä¿¡å·å”¤é†’
+        //¶ÔÓÚµÈ´ıµÄÏß³Ì£¬·¢ËÍĞÅºÅ»½ĞÑ
         if(pool->idle > 0)
         {
             condition_broadcast(&pool->ready);
         }
-        //æ­£åœ¨æ‰§è¡Œä»»åŠ¡çš„çº¿ç¨‹ï¼Œç­‰å¾…ä»–ä»¬ç»“æŸä»»åŠ¡
+        //ÕıÔÚÖ´ĞĞÈÎÎñµÄÏß³Ì£¬µÈ´ıËûÃÇ½áÊøÈÎÎñ
         while(pool->counter)
         {
             condition_wait(&pool->ready);

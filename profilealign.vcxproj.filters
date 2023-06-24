@@ -6,9 +6,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource_profilealign.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="头文件">
       <UniqueIdentifier>{20ca2f9d-b529-460a-94dc-b7834f4da241}</UniqueIdentifier>
     </Filter>
@@ -23,5 +20,10 @@
     <ResourceCompile Include="profilealign.rc">
       <Filter>资源</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource_profilealign.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

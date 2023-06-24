@@ -1,23 +1,32 @@
 cp test/profilealign-test1/raw test/profilealign-test1/sample # use backup
-./profile_two_align -p test/profilealign-test1/sample/tmp_0.clstr.res -q test/profilealign-test1/sample/tmp_1.clstr.res 
+./profile_two_align -p test/profilealign-test1/sample/tmp_0.clstr.res -q test/profilealign-test1/sample/tmp_1.clstr.res
 # The alignment will we written in tmp_0.clstr.res
 ./profile_two_align -p test/profilealign-test1/sample/tmp_0.clstr.res -q test/profilealign-test1/sample/tmp_1.clstr.res -M
 # The alignment will we written in tmp_0.clstr.res and tmp_1.clstr.res
 
 Arguments:
--p: profile 1 file name
--q: profile 2 file name
--f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)
--Q, -V: penalty_shift_factor(not used), ppenalty_dist
--b: BLOSUM Matrix
--j: use jtt/kimura model, pamN is needed
--m: use tm model, pamN is needed
+Input:
+-p File1: profile 1 file name
+-q File2: profile 2 file name
+Align mode:
+-F: use FFT align (default)
+-G: do not use FFT align, just make it simpler
+-A: Use gap open and extension mode to align sequences
+-N: Use simple align mode to align sequences
+-L: Use legacy gap cost in order to get less gaps
+-e: use memsave mode for alignment
+Alignment arugments:
+-f p, -g pex: ppenalty, ppenalty_ex (only used in -A)
 -D, -P: -D the sequence is DNA, -P the sequence is Protein
--S: Calcuate SP Scores after alignment
--z, -w: FFT align arguments: fftthreshold, fftWinSize
--B: Kband in calcuating DP-matrix during the alignment
--A: Use Aalign to align sequences
--F: Use FFT align to align sequences
--v: show program version and exit
+-z threshold, -w Winsize: FFT align arguments: fftthreshold, fftWinSize
+-B band: Kband in calcuating DP-matrix during the alignment
+Scoring matrix:
+-b pamN: BLOSUM[pamN] Matrix
+-j pamN: use jtt/kimura model, pamN is needed
+-m pamN: use tm model, pamN is needed
+Other arugments:
 -M: print profile result to two profiles
+-S: Calcuate SP Scores after alignment
+-d: Print Score Matrix fits the file1 and exit
+-v: show program version and exit
 -H, -?: Print help message and exit

@@ -5,13 +5,13 @@
 #define TLS __declspec(thread)
 #endif
 #else
-#define TLS 
+#define TLS
 #endif
 
 #ifdef enableatomic
 #define ATOMICINT atomic_int
 #else
-#define ATOMICINT int 
+#define ATOMICINT int
 #endif
 
 extern TLS int commonAlloc1;

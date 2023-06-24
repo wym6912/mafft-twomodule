@@ -138,21 +138,21 @@ void ErrorExit( char *message )
 
 void strncpy_caseC( char *str1, char *str2, int len )
 {
-	if( dorp == 'd' && upperCase > 0 ) 
+	if( dorp == 'd' && upperCase > 0 )
 	{
 		while( len-- )
 			*str1++ = toupper( *str2++ );
 	}
 	else strncpy( str1, str2, len );
 }
-	
+
 void seqUpper( int nseq, char **seq )
 {
 	int i, j, len;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		len = strlen( seq[i] );
-		for( j=0; j<len; j++ ) 
+		for( j=0; j<len; j++ )
 			seq[i][j] = toupper( seq[i][j] );
 	}
 }
@@ -160,10 +160,10 @@ void seqUpper( int nseq, char **seq )
 void seqLower( int nseq, char **seq )
 {
 	int i, j, len;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		len = strlen( seq[i] );
-		for( j=0; j<len; j++ ) 
+		for( j=0; j<len; j++ )
 			seq[i][j] = tolower( seq[i][j] );
 	}
 }
@@ -172,7 +172,7 @@ int getaline_fp_eof( char *s, int l, FILE *fp )  /* end of file -> return 1 */
 {
     int c, i = 0 ;
     int noteofflag = 0;
-    for( i=0; i<l && ( noteofflag = ( (c=getc(fp)) != EOF ) ) && c != '\n'; i++ ) 
+    for( i=0; i<l && ( noteofflag = ( (c=getc(fp)) != EOF ) ) && c != '\n'; i++ )
     	*s++ = c;
     *s = '\0' ;
      return( !noteofflag );
@@ -186,7 +186,7 @@ char    s[] ; int l ; FILE *fp ;
 
 		if( feof( fp ) ) return( 1 );
 
-		for( i=0; i<l && ( noteofflag = ( (c=getc(fp)) != EOF ) ) && c != '\n'; i++ ) 
+		for( i=0; i<l && ( noteofflag = ( (c=getc(fp)) != EOF ) ) && c != '\n'; i++ )
         { *s++ = c ; }
         *s = '\0' ;
 		if( c != '\n' && c != EOF ) while( getc(fp) != '\n' )
@@ -194,17 +194,17 @@ char    s[] ; int l ; FILE *fp ;
 		return( !noteofflag );
 }
 
-int myfgets(s, l, fp) 
+int myfgets(s, l, fp)
 char    s[] ; int l ; FILE *fp ;
 {
         int     c = 0, i = 0 ;
 
 		if( feof( fp ) ) return( 1 );
 
-		for( i=0; i<l && ( c=getc( fp ) ) != '\n'; i++ ) 
+		for( i=0; i<l && ( c=getc( fp ) ) != '\n'; i++ )
         	*s++ = c;
         *s = '\0' ;
-		if( c != '\n' ) 
+		if( c != '\n' )
 			while( getc(fp) != '\n' )
 				;
 		return( 0 );
@@ -276,7 +276,7 @@ static int charfilter( unsigned char *str )
 			exit( 1 );
 		}
 //		if( 0x20 < tmp && tmp < 0x7f )
-//		if( 0x0 <=tmp && tmp < 0x100 && 
+//		if( 0x0 <=tmp && tmp < 0x100 &&
 		if( tmp != 0x0a && tmp != 0x20 && tmp != 0x0d )
 //		if( tmp != '\n' && tmp != ' ' && tmp != '\t' ) // unprintable characters mo ok.
 		{
@@ -332,10 +332,10 @@ char *load1SeqWithoutName_realloc_casepreserve( FILE *fpp )
 	cbuf = val;
 
 	b = '\n';
-	while( ( c = getc( fpp ) ) != EOF &&           
+	while( ( c = getc( fpp ) ) != EOF &&
           !( ( c == '>' || c == EOF ) && b == '\n' ) )
 	{
-		*cbuf++ = (char)c;  /* Ĺ�����Ƥ⤷��ʤ� */
+		*cbuf++ = (char)c;  /* ���??????????? */
 		if( cbuf - val == size )
 		{
 			size += NLEN;
@@ -370,10 +370,10 @@ char *load1SeqWithoutName_realloc( FILE *fpp )
 	cbuf = val;
 
 	b = '\n';
-	while( ( c = getc( fpp ) ) != EOF &&           
+	while( ( c = getc( fpp ) ) != EOF &&
           !( ( c == '>' || c == EOF ) && b == '\n' ) )
 	{
-		*cbuf++ = (char)c;  /* Ĺ�����Ƥ⤷��ʤ� */
+		*cbuf++ = (char)c;  /* 長すぎてもしらない */
 		if( cbuf - val == size )
 		{
 			size += NLEN;
@@ -416,7 +416,7 @@ int load1SeqWithoutName_new( FILE *fpp, char *cbuf )
 	while( ( c = getc( fpp ) ) != EOF &&                    /* by T. Nishiyama */
           !( ( c == '>' || c == EOF ) && b == '\n' ) )
 	{
-		*cbuf++ = (char)c;  /* Ĺ�����Ƥ⤷��ʤ� */
+		*cbuf++ = (char)c;  /* 長すぎてもしらない */
 		b = c;
 	}
 	ungetc( c, fpp );
@@ -432,7 +432,7 @@ int load1SeqWithoutName_new( FILE *fpp, char *cbuf )
 
 void readDataforgaln( FILE *fp, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 #if 0
@@ -447,9 +447,9 @@ void readDataforgaln( FILE *fp, char **name, int *nlen, char **seq )
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
@@ -473,7 +473,7 @@ void readDataforgaln( FILE *fp, char **name, int *nlen, char **seq )
 
 void readData_varlen( FILE *fp, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 	rewind( fp );
@@ -481,15 +481,15 @@ void readData_varlen( FILE *fp, char **name, int *nlen, char **seq )
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
 		name[i][j-1] = 0;
 #else
-		myfgets( name[i]+1, BLEN-2, fp ); 
+		myfgets( name[i]+1, BLEN-2, fp );
 #endif
 #if 0
 		fprintf( stderr, "name[%d] = %s\n", i, name[i] );
@@ -509,7 +509,7 @@ void readData_varlen( FILE *fp, char **name, int *nlen, char **seq )
 
 void readData_pointer2( FILE *fp, int nseq, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 #if 0
@@ -524,15 +524,15 @@ void readData_pointer2( FILE *fp, int nseq, char **name, int *nlen, char **seq )
 
 	for( i=0; i<nseq; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
 		name[i][j-1] = 0;
 #else
-		myfgets( name[i]+1, BLEN-2, fp ); 
+		myfgets( name[i]+1, BLEN-2, fp );
 #endif
 #if 0
 		fprintf( stderr, "name[%d] = %s\n", i, name[i] );
@@ -570,7 +570,7 @@ void readData_pointer2( FILE *fp, int nseq, char **name, int *nlen, char **seq )
 
 void readData_pointer_casepreserve( FILE *fp, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 #if 0
@@ -585,15 +585,15 @@ void readData_pointer_casepreserve( FILE *fp, char **name, int *nlen, char **seq
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
 		name[i][j-1] = 0;
 #else
-		myfgets( name[i]+1, BLEN-2, fp ); 
+		myfgets( name[i]+1, BLEN-2, fp );
 #endif
 #if 0
 		fprintf( stderr, "name[%d] = %s\n", i, name[i] );
@@ -608,21 +608,21 @@ void readData_pointer_casepreserve( FILE *fp, char **name, int *nlen, char **seq
 
 int copydatafromgui( char **namegui, char **seqgui, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; 
+		name[i][0] = '=';
 		strncpy( name[i]+1, namegui[i], BLEN-2 );
 		name[i][BLEN-1] = 0;
 
 		strcpy( seq[i], seqgui[i] );
 		nlen[i] = strlen( seq[i] );
 	}
-	if( dorp == 'd' ) 
+	if( dorp == 'd' )
 		seqLower( njob, seq );
-	else if( dorp == 'p' ) 
+	else if( dorp == 'p' )
 		seqUpper( njob, seq );
 	else
 	{
@@ -655,7 +655,7 @@ int copydatafromgui( char **namegui, char **seqgui, char **name, int *nlen, char
 
 void readData_pointer( FILE *fp, char **name, int *nlen, char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 #if 0
@@ -670,15 +670,15 @@ void readData_pointer( FILE *fp, char **name, int *nlen, char **seq )
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
 		name[i][j-1] = 0;
 #else
-		myfgets( name[i]+1, BLEN-2, fp ); 
+		myfgets( name[i]+1, BLEN-2, fp );
 #endif
 #if 0
 		fprintf( stderr, "name[%d] = %s\n", i, name[i] );
@@ -715,7 +715,7 @@ void readData_pointer( FILE *fp, char **name, int *nlen, char **seq )
 
 void readData( FILE *fp, char name[][BLEN], int nlen[], char **seq )
 {
-	int i; 
+	int i;
 	static char *tmpseq = NULL;
 
 #if 0
@@ -730,15 +730,15 @@ void readData( FILE *fp, char name[][BLEN], int nlen[], char **seq )
 
 	for( i=0; i<njob; i++ )
 	{
-		name[i][0] = '='; getc( fp ); 
+		name[i][0] = '='; getc( fp );
 #if 0
-		fgets( name[i]+1, BLEN-2, fp ); 
+		fgets( name[i]+1, BLEN-2, fp );
 		j = strlen( name[i] );
 		if( name[i][j-1] != '\n' )
 			ErrorExit( "Too long name\n" );
 		name[i][j-1] = 0;
 #else
-		myfgets( name[i]+1, BLEN-2, fp ); 
+		myfgets( name[i]+1, BLEN-2, fp );
 #endif
 #if 0
 		fprintf( stderr, "name[%d] = %s\n", i, name[i] );
@@ -762,7 +762,7 @@ int countATGCandN( char *s, int *countN, int *total )
 	char c;
 	nN = nATGC = nChar = 0;
 
-	if( *s == 0 ) 
+	if( *s == 0 )
 	{
 		*total = 0;
 		return( 0 );
@@ -796,7 +796,7 @@ int countATGC( char *s, int *total )
 	char c;
 	nATGC = nChar = 0;
 
-	if( *s == 0 ) 
+	if( *s == 0 )
 	{
 		*total = 0;
 		return( 0 );
@@ -893,12 +893,12 @@ void getnumlen_casepreserve( FILE *fp, int *nlenminpt )
 //	fprintf( stderr, "##### atgcfreq = %f\n", atgcfreq );
 	if( dorp == NOTSPECIFIED )
 	{
-		if( atgcfreq > 0.75 ) 	
+		if( atgcfreq > 0.75 )
 		{
 			dorp = 'd';
 			upperCase = -1;
 		}
-		else                  
+		else
 		{
 			dorp = 'p';
 			upperCase = 0;
@@ -941,12 +941,12 @@ void getnumlen_nogap_countn( FILE *fp, int *nlenminpt, double *nfreq )
 //	fprintf( stderr, "##### atgcfreq = %f, *nfreq = %f\n", atgcfreq, *nfreq );
 	if( dorp == NOTSPECIFIED )
 	{
-		if( atgcfreq > 0.75 ) 	
+		if( atgcfreq > 0.75 )
 		{
 			dorp = 'd';
 			upperCase = -1;
 		}
-		else                  
+		else
 		{
 			dorp = 'p';
 			upperCase = 0;
@@ -988,12 +988,12 @@ void getnumlen_nogap( FILE *fp, int *nlenminpt )
 //	fprintf( stderr, "##### atgcfreq = %f\n", atgcfreq );
 	if( dorp == NOTSPECIFIED )
 	{
-		if( atgcfreq > 0.75 ) 	
+		if( atgcfreq > 0.75 )
 		{
 			dorp = 'd';
 			upperCase = -1;
 		}
-		else                  
+		else
 		{
 			dorp = 'p';
 			upperCase = 0;
@@ -1039,12 +1039,12 @@ void getnumlen_nogap_outallreg( FILE *fp, int *nlenminpt )
 //	fprintf( stderr, "##### atgcfreq = %f\n", atgcfreq );
 	if( dorp == NOTSPECIFIED )
 	{
-		if( atgcfreq > 0.75 ) 	
+		if( atgcfreq > 0.75 )
 		{
 			dorp = 'd';
 			upperCase = -1;
 		}
-		else                  
+		else
 		{
 			dorp = 'p';
 			upperCase = 0;
@@ -1067,7 +1067,7 @@ void getnumlen( FILE *fp )
 	setmode( fileno( stdout ), O_BINARY );
 #endif
 
-	
+
 	tmpname = AllocateCharVec( NLEN );
 	njob = countKUorWA( fp );
 	searchKUorWA( fp );
@@ -1091,12 +1091,12 @@ void getnumlen( FILE *fp )
 //	fprintf( stderr, "##### atgcfreq = %f\n", atgcfreq );
 	if( dorp == NOTSPECIFIED )
 	{
-		if( atgcfreq > 0.75 ) 	
+		if( atgcfreq > 0.75 )
 		{
 			dorp = 'd';
 			upperCase = -1;
 		}
-		else                  
+		else
 		{
 			dorp = 'p';
 			upperCase = 0;
@@ -1104,7 +1104,7 @@ void getnumlen( FILE *fp )
 	}
 	free( tmpname );
 }
-	
+
 /* only use in profile alignment */
 void getnumlen_nocommonnjob( FILE *fp, int *nn, int *nm )
 {
@@ -1116,7 +1116,7 @@ void getnumlen_nocommonnjob( FILE *fp, int *nn, int *nm )
 	setmode( fileno( fp ), O_BINARY );
 	setmode( fileno( stdout ), O_BINARY );
 #endif
-	
+
 	tmpname = AllocateCharVec( NLEN );
 	nj = countKUorWA( fp );
 	searchKUorWA( fp );
@@ -1265,7 +1265,7 @@ int writePre( int nseq, char **name, int nlen[M], char **aseq, int force )
 	int i, value;
 	if( !signalSM )
 	{
-		if( force ) 
+		if( force )
 		{
 			rewind( prep_g );
 			if( devide ) dvWrite( prep_g, nseq, name, nlen, aseq );
@@ -1284,9 +1284,9 @@ int writePre( int nseq, char **name, int nlen[M], char **aseq, int force )
 #endif
 		if( signalSM[SEMAPHORE]-- > 0 )
 		{
-#if 0 /* /tmp/pre �δط��ǤϤ����� */
+#if 0 /* /tmp/pre ?��?????????? */
 			if( ferror( prep_g ) ) prep_g = fopen( "pre", "w" );
-			if( !prep_g ) ErrorExit( "Cannot re-open pre." ); 
+			if( !prep_g ) ErrorExit( "Cannot re-open pre." );
 #endif
 			rewind( prep_g );
 			signalSM[STATUS] = IMA_KAITERU;
@@ -1325,7 +1325,7 @@ int writePre( int nseq, char **name, int nlen[M], char **aseq, int force )
 	if( force && !value ) ErrorExit( "xced ga pre wo hanasanai \n" );
 	return( value );
 #else
-	if( force ) 
+	if( force )
 	{
 		rewind( prep_g );
 		writeData_pointer( prep_g, nseq, name, nlen, aseq );
@@ -1393,7 +1393,7 @@ void WriteForFasta( FILE *fp, int locnjob, char **name, int nlen[M], char **aseq
     {
         nalen[i] = strlen( aseq[i] );
         fprintf( fp, ">%s\n", name[i] );
-        for( j=0; j<nalen[i]; j=j+CLEN ) 
+        for( j=0; j<nalen[i]; j=j+CLEN )
         {
             strncpy( b, aseq[i]+j, CLEN ); b[CLEN] = 0;
             fprintf( fp, "%s\n",b );
@@ -1404,10 +1404,10 @@ void WriteForFasta( FILE *fp, int locnjob, char **name, int nlen[M], char **aseq
 
 char *progName( char *str )
 {
-    char *value; 
+    char *value;
     if( ( value = strrchr( str, '/' ) ) != NULL )
         return( value+1 );
-    else    
+    else
         return( str );
 }
 
@@ -1452,7 +1452,7 @@ void phylipout_pointer( FILE *fp, int nseq, int maxlen, char **seq, char **name,
 	pos = 0;
 
 	fprintf( fp, " %d %d\n", nseq, maxlen );
-	
+
 	while( pos < maxlen )
 	{
 		for( j=0; j<nseq; j++ )
@@ -1484,19 +1484,19 @@ void clustalout_pointer( FILE *fp, int nseq, int maxlen, char **seq, char **name
 		fprintf( fp, "CLUSTAL format alignment by MAFFT (v%s)\n\n", VERSION );
 	else
 		fprintf( fp, "CLUSTAL format alignment by MAFFT %s (v%s)\n\n", comment, VERSION );
-	
+
 	while( pos < maxlen )
 	{
 		fprintf( fp, "\n" );
 		for( j=0; j<nseq; j++ )
 		{
 			fprintf( fp, "%-*.*s ", namelen, namelen, extractfirstword( name[order[j]]+1 ) );
-			fprintf( fp, "%.60s\n", seq[order[j]]+pos ); // Ĺ�����㤦�Ȥ��ᡣ
+			fprintf( fp, "%.60s\n", seq[order[j]]+pos ); // ���???????????
 		}
 		if( mark )
 		{
 			fprintf( fp, "%-*.*s ", namelen, namelen, "" );
-			fprintf( fp, "%.60s\n", mark + pos ); // Ĺ�����㤦�Ȥ��ᡣ
+			fprintf( fp, "%.60s\n", mark + pos ); // ���???????????
 		}
 		pos += 60;
 	}
@@ -1603,7 +1603,7 @@ double *loadaamtx( int *rescalept )
 
 	inorder = calloc( 1000, sizeof( char ) );
 	line = calloc( 1000, sizeof( char ) );
-	
+
 
 	while( !feof( mf ) )
 	{
@@ -1665,7 +1665,7 @@ double *loadaamtx( int *rescalept )
 		fgets( line, 999, mf );
 
 		sscanf( line, "%s", key );
-		
+
 		if( !strcmp( key, "norescale" ) )
 		{
 			reporterr( "no rescale\n" );
@@ -1681,7 +1681,7 @@ double *loadaamtx( int *rescalept )
 			{
 				while( !isdigit( *ptr1 ) && *ptr1 != '-' && *ptr1 != '.' )
 					ptr1++;
-	
+
 				raw[20][j] = atof( ptr1 );
 //				fprintf( stderr, "raw[20][]=%f, %c %d\n", raw[20][j], inorder[i], j );
 				ptr1 = strchr( ptr1, ' ' );
@@ -1741,7 +1741,7 @@ static int readasubalignment( char *s, int *t, int *preservegaps )
 		}
 		else
 		{
-			if( status == 's' ) 
+			if( status == 's' )
 			{
 				if( *pt == '\n' || *pt == '#' ) break;
 				status = 'n';
@@ -1777,7 +1777,7 @@ static int countspace( char *s )
 		}
 		else
 		{
-			if( status == 's' ) 
+			if( status == 's' )
 			{
 				if( *pt == '\n' || *pt == '#' ) break;
 				v++;
@@ -2187,19 +2187,19 @@ void treeout_bin( FILE *fp, int n, int ***topol, double **len, Treedep *dep, int
 	char c = '\n';
 	for( i=0; i<n-1; i++ )
 	{
-		if( fwrite( topol[i][0], sizeof( int ), 1, fp ) != 1 || 
+		if( fwrite( topol[i][0], sizeof( int ), 1, fp ) != 1 ||
 		    fwrite( topol[i][1], sizeof( int ), 1, fp ) != 1 )
 		{
 			reporterr( "write error in treeout_bin(), topol, i=%d\n", i );
 			exit( 1 );
 		}
-		if( fwrite( len[i]+0, sizeof( double ), 1, fp ) != 1 || 
+		if( fwrite( len[i]+0, sizeof( double ), 1, fp ) != 1 ||
 		    fwrite( len[i]+1, sizeof( double ), 1, fp ) != 1 )
 		{
 			reporterr( "write error in treeout_bin(), len, i=%d\n", i );
 			exit( 1 );
 		}
-		if( fwrite( &(dep[i].child0), sizeof( int ), 1, fp ) != 1 || 
+		if( fwrite( &(dep[i].child0), sizeof( int ), 1, fp ) != 1 ||
 		    fwrite( &(dep[i].child1), sizeof( int ), 1, fp ) != 1 ||
 		    fwrite( &(nfilesfornode[i]), sizeof( int ), 1, fp ) != 1 ||
 		    fwrite( &(dep[i].distfromtip), sizeof( double ), 1, fp ) != 1 )
@@ -2229,19 +2229,19 @@ void treein_bin( FILE *fp, int n, int ***topol, double **len, Treedep *dep, int 
 		topol[i][0][1] = -1;
 		topol[i][1][1] = -1;
 
-		if( fread( topol[i][0], sizeof( int ), 1, fp ) != 1 || 
+		if( fread( topol[i][0], sizeof( int ), 1, fp ) != 1 ||
 		    fread( topol[i][1], sizeof( int ), 1, fp ) != 1 )
 		{
 			reporterr( "read error in treein_bin(), topol, i=%d\n", i );
 			exit( 1 );
 		}
-		if( fread( len[i]+0, sizeof( double ), 1, fp ) != 1 || 
+		if( fread( len[i]+0, sizeof( double ), 1, fp ) != 1 ||
 		    fread( len[i]+1, sizeof( double ), 1, fp ) != 1 )
 		{
 			reporterr( "read error in treein_bin(), len, i=%d\n", i );
 			exit( 1 );
 		}
-		if( fread( &(dep[i].child0), sizeof( int ), 1, fp ) != 1 || 
+		if( fread( &(dep[i].child0), sizeof( int ), 1, fp ) != 1 ||
 		    fread( &(dep[i].child1), sizeof( int ), 1, fp ) != 1 ||
 		    fread( &(nfilesfornode[i]), sizeof( int ), 1, fp ) != 1 ||
 		    fread( &(dep[i].distfromtip), sizeof( double ), 1, fp ) != 1 )
@@ -2266,7 +2266,7 @@ void treein_bin( FILE *fp, int n, int ***topol, double **len, Treedep *dep, int 
 void uselhout( FILE *fp, int n, int *uselh )
 {
 
-	if( fwrite( uselh, sizeof( int ), n, fp ) != n ) 
+	if( fwrite( uselh, sizeof( int ), n, fp ) != n )
 	{
 		reporterr( "write error in uselhout()\n" );
 		exit( 1 );
@@ -2275,7 +2275,7 @@ void uselhout( FILE *fp, int n, int *uselh )
 
 int uselhin( FILE *fp, int n, int *uselh )
 {
-	if( fread( uselh, sizeof( int ), n, fp ) != n ) 
+	if( fread( uselh, sizeof( int ), n, fp ) != n )
 	{
 		reporterr( "read error in uselhout()\n" );
 		exit( 1 );
@@ -2350,7 +2350,7 @@ void commongappick( int nseq, char **seq )
 
 	mapfromnewtoold = calloc( len+1, sizeof( int ) );
 
-	for( i=0, count=0; i<=len; i++ ) 
+	for( i=0, count=0; i<=len; i++ )
 	{
 		for( j=0; j<nseq; j++ )
 			if( seq[j][i] != '-' ) break;
@@ -2377,7 +2377,7 @@ void commongappick( int nseq, char **seq )
 	mapfromoldtonew = calloc( len+1, sizeof( int ) );
 	for( i=0; i<=len; i++ ) mapfromoldtonew[i] = -1;
 
-	for( i=0, count=0; i<=len; i++ ) 
+	for( i=0, count=0; i<=len; i++ )
 	{
 		for( j=0; j<nseq; j++ )
 			if( seq[j][i] != '-' ) break;
@@ -2389,7 +2389,7 @@ void commongappick( int nseq, char **seq )
 	}
 	for( j=0; j<nseq; j++ )
 	{
-		for( i=0; i<=len; i++ ) 
+		for( i=0; i<=len; i++ )
 		{
 			if( (pos=mapfromoldtonew[i]) != -1 )
 				seq[j][pos] = seq[j][i];
@@ -2398,11 +2398,11 @@ void commongappick( int nseq, char **seq )
 	free( mapfromoldtonew );
 --------------------------
 
-	for( i=0, count=0; i<=len; i++ ) 
+	for( i=0, count=0; i<=len; i++ )
 	{
 	/*
 		allgap = 1;
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 			allgap *= ( seq[j][i] == '-' );
 		if( !allgap )
 	*/
@@ -2458,7 +2458,7 @@ void readexternalanchors( ExtAnch **extanch, int nseq, int *nogaplen )
 
 		((*extanch)+size)->i -= 1; // 1-origin -> 0-origin
 		((*extanch)+size)->j -= 1; // 1-origin -> 0-origin
-		((*extanch)+size)->starti -= 1; 
+		((*extanch)+size)->starti -= 1;
 		((*extanch)+size)->startj -= 1;
 		((*extanch)+size)->endi -= 1;
 		((*extanch)+size)->endj -= 1;

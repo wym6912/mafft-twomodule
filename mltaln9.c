@@ -52,7 +52,7 @@ int seqlen( char *seq )
 int intlen( int *num )
 {
 	int *numbk = num;
-	while( *num++ != -1 ) 
+	while( *num++ != -1 )
 		;
 	return( num-numbk-1 );
 }
@@ -61,12 +61,12 @@ char seqcheck( char **seq )
 {
 	int i, len;
 	char **seqbk = seq;
-	while( *seq )	
+	while( *seq )
 	{
 		len = strlen( *seq );
-		for( i=0; i<len; i++ ) 
+		for( i=0; i<len; i++ )
 		{
-			if( amino_n[(int)(*seq)[i]] == -1 ) 
+			if( amino_n[(int)(*seq)[i]] == -1 )
 			{
 
 				reporterr(       "========================================================================= \n" );
@@ -88,7 +88,7 @@ char seqcheck( char **seq )
 void intcat( int *s1, int *s2 )
 {
 	while( *s1 != -1 ) s1++;
-	while( *s2 != -1 ) 
+	while( *s2 != -1 )
 	{
 //		reporterr(       "copying %d\n", *s2 );
 		*s1++ = *s2++;
@@ -98,7 +98,7 @@ void intcat( int *s1, int *s2 )
 
 void intcpy( int *s1, int *s2 )
 {
-	while( *s2 != -1 ) 
+	while( *s2 != -1 )
 	{
 //		reporterr(       "copying %d\n", *s2 );
 		*s1++ = *s2++;
@@ -125,16 +125,16 @@ static int countmem( int *s )
 
 static int lastmem( int *s )
 {
-	while( *s++ != -1 ) 
+	while( *s++ != -1 )
 		;
 	return( *(s-2) );
 }
 
-	
+
 void scmx_calc( int icyc, char **aseq, double *effarr, double **scmx )
 {
 	int  i, j, lgth;
-	 
+
 	lgth = strlen( aseq[0] );
 	for( j=0; j<lgth; j++ )
 	{
@@ -204,22 +204,22 @@ void intergroup_score_consweight( char **seq1, char **seq2, double *eff1, double
 
 
 	*value = 0.0;
-	for( i=0; i<clus1; i++ ) 
+	for( i=0; i<clus1; i++ )
 	{
-		for( j=0; j<clus2; j++ ) 
+		for( j=0; j<clus2; j++ )
 		{
 			efficient = eff1[i] * eff2[j]; /* なぜか配列を使わないとおかしくなる, 多分バグ */
 			mseq1 = seq1[i];
 			mseq2 = seq2[j];
 			tmpscore = 0.0;
-			for( k=0; k<len; k++ ) 
+			for( k=0; k<len; k++ )
 			{
 				ms1 = (unsigned char)mseq1[k];
 				ms2 = (unsigned char)mseq2[k];
 				if( ms1 == '-' && ms2 == '-' ) continue;
 				tmpscore += (double)amino_dis_consweight_multi[ms1][ms2];
-	
-				if( ms1 == '-' ) 
+
+				if( ms1 == '-' )
 				{
 					tmpscore += (double)penalty;
 					tmpscore += (double)amino_dis_consweight_multi[ms1][ms2];
@@ -269,22 +269,22 @@ void intergroup_score_gapnomi( char **seq1, char **seq2, double *eff1, double *e
 
 
 	*value = 0.0;
-	for( i=0; i<clus1; i++ ) 
+	for( i=0; i<clus1; i++ )
 	{
-		for( j=0; j<clus2; j++ ) 
+		for( j=0; j<clus2; j++ )
 		{
 			efficient = eff1[i] * eff2[j]; /* なぜか配列を使わないとおかしくなる, 多分バグ */
 			mseq1 = seq1[i];
 			mseq2 = seq2[j];
 			tmpscore = 0.0;
-			for( k=0; k<len; k++ ) 
+			for( k=0; k<len; k++ )
 			{
 				ms1 = (int)mseq1[k];
 				ms2 = (int)mseq2[k];
 				if( ms1 == (int)'-' && ms2 == (int)'-' ) continue;
 //				tmpscore += (double)amino_dis[ms1][ms2];
-	
-				if( ms1 == (int)'-' ) 
+
+				if( ms1 == (int)'-' )
 				{
 					tmpscore += (double)penalty;
 //					tmpscore += (double)amino_dis[ms1][ms2];
@@ -340,9 +340,9 @@ void intergroup_score_multimtx( int **whichmtx, double ***scoringmatrices, char 
 
 //	reporterr(       "\n intergroup_score_multimtx ..." );
 	*value = 0.0;
-	for( i=0; i<clus1; i++ ) 
+	for( i=0; i<clus1; i++ )
 	{
-		for( j=0; j<clus2; j++ ) 
+		for( j=0; j<clus2; j++ )
 		{
 			efficient = eff1[i] * eff2[j]; /* なぜか配列を使わないとおかしくなる, 多分バグ */
 			c = whichmtx[i][j];
@@ -350,15 +350,15 @@ void intergroup_score_multimtx( int **whichmtx, double ***scoringmatrices, char 
 			mseq2 = seq2[j];
 			tmpscore = 0.0;
 			gaptmpscore = 0.0;
-			for( k=0; k<len; k++ ) 
+			for( k=0; k<len; k++ )
 			{
 				mn1 = amino_n[(unsigned char)(mseq1[k])];
 				mn2 = amino_n[(unsigned char)(mseq2[k])];
 				if( mn1 == gapnum && mn2 == gapnum ) continue;
 				tmpscore += (double)scoringmatrices[c][mn1][mn2];
 //				tmpscore += (double)scoringmtx[mn1][mn2];
-	
-				if( mn1 == gapnum ) 
+
+				if( mn1 == gapnum )
 				{
 					tmpscore += (double)penalty;
 					gaptmpscore += (double)penalty;
@@ -416,24 +416,24 @@ void intergroup_score( char **seq1, char **seq2, double *eff1, double *eff2, int
 //	totaleff2 = 0.0; for( i=0; i<clus2; i++ ) totaleff2 += eff2[i];
 
 	*value = 0.0;
-	for( i=0; i<clus1; i++ ) 
+	for( i=0; i<clus1; i++ )
 	{
-		for( j=0; j<clus2; j++ ) 
+		for( j=0; j<clus2; j++ )
 		{
 			efficient = eff1[i] * eff2[j]; /* なぜか配列を使わないとおかしくなる, 多分バグ */
 			mseq1 = seq1[i];
 			mseq2 = seq2[j];
 			tmpscore = 0.0;
 			gaptmpscore = 0.0;
-			for( k=0; k<len; k++ ) 
+			for( k=0; k<len; k++ )
 			{
 				ms1 = (unsigned char)mseq1[k];
 				ms2 = (unsigned char)mseq2[k];
 				if( ms1 == '-' && ms2 == '-' ) continue;
 //				tmpscore += (double)amino_dis[ms1][ms2];
 				tmpscore += (double)amino_dis_consweight_multi[ms1][ms2];
-	
-				if( ms1 == '-' ) 
+
+				if( ms1 == '-' )
 				{
 					tmpscore += (double)penalty;
 					gaptmpscore += (double)penalty;
@@ -489,9 +489,9 @@ double score_calc5( char **seq, int s, double **eff, int ex )  /* method 3 deha 
     score = 0.0;
     c = 0.0;
 
-	for( i=0; i<s; i++ ) 
+	for( i=0; i<s; i++ )
 	{
-		
+
 			if( i == ex ) continue;
             efficient = eff[i][ex];
             mseq1 = seq[i];
@@ -576,7 +576,7 @@ double score_calc5( char **seq, int s, double **eff, int ex )  /* method 3 deha 
 fprintf( trap_g, "score by fast = %f\n", (double)score );
 
 tmpscore = score = 0.0;
-	for( i=0; i<s; i++ ) 
+	for( i=0; i<s; i++ )
 	{
 		if( i == ex ) continue;
 		tmpscore = Cscore_m_1( seq, i, eff );
@@ -593,7 +593,7 @@ tmpscore = score = 0.0;
 }
 
 
-	
+
 double score_calc4( char **seq, int s, double **eff, int ex )  /* method 3 deha nai */
 {
     int i, j, k;
@@ -610,12 +610,12 @@ double score_calc4( char **seq, int s, double **eff, int ex )  /* method 3 deha 
 	printf( "in score_calc4\n" );
 	for( i=0; i<s; i++ )
 	{
-		for( j=0; j<s; j++ ) 
+		for( j=0; j<s; j++ )
 		{
-			printf( "% 5.3f", eff[i][j] ); 
+			printf( "% 5.3f", eff[i][j] );
 		}
 		printf( "\n" );
-		
+
 	}
 */
     for( i=0; i<s-1; i++ )
@@ -788,7 +788,7 @@ static void *generalkmerdistarrthread( void *arg ) // enablemultithread == 0 dem
 		{
 #ifdef enablemultithread
 			if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 			if( *posshared >= njob ) // block no toki >=
 			{
 #ifdef enablemultithread
@@ -806,11 +806,11 @@ static void *generalkmerdistarrthread( void *arg ) // enablemultithread == 0 dem
 			for( n=0; n<LARGEBLOCKSIZE&&posinjoblist<njob; n++ )
 			{
 				i = joblist[posinjoblist++];
-	
+
 //				if( i == m ) continue; // iranai
-		
+
 				result[i] = distcompact( nlen[m], nlen[i], ttable, pointt[i], tselfscore[m], tselfscore[i] );
-		
+
 			}
 		}
 }
@@ -836,7 +836,7 @@ static void *generalmsadistarrthread( void *arg ) // enablemultithread == 0 demo
 		{
 #ifdef enablemultithread
 			if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 			if( *posshared >= njob ) // block no toki >=
 			{
 #ifdef enablemultithread
@@ -853,11 +853,11 @@ static void *generalmsadistarrthread( void *arg ) // enablemultithread == 0 demo
 			for( n=0; n<LARGEBLOCKSIZE&&posinjoblist<njob; n++ )
 			{
 				i = joblist[posinjoblist++];
-	
+
 //				if( i == m ) continue; // iranai
-		
+
 				result[i] = distcompact_msa( seq[m], seq[i], skiptable[m], skiptable[i], tselfscore[m], tselfscore[i] );
-		
+
 			}
 		}
 }
@@ -974,10 +974,10 @@ static void kmerresetnearest( int nseq, Bchain *acpt, double **distfrompt, doubl
 				targ[i].result = result;
 				targ[i].posshared = &posshared;
 				targ[i].mutex = &mutex;
-	
+
 				pthread_create( handle+i, NULL, generalkmerdistarrthread, (void *)(targ+i) );
 			}
-				
+
 			for( j=0; j<nthread; j++ ) pthread_join( handle[j], NULL );
 			pthread_mutex_destroy( &mutex );
 			free( handle );
@@ -998,7 +998,7 @@ static void kmerresetnearest( int nseq, Bchain *acpt, double **distfrompt, doubl
 				targ[0].joblist = joblist;
 				targ[0].result = result;
 				targ[0].posshared = &posshared;
-	
+
 				generalkmerdistarrthread( targ );
 			}
 		}
@@ -1014,7 +1014,7 @@ static void kmerresetnearest( int nseq, Bchain *acpt, double **distfrompt, doubl
 				nearest = j;
 			}
 		}
-	
+
 		for( acptj=acpt; (acptj&&acptj->pos!=pos); acptj=acptj->next ) // setnearest ni awaseru
 		{
 			j = acptj->pos;
@@ -1068,7 +1068,7 @@ static void kmerresetnearest( int nseq, Bchain *acpt, double **distfrompt, doubl
 //			tmpdouble=distcompact_msa( seq[pos], seq[j], skiptable[pos], skiptable[j], tselfscore[pos], tselfscore[j] );
 		else
 			tmpdouble=distcompact( nlen[pos], nlen[j], singlettable1, pointt[j], tselfscore[pos], tselfscore[j] );
-				
+
 
 		if( tmpdouble < mindisfrom )
 		{
@@ -1089,7 +1089,7 @@ static void kmerresetnearest( int nseq, Bchain *acpt, double **distfrompt, doubl
 //			tmpdouble=distcompact_msa( seq[pos], seq[j], skiptable[pos], skiptable[j], tselfscore[pos], tselfscore[j] );
 		else
 			tmpdouble=distcompact( nlen[pos], nlen[j], singlettable1, pointt[j], tselfscore[pos], tselfscore[j] );
-				
+
 
 
 		if( tmpdouble < mindisfrom )
@@ -1215,7 +1215,7 @@ static void msaresetnearest( int nseq, Bchain *acpt, double **distfrompt, double
 				targ[i].result = result;
 				targ[i].posshared = &posshared;
 				targ[i].mutex = &mutex;
-	
+
 				pthread_create( handle+i, NULL, generalmsadistarrthread, (void *)(targ+i) );
 			}
 			for( j=0; j<nthread; j++ ) pthread_join( handle[j], NULL );
@@ -1236,7 +1236,7 @@ static void msaresetnearest( int nseq, Bchain *acpt, double **distfrompt, double
 				targ[0].joblist = joblist;
 				targ[0].result = result;
 				targ[0].posshared = &posshared;
-	
+
 				generalmsadistarrthread( targ );
 			}
 		}
@@ -1252,7 +1252,7 @@ static void msaresetnearest( int nseq, Bchain *acpt, double **distfrompt, double
 				nearest = j;
 			}
 		}
-	
+
 		for( acptj=acpt; (acptj&&acptj->pos!=pos); acptj=acptj->next ) // setnearest ni awaseru
 		{
 			j = acptj->pos;
@@ -1307,7 +1307,7 @@ static void msaresetnearest( int nseq, Bchain *acpt, double **distfrompt, double
 			tmpdouble=distcompact_msa( seq[pos], seq[j], skiptable[pos], skiptable[j], tselfscore[pos], tselfscore[j] );
 //		else
 //			tmpdouble=distcompact( nlen[pos], nlen[j], singlettable1, pointt[j], tselfscore[pos], tselfscore[j] );
-				
+
 
 		if( tmpdouble < mindisfrom )
 		{
@@ -1328,7 +1328,7 @@ static void msaresetnearest( int nseq, Bchain *acpt, double **distfrompt, double
 			tmpdouble=distcompact_msa( seq[pos], seq[j], skiptable[pos], skiptable[j], tselfscore[pos], tselfscore[j] );
 //		else
 //			tmpdouble=distcompact( nlen[pos], nlen[j], singlettable1, pointt[j], tselfscore[pos], tselfscore[j] );
-				
+
 
 
 		if( tmpdouble < mindisfrom )
@@ -1349,7 +1349,7 @@ static int getdensest( int *m, double *d )
 	int i;
 	double dmax = -100.0;
 	int pmax = -1;
-	for( i=0; m[i]>-1; i++ ) 
+	for( i=0; m[i]>-1; i++ )
 	{
 		if( d[m[i]] > dmax )
 		{
@@ -1528,7 +1528,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 	int nmemim, nmemjm;
 	char **tree;
 	char *treetmp;
-	char *nametmp, *nameptr, *tmpptr; 
+	char *nametmp, *nameptr, *tmpptr;
 	char namec;
 	FILE *fp;
 	int node[2];
@@ -1559,7 +1559,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 	for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -1597,7 +1597,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 	ac[nseq-1].next = NULL;
 
 
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -1609,7 +1609,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 		if( k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 #if 0
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -1620,7 +1620,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -1728,7 +1728,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 			reporterr( "Re-computing the length of branch %d..\n", k );
 			clusterdist = 0.0;
 			mpair = 0;
-			for( i=0; (mi=topol[k][0][i])>-1; i++ ) for( j=0; (mj=topol[k][1][j])>-1; j++ ) 
+			for( i=0; (mi=topol[k][0][i])>-1; i++ ) for( j=0; (mj=topol[k][1][j])>-1; j++ )
 			{
 				minijm = MIN(mi,mj);
 				maxijm = MAX(mi,mj);
@@ -1739,7 +1739,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 			reporterr( "clusterdist = %f\n", clusterdist );
 			if( len[k][0] == -1 ) len[k][0] = clusterdist/2.0 - height[im];
 			if( len[k][1] == -1 ) len[k][1] = clusterdist/2.0 - height[im];
-	
+
 			fprintf( stderr, "len0 = %f\n", len[k][0] );
 			fprintf( stderr, "len1 = %f\n\n", len[k][1] );
 		}
@@ -1779,8 +1779,8 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 		strcpy( tree[im], treetmp );
 
 //		reporterr(       "im,jm=%d,%d\n", im, jm );
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -1790,7 +1790,7 @@ void loadtop( int nseq, double **mtx, int ***topol, double **len, char **name, i
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 //				reporterr(       "calling setnearest\n" );
 //				setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i );
@@ -1937,7 +1937,7 @@ int *topolorderz( int *order, int ***topol, Treedep *dep, int pos, int nchild )
 #endif
 
 	int child;
-	
+
 	if( nchild == 0 || nchild == 2 )
 	{
 		if( (child=(dep)[pos].child0) == -1 )
@@ -1991,7 +1991,7 @@ static void topolorder_mudaari( int nseq, int *n1, int *n2, int *order1, int *or
    	{
 		c1 = dep[i].child0;
 		c2 = dep[i].child1;
-		if( c1 == -1 ) 
+		if( c1 == -1 )
 		{
 			localmem[0] = calloc( sizeof( int ), 2 );
 			localmem[0][0] = topol[i][0][0];
@@ -2004,7 +2004,7 @@ static void topolorder_mudaari( int nseq, int *n1, int *n2, int *order1, int *or
 			s1 = intlen( localmem[0] );
 		}
 
-		if( c2 == -1 ) 
+		if( c2 == -1 )
 		{
 			localmem[1] = calloc( sizeof( int ), 2 );
 			localmem[1][0] = topol[i][1][0];
@@ -2040,9 +2040,9 @@ static void topolorder_mudaari( int nseq, int *n1, int *n2, int *order1, int *or
 //		reporterr( "freeing memhist[%d]\n", dep[i].child1 );
 	}
 
-	for( i=0; i<=pos; i++ ) 
+	for( i=0; i<=pos; i++ )
 	{
-		if( memhist[i] ) free( memhist[i] ); 
+		if( memhist[i] ) free( memhist[i] );
 		memhist[i] = NULL;
 	}
 	free( memhist );
@@ -2061,7 +2061,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 	char *instanttree;
 	int posinit;
 //	char *treetmp, *tt;
-	char *nametmp, *nameptr, *tmpptr; 
+	char *nametmp, *nameptr, *tmpptr;
 	char namec;
 	int *order;
 	int im, jm, mm;
@@ -2075,9 +2075,9 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		treelen = nseq;
 		for( i=0; i<nseq; i++ )
 		{
-	
+
 			for( j=0; j<999; j++ ) nametmp[j] = 0;
-			for( j=0; j<999; j++ ) 
+			for( j=0; j<999; j++ )
 			{
 				namec = name[i][j];
 				if( namec == 0 )
@@ -2093,9 +2093,9 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 				nameptr = strstr( nametmp, "_numo_e" ) + 8;
 			else
 				nameptr = nametmp + 1;
-	
+
 			if( (tmpptr=strstr( nameptr, "_oe_" )) ) nameptr = tmpptr + 4; // = -> _ no tame
-	
+
 			tree[i] = calloc( strlen( nametmp )+100, sizeof( char ) ); // suuji no bun de +100
 			if( tree[i] == NULL )
 			{
@@ -2138,7 +2138,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		topol[0][1][0] = jm;
 		topol[0][1][1] = -1;
 		mm = im;
-	}	
+	}
 	else
 	{
 		topol[0][0][0] = jm;
@@ -2178,17 +2178,17 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 			topol[i][1] = (int *)realloc( topol[i][1], ( 2 ) * sizeof( int ) );
 			topol[i][1][0] = jm;
 			topol[i][1][1] = -1;
-	
+
 //			reporterr( "step %d\n", i );
 //			for( j=0; topol[i][0][j]!=-1; j++ ) reporterr( "%5d ", topol[i][0][j] );
 //			reporterr( "\n", i );
 //			for( j=0; topol[i][1][j]!=-1; j++ ) reporterr( "%5d ", topol[i][1][j] );
 //			reporterr( "\n\n", i );
-//			
+//
 			len[i][0] = l;
 			len[i][1] = ll;
-	
-			if( dep ) 
+
+			if( dep )
 			{
 				dep[i].child0 = i-1;
 				dep[i].child1 = -1;
@@ -2212,18 +2212,18 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 			topol[i][0][1] = -1;
 
 			mm = jm;
-	
+
 //			reporterr( "step %d\n", i );
 //			for( j=0; topol[i][0][j]!=-1; j++ ) reporterr( "%5d ", topol[i][0][j] );
 //			reporterr( "\n", i );
 //			for( j=0; topol[i][1][j]!=-1; j++ ) reporterr( "%5d ", topol[i][1][j] );
 //			reporterr( "\n\n", i );
-//			
-	
+//
+
 			len[i][1] = l;
 			len[i][0] = ll;
-	
-			if( dep ) 
+
+			if( dep )
 			{
 				dep[i].child1 = i-1;
 				dep[i].child0 = -1;
@@ -2231,7 +2231,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 			}
 		}
 
-		if( treeout ) 
+		if( treeout )
 		{
 			posinit += sprintf( instanttree+posinit, "%s:%7.5f):%7.5f,", tree[im], ll-l, l );
 //			reporterr( "instanttree (in loop) = %s\n", instanttree );
@@ -2266,7 +2266,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		}
 		ll += l;
 	}
-	if( treeout ) 
+	if( treeout )
 	{
 		posinit += sprintf( instanttree+posinit, "%s:%7.5f)", tree[jm], ll-l );
 		fp = fopen( "infile.tree", "w" );
@@ -2303,7 +2303,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 	char *instanttree;
 	int posinit;
 //	char *treetmp, *tt;
-	char *nametmp, *nameptr, *tmpptr; 
+	char *nametmp, *nameptr, *tmpptr;
 	char namec;
 	int *order;
 	int im, jm;
@@ -2317,9 +2317,9 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		treelen = nseq;
 		for( i=0; i<nseq; i++ )
 		{
-	
+
 			for( j=0; j<999; j++ ) nametmp[j] = 0;
-			for( j=0; j<999; j++ ) 
+			for( j=0; j<999; j++ )
 			{
 				namec = name[i][j];
 				if( namec == 0 )
@@ -2335,9 +2335,9 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 				nameptr = strstr( nametmp, "_numo_e" ) + 8;
 			else
 				nameptr = nametmp + 1;
-	
+
 			if( (tmpptr=strstr( nameptr, "_oe_" )) ) nameptr = tmpptr + 4; // = -> _ no tame
-	
+
 			tree[i] = calloc( strlen( nametmp )+100, sizeof( char ) ); // suuji no bun de +100
 			if( tree[i] == NULL )
 			{
@@ -2377,7 +2377,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		topol[i][0] = (int *)realloc( topol[i][0], ( i + 2 ) * sizeof( int ) );
 		topol[i][1] = (int *)realloc( topol[i][1], ( 2 ) * sizeof( int ) );
 
-		for( j=0; j<i; j++ ) 
+		for( j=0; j<i; j++ )
 			topol[i][0][j] = order[j];
 		topol[i][0][i] = im;
 		topol[i][0][i+1] = -1;
@@ -2389,14 +2389,14 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 		len[i][1] = ll;
 		ll += l;
 
-		if( dep ) 
+		if( dep )
 		{
 			dep[i].child0 = i-1;
 			dep[i].child1 = -1;
 			dep[i].distfromtip = ll;
 		}
 
-		if( treeout ) 
+		if( treeout )
 		{
 			if( i == 0 )
 			{
@@ -2443,7 +2443,7 @@ void createchain( int nseq, int ***topol, double **len, char **name, int *nlen, 
 #endif
 		}
 	}
-	if( treeout ) 
+	if( treeout )
 	{
 		fp = fopen( "infile.tree", "w" );
 //		fprintf( fp, "%s;\n", treetmp );
@@ -2501,7 +2501,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 	int nmemim, nmemjm;
 	char **tree;
 	char *treetmp;
-	char *nametmp, *nameptr, *tmpptr; 
+	char *nametmp, *nameptr, *tmpptr;
 	char namec;
 	FILE *fp;
 	int node[2];
@@ -2536,7 +2536,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 		for( i=0; i<nseq; i++ )
 		{
 			for( j=0; j<999; j++ ) nametmp[j] = 0;
-			for( j=0; j<999; j++ ) 
+			for( j=0; j<999; j++ )
 			{
 				namec = name[i][j];
 				if( namec == 0 )
@@ -2552,9 +2552,9 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 				nameptr = strstr( nametmp, "_numo_e" ) + 8;
 			else
 				nameptr = nametmp + 1;
-	
+
 			if( (tmpptr=strstr( nameptr, "_oe_" )) ) nameptr = tmpptr + 4; // = -> _ no tame
-	
+
 			tree[i] = calloc( strlen( nametmp )+100, sizeof( char ) ); // suuji no bun de +100
 			if( tree[i] == NULL )
 			{
@@ -2575,7 +2575,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 	ac[nseq-1].next = NULL;
 
 
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -2587,7 +2587,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 		if( k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 #if 0
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -2598,7 +2598,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -2765,8 +2765,8 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 		}
 
 //		reporterr(       "im,jm=%d,%d\n", im, jm );
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -2776,7 +2776,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 //				reporterr(       "calling setnearest\n" );
 //				setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i );
@@ -2795,7 +2795,7 @@ void loadtree( int nseq, int ***topol, double **len, char **name, int *nlen, Tre
         fprintf( stderr, "\n" );
 #endif
 
-		if( dep ) 
+		if( dep )
 		{
 			height[im] += len[k][0]; // for ig tree, 2015/Dec/25
 			dep[k].distfromtip = height[im]; // for ig tree, 2015/Dec/25
@@ -2931,28 +2931,28 @@ static double sueff1, sueff05;
 
 static double cluster_mix_double( double d1, double d2 )
 {
-	return( MIN( d1, d2 ) * sueff1 + ( d1 + d2 ) * sueff05 ); 
+	return( MIN( d1, d2 ) * sueff1 + ( d1 + d2 ) * sueff05 );
 }
 static double cluster_average_double( double d1, double d2 )
 {
-	return( ( d1 + d2 ) * 0.5 ); 
+	return( ( d1 + d2 ) * 0.5 );
 }
 static double cluster_minimum_double( double d1, double d2 )
 {
-	return( MIN( d1, d2 ) ); 
+	return( MIN( d1, d2 ) );
 }
 #if 0
 static double cluster_mix_double( double d1, double d2 )
 {
-	return( MIN( d1, d2 ) * sueff1_double + ( d1 + d2 ) * sueff05_double ); 
+	return( MIN( d1, d2 ) * sueff1_double + ( d1 + d2 ) * sueff05_double );
 }
 static double cluster_average_double( double d1, double d2 )
 {
-	return( ( d1 + d2 ) * 0.5 ); 
+	return( ( d1 + d2 ) * 0.5 );
 }
 static double cluster_minimum_double( double d1, double d2 )
 {
-	return( MIN( d1, d2 ) ); 
+	return( MIN( d1, d2 ) );
 }
 #endif
 
@@ -2979,7 +2979,7 @@ static void increaseintergroupdistanceshalfmtx( double **eff, int ngroup, int **
 		others[k] = -1;
 
 		maxdist = 0.0;
-		for( m=1; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=groups[i][k])>-1&&k<m; k++ ) 
+		for( m=1; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=groups[i][k])>-1&&k<m; k++ )
 		{
 //			reporterr( "m=%d, k=%d, s2=%d, s1=%d\n", m, k, s2, s1 );
 
@@ -2996,7 +2996,7 @@ static void increaseintergroupdistanceshalfmtx( double **eff, int ngroup, int **
 		}
 //		reporterr( "maxdist = %f\n", maxdist );
 
-		for( m=0; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=others[k])>-1; k++ ) 
+		for( m=0; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=others[k])>-1; k++ )
 		{
 			if( s2 > s1 )
 			{
@@ -3042,7 +3042,7 @@ static void increaseintergroupdistancesfullmtx( double **eff, int ngroup, int **
 		others[k] = -1;
 
 		maxdist = 0.0;
-		for( m=1; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=groups[i][k])>-1&&k<m; k++ ) 
+		for( m=1; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=groups[i][k])>-1&&k<m; k++ )
 		{
 			if( s2 > s1 )
 			{
@@ -3058,7 +3058,7 @@ static void increaseintergroupdistancesfullmtx( double **eff, int ngroup, int **
 
 //		reporterr( "maxdist = %f\n", maxdist );
 
-		for( m=0; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=others[k])>-1; k++ ) 
+		for( m=0; (s2=groups[i][m])>-1; m++ ) for( k=0; (s1=others[k])>-1; k++ )
 		{
 			if( s2 > s1 )
 			{
@@ -3154,11 +3154,11 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 		warned = AllocateIntVec( ngroup );
 	}
 
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -3196,7 +3196,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 	for( i=0; i<nseq; i++ ) setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -3219,7 +3219,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 			{
 				firsttime = 0;
 				minscore = 999.9;
-				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 				{
 					i = acpti->pos;
 //					reporterr(       "k=%d i=%d\n", k, i );
@@ -3230,7 +3230,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 					}
 				}
 				jm = nearest[im];
-				if( jm < im ) 
+				if( jm < im )
 				{
 					j=jm; jm=im; im=j;
 				}
@@ -3238,7 +3238,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 			else
 			{
 				minscore = 999.9;
-				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 				{
 					i = acpti->pos;
 //					reporterr(       "k=%d i=%d\n", k, i );
@@ -3265,7 +3265,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 
 
 			allinconsistent = 1;
-			for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+			for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 			{
 				for( acptj=acpti->next; acptj!=NULL; acptj=acptj->next )
 				{
@@ -3297,7 +3297,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 				for( intpt2=topol[prevnode][1]; *intpt2!=-1; )
 					*intpt++ = *intpt2++;
 			}
-			
+
 			prevnode = hist[jm];
 			if( prevnode == -1 )
 			{
@@ -3333,7 +3333,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 						}
 						inconsistent[im][jm] = 1;
 
-						if( maxinconsistentpairs < ninconsistentpairs+1 ) 
+						if( maxinconsistentpairs < ninconsistentpairs+1 )
 						{
 							inconsistentpairlist = realloc( inconsistentpairlist, (ninconsistentpairs+1)*sizeof( int * ) );
 							for( j=maxinconsistentpairs; j<ninconsistentpairs+1; j++ )
@@ -3468,7 +3468,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 				eff1 = eff[minijm][maxijm-minijm];
 #if 0
                 		tmpdouble = eff[miniim][maxiim-miniim] =
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
                 tmpdouble = eff[miniim][maxiim-miniim] =
 				(clusterfuncpt[0])( eff0, eff1 );
@@ -3510,8 +3510,8 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 		}
 		strcpy( tree[im], treetmp );
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -3524,7 +3524,7 @@ void fixed_supg_double_realloc_nobk_halfmtx_treeout_constrained( int nseq, doubl
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -3633,7 +3633,7 @@ static void *msaresetnearestthread( void *arg )
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *acpt == NULL )
 		{
 #ifdef enablemultithread
@@ -3649,7 +3649,7 @@ static void *msaresetnearestthread( void *arg )
 		if( para ) pthread_mutex_unlock( targ->mutex );
 #endif
 		i = acptbk->pos;
-		if( nearest[i] == im ) 
+		if( nearest[i] == im )
 		{
 			if( partmtx[im][i] > mindist[i] )
 			{
@@ -3689,7 +3689,7 @@ static void *kmerresetnearestthread( void *arg )
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *acpt == NULL )
 		{
 #ifdef enablemultithread
@@ -3705,7 +3705,7 @@ static void *kmerresetnearestthread( void *arg )
 		if( para ) pthread_mutex_unlock( targ->mutex );
 #endif
 		i = acptbk->pos;
-		if( nearest[i] == im ) 
+		if( nearest[i] == im )
 		{
 			if( partmtx[im][i] > mindist[i] )
 			{
@@ -3780,7 +3780,7 @@ static void *verycompactkmerdistarrthreadjoblist( void *arg ) // enablemultithre
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *posshared >= njob ) // block no toki >=
 		{
 #ifdef enablemultithread
@@ -3801,21 +3801,21 @@ static void *verycompactkmerdistarrthreadjoblist( void *arg ) // enablemultithre
 
 			if( i == im ) continue;
 			if( i == jm ) continue;
-	
+
 //			if( partmtx[im] )
 //				tmpdist1 = partmtx[im][i];
 //			else if( partmtx[i] )
 //				tmpdist1 = partmtx[i][im];
 //			else
 				tmpdist1 = distcompact( nlen[im], nlen[i], table1, pointt[i], tselfscore[im], tselfscore[i] );
-					
+
 //			if( partmtx[jm] )
 //				tmpdist2 = partmtx[jm][i];
 //			else if( partmtx[i] )
 //				tmpdist2 = partmtx[i][jm];
 //			else
 				tmpdist2 = distcompact( nlen[jm], nlen[i], table2, pointt[i], tselfscore[jm], tselfscore[i] );
-	
+
 //			if( seq )
 //			{
 //				tmpdist1 = distcompact_msa( seq[im], seq[i], skiptable[im], skiptable[i], tselfscore[im], tselfscore[i] );
@@ -3828,21 +3828,21 @@ static void *verycompactkmerdistarrthreadjoblist( void *arg ) // enablemultithre
 //			}
 			tmpdouble = cluster_mix_double( tmpdist1, tmpdist2 );
 			newarr[i] = tmpdouble;
-	
+
 //			if( partmtx[i] ) partmtx[i][im] = partmtx[i][jm] = newarr[i];
-	
+
 			if( tmpdouble < mindist[i]  )
 			{
 				mindist[i] = tmpdouble;
 				nearest[i] = im;
 			}
-	
+
 //			if( tmpdouble < mindist[im]  ) // koko deha muri
 //			{
 //				mindist[im] = tmpdouble;
 //				nearest[im] = i;
 //			}
-	
+
 			if( nearest[i] == jm )
 			{
 				nearest[i] = im;
@@ -3882,7 +3882,7 @@ static void *kmerdistarrthreadjoblist( void *arg ) // enablemultithread == 0 dem
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *posshared >= njob ) // block no toki >=
 		{
 #ifdef enablemultithread
@@ -3903,21 +3903,21 @@ static void *kmerdistarrthreadjoblist( void *arg ) // enablemultithread == 0 dem
 
 			if( i == im ) continue;
 			if( i == jm ) continue;
-	
+
 			if( partmtx[im] )
 				tmpdist1 = partmtx[im][i];
 			else if( partmtx[i] )
 				tmpdist1 = partmtx[i][im];
 			else
 				tmpdist1 = distcompact( nlen[im], nlen[i], table1, pointt[i], tselfscore[im], tselfscore[i] );
-					
+
 			if( partmtx[jm] )
 				tmpdist2 = partmtx[jm][i];
 			else if( partmtx[i] )
 				tmpdist2 = partmtx[i][jm];
 			else
 				tmpdist2 = distcompact( nlen[jm], nlen[i], table2, pointt[i], tselfscore[jm], tselfscore[i] );
-	
+
 //			if( seq )
 //			{
 //				tmpdist1 = distcompact_msa( seq[im], seq[i], skiptable[im], skiptable[i], tselfscore[im], tselfscore[i] );
@@ -3930,21 +3930,21 @@ static void *kmerdistarrthreadjoblist( void *arg ) // enablemultithread == 0 dem
 //			}
 			tmpdouble = cluster_mix_double( tmpdist1, tmpdist2 );
 			newarr[i] = tmpdouble;
-	
+
 			if( partmtx[i] ) partmtx[i][im] = partmtx[i][jm] = newarr[i];
-	
+
 			if( tmpdouble < mindist[i]  )
 			{
 				mindist[i] = tmpdouble;
 				nearest[i] = im;
 			}
-	
+
 //			if( tmpdouble < mindist[im]  ) // koko deha muri
 //			{
 //				mindist[im] = tmpdouble;
 //				nearest[im] = i;
 //			}
-	
+
 			if( nearest[i] == jm )
 			{
 				nearest[i] = im;
@@ -3983,7 +3983,7 @@ static void *verycompactmsadistarrthreadjoblist( void *arg ) // enablemultithrea
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *posshared >= njob ) // block no toki >=
 		{
 #ifdef enablemultithread
@@ -4011,31 +4011,31 @@ static void *verycompactmsadistarrthreadjoblist( void *arg ) // enablemultithrea
 //				tmpdist1 = partmtx[i][im];
 //			else
 				tmpdist1 = distcompact_msa( seq[im], seq[i], skiptable[im], skiptable[i], tselfscore[im], tselfscore[i] );
-					
+
 //			if( partmtx[jm] )
 //				tmpdist2 = partmtx[jm][i];
 //			else if( partmtx[i] )
 //				tmpdist2 = partmtx[i][jm];
 //			else
 				tmpdist2 = distcompact_msa( seq[jm], seq[i], skiptable[jm], skiptable[i], tselfscore[jm], tselfscore[i] );
-	
+
 			tmpdouble = cluster_mix_double( tmpdist1, tmpdist2 );
 			newarr[i] = tmpdouble;
-	
+
 //			if( partmtx[i] ) partmtx[i][im] = partmtx[i][jm] = newarr[i];
-	
+
 			if( tmpdouble < mindist[i]  )
 			{
 				mindist[i] = tmpdouble;
 				nearest[i] = im;
 			}
-	
+
 //			if( tmpdouble < mindist[im]  ) // koko deha muri
 //			{
 //				mindist[im] = tmpdouble;
 //				nearest[im] = i;
 //			}
-	
+
 			if( nearest[i] == jm )
 			{
 				nearest[i] = im;
@@ -4074,7 +4074,7 @@ static void *msadistarrthreadjoblist( void *arg ) // enablemultithread == 0 demo
 	{
 #ifdef enablemultithread
 		if( para ) pthread_mutex_lock( targ->mutex );
-#endif 
+#endif
 		if( *posshared >= njob ) // block no toki >=
 		{
 #ifdef enablemultithread
@@ -4102,31 +4102,31 @@ static void *msadistarrthreadjoblist( void *arg ) // enablemultithread == 0 demo
 				tmpdist1 = partmtx[i][im];
 			else
 				tmpdist1 = distcompact_msa( seq[im], seq[i], skiptable[im], skiptable[i], tselfscore[im], tselfscore[i] );
-					
+
 			if( partmtx[jm] )
 				tmpdist2 = partmtx[jm][i];
 			else if( partmtx[i] )
 				tmpdist2 = partmtx[i][jm];
 			else
 				tmpdist2 = distcompact_msa( seq[jm], seq[i], skiptable[jm], skiptable[i], tselfscore[jm], tselfscore[i] );
-	
+
 			tmpdouble = cluster_mix_double( tmpdist1, tmpdist2 );
 			newarr[i] = tmpdouble;
-	
+
 			if( partmtx[i] ) partmtx[i][im] = partmtx[i][jm] = newarr[i];
-	
+
 			if( tmpdouble < mindist[i]  )
 			{
 				mindist[i] = tmpdouble;
 				nearest[i] = im;
 			}
-	
+
 //			if( tmpdouble < mindist[im]  ) // koko deha muri
 //			{
 //				mindist[im] = tmpdouble;
 //				nearest[im] = i;
 //			}
-	
+
 			if( nearest[i] == jm )
 			{
 				nearest[i] = im;
@@ -4264,7 +4264,7 @@ static void reformattree( Treept *root, Treept *ori, int n, int ***topol, double
 	    for( i=0; i<n; i++ )
 		{
 			for( j=0; j<999; j++ ) nametmp[j] = 0;
-			for( j=0; j<999; j++ ) 
+			for( j=0; j<999; j++ )
 			{
 				namec = name[i][j];
 				if( namec == 0 )
@@ -4280,9 +4280,9 @@ static void reformattree( Treept *root, Treept *ori, int n, int ***topol, double
 				nameptr = strstr( nametmp, "_numo_e" ) + 8;
 			else
 				nameptr = nametmp + 1;
-	
+
 			if( (tmpptr=strstr( nameptr, "_oe_" )) ) nameptr = tmpptr + 4; // = -> _ no tame
-	
+
 			tree[i] = calloc( strlen( nametmp )+100, sizeof( char ) ); // suuji no bun de +100
 			if( tree[i] == NULL )
 			{
@@ -4377,7 +4377,7 @@ static void *calcnearestthread( void *arg )
 	//else if( alg == 'L' ) distfunc = distdpL_noalign;
 	//else if( alg == 'N' ) distfunc = distdpN_noalign;
 
-	while( 1 ) 
+	while( 1 )
 	{
 #ifdef enablemultithread
 		pthread_mutex_lock( mutex );
@@ -4411,7 +4411,7 @@ static void *calcnearestthread( void *arg )
 		pthread_mutex_unlock( mutex );
 #endif
 
-		if( (nlim-pos) % 100 == 0 ) 
+		if( (nlim-pos) % 100 == 0 )
 		{
 			//progress = ( (unsigned long long)pos * (unsigned long long)nlim - (unsigned long long)pos*((unsigned long long)pos-1.0)*0.5 ) / ( (unsigned long long)nlim * ((unsigned long long)nlim-1.0) *0.5 ) * 100;
 //			progress = ( (double)pos * nlim - pos*(pos-1.0)*0.5 ) / ( nlim * (nlim-1.0) * 0.5 ) * 100;
@@ -4431,7 +4431,7 @@ static void *calcnearestthread( void *arg )
 #else
 			tmpdist = distfunc( bseq[pos], bseq[i], selfscore[pos], selfscore[i], alloclen );
 #endif
-			if( mindist > tmpdist ) 
+			if( mindist > tmpdist )
 			{
 				mindist = tmpdist;
 				neighbor = i;
@@ -4514,7 +4514,7 @@ static void calcnearest_para( int njob, double *selfscore, char **bseq, int allo
 	use_getrusage();
 	reporterr( "\n" );
 #endif
-} 
+}
 
 void compacttreegivendist( int njob, double *mindists, int *neighbors, int ***topol, double **len, char **name, Treedep *dep, int treeout )
 {
@@ -4527,11 +4527,11 @@ void compacttreegivendist( int njob, double *mindists, int *neighbors, int ***to
 		Treept *p, *b;
 		Treept *root;
 		treept = (Treept *)calloc( sizeof( Treept ), njob*2 );
-	
+
 //		reporterr( "\n" );
-//		for( i=0; i<njob; i++ ) 
+//		for( i=0; i<njob; i++ )
 //			reporterr( "mindists[%d]=%f, neighbors[%d]=%d\n", i, mindists[i], i, neighbors[i] );
-		for( i=0; i<njob; i++ ) 
+		for( i=0; i<njob; i++ )
 		{
 			treept[i].parent = NULL;
 			treept[i].child0 = NULL;
@@ -4539,10 +4539,10 @@ void compacttreegivendist( int njob, double *mindists, int *neighbors, int ***to
 			treept[i].height = 0.0;
 			treept[i].len0 = 0.0;
 			treept[i].len1 = 0.0;
-			treept[i].rep0 = i; 
-			treept[i].rep1 = -1; 
+			treept[i].rep0 = i;
+			treept[i].rep1 = -1;
 		}
-	
+
 		n = njob;
 #if TREE7325
 		tmpdist = mindists[njob-2];
@@ -4576,17 +4576,17 @@ void compacttreegivendist( int njob, double *mindists, int *neighbors, int ***to
 		{
 			n++;
 //			if( i % 100 == 0 ) reporterr( "i=%d, n=%d\n", i+1, n );
-	
+
 			neighbor = neighbors[i];
 			mindist = mindists[i];
-	
-	
+
+
 			for( b=treept+neighbor,p=b->parent; p!=NULL; b=p,p=p->parent )
 			{
 //				reporterr( "checking %p->%p (height=%f)\n", b, p, p->height );
 				if( p->height > mindist * 0.5 ) break;
 			}
-	
+
 			if( p == NULL )
 			{
 				treept[n].parent = NULL;
@@ -4609,10 +4609,10 @@ void compacttreegivendist( int njob, double *mindists, int *neighbors, int ***to
 				reporterr( "okashii\n" );
 				exit( 1 );
 			}
-	
+
 			treept[i].parent = treept+n;
 			b->parent = treept+n;
-	
+
 			treept[n].child0 = b;
 			treept[n].child1 = treept+i;
 			treept[n].height = mindist * 0.5;
@@ -4695,7 +4695,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 		{
 			distarrfunc = msadistarrthreadjoblist;
 			resetnearestfunc = msaresetnearestthread;
-		}	
+		}
 		else
 		{
 			distarrfunc = kmerdistarrthreadjoblist;
@@ -4722,13 +4722,13 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 		}
 	}
 
-	
+
 	if( treeout )
 	{
 	    for( i=0; i<nseq; i++ )
 		{
 			for( j=0; j<999; j++ ) nametmp[j] = 0;
-			for( j=0; j<999; j++ ) 
+			for( j=0; j<999; j++ )
 			{
 				namec = name[i][j];
 				if( namec == 0 )
@@ -4744,9 +4744,9 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 				nameptr = strstr( nametmp, "_numo_e" ) + 8;
 			else
 				nameptr = nametmp + 1;
-	
+
 			if( (tmpptr=strstr( nameptr, "_oe_" )) ) nameptr = tmpptr + 4; // = -> _ no tame
-	
+
 			tree[i] = calloc( strlen( nametmp )+100, sizeof( char ) ); // suuji no bun de +100
 			if( tree[i] == NULL )
 			{
@@ -4768,7 +4768,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 //	for( i=0; i<nseq; i++ ) setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -4784,7 +4784,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 //		if( k% 100 == 0 ) reporterr( "numfilled=%d, filledinpartmtx=%d, numempty=%d\n", numfilled, j, nseq-k-numfilled );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			printf(       "k=%d i=%d, mindist[i]=%f\n", k, i, mindist[i] );
@@ -4800,7 +4800,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 //		printf(       "jm=%d\n", jm );
 
 
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -4936,13 +4936,13 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			compactdistarrthread_arg_t *targ;
 			pthread_t *handle;
 			pthread_mutex_t mutex;
-		
+
 			posshared = 0;
 //			targ = calloc( nthreadpair, sizeof( compactdistarrthread_arg_t ) );
 			targ = distarrarg;
 			handle = calloc( nthreadpair, sizeof( pthread_t ) );
 			pthread_mutex_init( &mutex, NULL );
-		
+
 			if( k % 100 == 0 ) reporterr( " (%d threads, nactive=%d, nfilled=%d)     \r", nthreadpair, nactive, numfilled );
 			for( i=0; i<nthreadpair; i++ )
 			{
@@ -4968,12 +4968,12 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 
 				pthread_create( handle+i, NULL, distarrfunc, (void *)(targ+i) );
 			}
-		
+
 			for( j=0; j<nthreadpair; j++ ) pthread_join( handle[j], NULL );
 			pthread_mutex_destroy( &mutex );
 			free( handle );
 //			free( targ );
-	
+
 #if 0
 			for( acpti=ac; acpti!=NULL; acpti=acpti->next ) // antei sei no tame
 			{
@@ -5004,11 +5004,11 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 		{
 			if( k % 100 == 0 ) reporterr( " (serial, nactive=%d, nfilled=%d)             \r", nactive, numfilled );
 			compactdistarrthread_arg_t *targ;
-		
+
 			posshared = 0;
 //			targ = calloc( 1, sizeof( compactdistarrthread_arg_t ) );
 			targ = distarrarg;
-		
+
 			for( i=0; i<1; i++ )
 			{
 				targ[i].para = 0;
@@ -5035,7 +5035,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			}
 
 //			free( targ );
-	
+
 		}
 
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next ) // antei sei no tame
@@ -5069,7 +5069,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			if( partmtx[i] ) for( j=0; j<njob; j++ ) printf( "%f ", partmtx[i][j] );
 			else printf( "nai" );
 			printf( "\n" );
-			
+
 		}
 #endif
 //		if( k%500 == 0 )
@@ -5098,7 +5098,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			singlettable1 = NULL;
 			singlettable2 = NULL;
 		}
-	
+
 		if( treeout )
 		{
 			treetmp = realloc( treetmp, strlen( tree[im] ) + strlen( tree[jm] ) + 100 ); // 22 de juubunn (:%7,:%7) %7 ha minus kamo
@@ -5120,8 +5120,8 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			strcpy( tree[im], treetmp );
 		}
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -5132,7 +5132,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 		{
 			i = acpti->pos;
 //			printf( "reset nearest? i=%d, k=%d, nearest[i]=%d, im=%d, mindist=%f\n", i, k, nearest[i], im, mindist[i] );
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 //				printf( "reset nearest, i=%d, k=%d\n", i, k );
 				if( partmtx[im][i] > mindist[i] )
@@ -5162,13 +5162,13 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 			pthread_t *handle;
 			pthread_mutex_t mutex;
 			Bchain *acshared;
-		
+
 			acshared = ac;
 //			targ = calloc( nthreadpair, sizeof( resetnearestthread_arg_t ) );
 			targ = resetarg;
 			handle = calloc( nthreadpair, sizeof( pthread_t ) );
 			pthread_mutex_init( &mutex, NULL );
-		
+
 			for( i=0; i<nthreadpair; i++ )
 			{
 				targ[i].para = 1;
@@ -5188,7 +5188,7 @@ void compacttree_memsaveselectable( int nseq, double **partmtx, int *nearest, do
 
 				pthread_create( handle+i, NULL, resetnearestfunc, (void *)(targ+i) );
 			}
-		
+
 			for( j=0; j<nthreadpair; j++ ) pthread_join( handle[j], NULL );
 			pthread_mutex_destroy( &mutex );
 			free( handle );
@@ -5326,11 +5326,11 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		if( treeout == 2 ) density = AllocateDoubleVec( njob );
 	}
 
-	
+
     for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -5370,7 +5370,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -5382,7 +5382,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		if( k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			printf(       "k=%d i=%d, mindist[i]=%f\n", k, i, mindisfrom[i] );
@@ -5397,7 +5397,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		jm = nearest[im];
 //		printf(       "im=%d\n", im );
 //		printf(       "jm=%d\n", jm );
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -5523,7 +5523,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 				eff1 = eff[minijm][maxijm-minijm];
 #if 0
                 		tmpdouble = eff[miniim][maxiim-miniim] =
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
                 tmpdouble = eff[miniim][maxiim-miniim] =
 				(clusterfuncpt[0])( eff0, eff1 );
@@ -5550,7 +5550,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		printf( "matrix = \n" );
 		for( i=0; i<njob; i++ )
 		{
-			for( j=0; j<njob; j++ ) 
+			for( j=0; j<njob; j++ )
 			{
 				if( i>j )
 				{
@@ -5586,8 +5586,8 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		}
 		strcpy( tree[im], treetmp );
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -5601,7 +5601,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		{
 			i = acpti->pos;
 //			printf( "reset nearest? i=%d, k=%d, nearest[i]=%d, im=%d, mindist=%f\n", i, k, nearest[i], im, mindisfrom[i] );
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 //				printf( "reset nearest, i=%d, k=%d\n", i, k );
 				if( i < im )
@@ -5634,7 +5634,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 		int *mem = calloc( sizeof( int ), nseq );
 		fprintf( fp, "\nDensity:" );
 		for( k=0; k<nseq; k++ ) fprintf( fp, "\nSequence %d, %7.4f", k+1, density[k] );
-	
+
 		fprintf( fp, "\n\nNode info:" );
 		for( k=0; k<nseq-1; k++ )
 		{
@@ -5646,7 +5646,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout_memsave( int nseq, dou
 			fprintf( fp, "%d:", getdensest( mem, density )+1 );
 			for( i=0; mem[i]>-1; i++ ) fprintf( fp, " %d", mem[i]+1 );
 			fprintf( fp, "\n" );
-	
+
 			topolorderz( mem, topol, dep, k, 1 );
 //			fprintf( fp, "len1 = %f\n", len[k][1] );
 //			for( i=0; topol[k][1][i]>-1; i++ ) fprintf( fp, " %03d", topol[k][1][i]+1 );
@@ -5727,11 +5727,11 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 		tree = AllocateCharMtx( njob, 0 );
 	}
 
-	
+
     for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -5769,7 +5769,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 	for( i=0; i<nseq; i++ ) setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -5781,7 +5781,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 		if( k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -5792,7 +5792,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -5907,7 +5907,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 				eff1 = eff[minijm][maxijm-minijm];
 #if 0
                 		tmpdouble = eff[miniim][maxiim-miniim] =
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
                 tmpdouble = eff[miniim][maxiim-miniim] =
 				(clusterfuncpt[0])( eff0, eff1 );
@@ -5949,8 +5949,8 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 		}
 		strcpy( tree[im], treetmp );
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -5963,7 +5963,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_treeout( int nseq, double **ef
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -6071,7 +6071,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
     for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<90; j++ ) nametmp[j] = 0;
-		for( j=0; j<90; j++ ) 
+		for( j=0; j<90; j++ )
 		{
 			if( name[i][j] == 0 )
 				break;
@@ -6109,11 +6109,11 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 		tree = AllocateCharMtx( njob, 0 );
 	}
 
-	
+
     for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -6161,7 +6161,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 	for( i=0; i<nseq; i++ ) setnearest_double_fullmtx( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -6173,7 +6173,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 		if( k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -6184,7 +6184,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -6292,7 +6292,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 				eff1 = eff[minijm][maxijm];
 #if 0
                 		tmpdouble = eff[miniim][maxiim] =
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
                 tmpdouble = eff[miniim][maxiim] =
 				(clusterfuncpt[0])( eff0, eff1 );
@@ -6336,8 +6336,8 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 		strcpy( tree[im], treetmp );
 #endif
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -6347,7 +6347,7 @@ void fixed_musclesupg_double_treeout( int nseq, double **eff, int ***topol, doub
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -6464,7 +6464,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 	for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<90; j++ ) nametmp[j] = 0;
-		for( j=0; j<90; j++ ) 
+		for( j=0; j<90; j++ )
 		{
 			if( name[i][j] == 0 )
 				break;
@@ -6507,11 +6507,11 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 		warned = AllocateIntVec( ngroup );
 	}
 
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -6559,7 +6559,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 	for( i=0; i<nseq; i++ ) setnearest_double_fullmtx( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -6584,7 +6584,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 			{
 				firsttime = 0;
 				minscore = 999.9;
-				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 				{
 					i = acpti->pos;
 //					reporterr(       "k=%d i=%d\n", k, i );
@@ -6595,7 +6595,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 					}
 				}
 				jm = nearest[im];
-				if( jm < im ) 
+				if( jm < im )
 				{
 					j=jm; jm=im; im=j;
 				}
@@ -6603,7 +6603,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 			else
 			{
 				minscore = 999.9;
-				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+				for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 				{
 					i = acpti->pos;
 //					reporterr(       "k=%d i=%d\n", k, i );
@@ -6629,7 +6629,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 			}
 
 			allinconsistent = 1;
-			for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+			for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 			{
 				for( acptj=acpti->next; acptj!=NULL; acptj=acptj->next )
 				{
@@ -6661,7 +6661,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 				for( intpt2=topol[prevnode][1]; *intpt2!=-1; )
 					*intpt++ = *intpt2++;
 			}
-			
+
 			prevnode = hist[jm];
 			if( prevnode == -1 )
 			{
@@ -6697,7 +6697,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 						}
 						inconsistent[im][jm] = 1;
 
-						if( maxinconsistentpairs < ninconsistentpairs+1 ) 
+						if( maxinconsistentpairs < ninconsistentpairs+1 )
 						{
 							inconsistentpairlist = realloc( inconsistentpairlist, (ninconsistentpairs+1)*sizeof( int * ) );
 							for( j=maxinconsistentpairs; j<ninconsistentpairs+1; j++ )
@@ -6831,7 +6831,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 				eff1 = eff[minijm][maxijm];
 #if 0
                 		tmpdouble = eff[miniim][maxiim] =
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
                 tmpdouble = eff[miniim][maxiim] =
 				(clusterfuncpt[0])( eff0, eff1 );
@@ -6878,8 +6878,8 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 		strcpy( tree[im], treetmp );
 #endif
 
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -6889,7 +6889,7 @@ void fixed_supg_double_treeout_constrained( int nseq, double **eff, int ***topol
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -6950,7 +6950,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 	double tmpdouble;
 	double eff1, eff0;
 	double *tmptmplen = NULL; // static TLS -> local, 2012/02/25
-	int *hist = NULL; // static TLS -> local, 2012/02/25 
+	int *hist = NULL; // static TLS -> local, 2012/02/25
 	Bchain *ac = NULL; // static TLS -> local, 2012/02/25
 	int im = -1, jm = -1;
 	Bchain *acjmnext, *acjmprev;
@@ -6991,7 +6991,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 		nearest = AllocateIntVec( njob );
 	}
 
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		ac[i].next = ac+i+1;
@@ -7003,7 +7003,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 	for( i=0; i<nseq; i++ ) setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -7015,7 +7015,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 		if( progressout && k % 10 == 0 ) reporterr( "\r% 5d / %d", k, nseq );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -7026,7 +7026,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -7169,8 +7169,8 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
         }
 
 //		reporterr(       "im,jm=%d,%d\n", im, jm );
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -7183,7 +7183,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx_memsave( int nseq, double **ef
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -7226,7 +7226,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 	double tmpdouble;
 	double eff1, eff0;
 	double *tmptmplen = NULL; // static TLS -> local, 2012/02/25
-	int *hist = NULL; // static TLS -> local, 2012/02/25 
+	int *hist = NULL; // static TLS -> local, 2012/02/25
 	Bchain *ac = NULL; // static TLS -> local, 2012/02/25
 	int im = -1, jm = -1;
 	Bchain *acjmnext, *acjmprev;
@@ -7265,7 +7265,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 		nearest = AllocateIntVec( njob );
 	}
 
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		ac[i].next = ac+i+1;
@@ -7277,7 +7277,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 	for( i=0; i<nseq; i++ ) setnearest( nseq, ac, eff, mindisfrom+i, nearest+i, i ); // muscle
 
 	for( i=0; i<nseq; i++ ) tmptmplen[i] = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		hist[i] = -1;
 		nmemar[i] = 1;
@@ -7289,7 +7289,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 		if( progressout && k % 10 == 0 ) reporterr(       "\r% 5d / %d", k, nseq );
 
 		minscore = 999.9;
-		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next ) 
+		for( acpti=ac; acpti->next!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
 //			reporterr(       "k=%d i=%d\n", k, i );
@@ -7300,7 +7300,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 			}
 		}
 		jm = nearest[im];
-		if( jm < im ) 
+		if( jm < im )
 		{
 			j=jm; jm=im; im=j;
 		}
@@ -7414,7 +7414,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 				eff1 = eff[minijm][maxijm-minijm];
 				tmpdouble = eff[miniim][maxiim-miniim] =
 #if 0
-				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05; 
+				MIN( eff0, eff1 ) * sueff1 + ( eff0 + eff1 ) * sueff05;
 #else
 				(clusterfuncpt[0])( eff0, eff1 );
 #endif
@@ -7436,8 +7436,8 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
         }
 
 //		reporterr(       "im,jm=%d,%d\n", im, jm );
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		acjmprev->next = acjmnext;
 		if( acjmnext != NULL )
 			acjmnext->prev = acjmprev;
@@ -7450,7 +7450,7 @@ void fixed_musclesupg_double_realloc_nobk_halfmtx( int nseq, double **eff, int *
 		for( acpti=ac; acpti!=NULL; acpti=acpti->next )
 		{
 			i = acpti->pos;
-			if( nearest[i] == im ) 
+			if( nearest[i] == im )
 			{
 				if( i < im )
 				{
@@ -7536,7 +7536,7 @@ void veryfastsupg_double_loadtree( int nseq, double **eff, int ***topol, double 
 	for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<999; j++ ) nametmp[j] = 0;
-		for( j=0; j<999; j++ ) 
+		for( j=0; j<999; j++ )
 		{
 			namec = name[i][j];
 			if( namec == 0 )
@@ -7563,7 +7563,7 @@ void veryfastsupg_double_loadtree( int nseq, double **eff, int ***topol, double 
 		}
 		sprintf( tree[i], "\n%d_%.900s\n", i+1, nameptr );
 	}
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		ac[i].next = i+1;
@@ -7581,7 +7581,7 @@ void veryfastsupg_double_loadtree( int nseq, double **eff, int ***topol, double 
 
 #if 0
 		minscore = 99999.9;
-		for( i=0; ac[i].next!=-1; i=ac[i].next ) 
+		for( i=0; ac[i].next!=-1; i=ac[i].next )
 		{
 			for( j=ac[i].next; j!=-1; j=ac[j].next )
 	        {
@@ -7725,8 +7725,8 @@ void veryfastsupg_double_loadtree( int nseq, double **eff, int ***topol, double 
 				( eff0 + eff1 ) * 0.5 * sueff_global;
             }
         }
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		ac[acjmprev].next = acjmnext;
 		if( acjmnext != -1 )
 			ac[acjmnext].prev = acjmprev;
@@ -7791,11 +7791,11 @@ void veryfastsupg_double_loadtree( int nseq, double **eff, int ***topol, double 
 			reporterr(       " %03d", im );
 		}
 		fprintf( stdout, "\n" );
-        for( i=0; (jm=topol[k][1][i])>-1; i++ ) 
+        for( i=0; (jm=topol[k][1][i])>-1; i++ )
 		{
 			reporterr(       " %03d", jm );
 		}
-        for( i=0; (im=topol[k][0][i])>-1; i++ ) for( j=0; (jm=topol[k][1][j])>-1; j++ ) 
+        for( i=0; (im=topol[k][0][i])>-1; i++ ) for( j=0; (jm=topol[k][1][j])>-1; j++ )
 		{
 			eff[im][jm] += len[k][0] + len[k][1];
 			eff[jm][im] += len[k][0] + len[k][1];
@@ -7824,7 +7824,7 @@ void veryfastsupg_double( int nseq, double **eff, int ***topol, double **len )
 		tmptmplen = (double *)malloc( njob * sizeof( double ) );
 		ac = (Achain *)malloc( njob * sizeof( Achain ) );
 	}
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		ac[i].next = i+1;
@@ -7842,7 +7842,7 @@ void veryfastsupg_double( int nseq, double **eff, int ***topol, double **len )
 		if( k % 10 == 0 ) reporterr(       "%d / %d\r", k, nseq );
 
 		minscore = 99999.9;
-		for( i=0; ac[i].next!=-1; i=ac[i].next ) 
+		for( i=0; ac[i].next!=-1; i=ac[i].next )
 		{
 			for( j=ac[i].next; j!=-1; j=ac[j].next )
 	        {
@@ -7954,8 +7954,8 @@ void veryfastsupg_double( int nseq, double **eff, int ***topol, double **len )
 				( eff0 + eff1 ) * 0.5 * sueff_global;
             }
         }
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		ac[acjmprev].next = acjmnext;
 		if( acjmnext != -1 )
 			ac[acjmnext].prev = acjmprev;
@@ -8026,7 +8026,7 @@ void veryfastsupg_double_outtree( int nseq, double **eff, int ***topol, double *
     for( i=0; i<nseq; i++ )
 	{
 		for( j=0; j<30; j++ ) nametmp[j] = 0;
-		for( j=0; j<30; j++ ) 
+		for( j=0; j<30; j++ )
 		{
 			if( isalnum( name[i][j] ) )
 				nametmp[j] = name[i][j];
@@ -8036,7 +8036,7 @@ void veryfastsupg_double_outtree( int nseq, double **eff, int ***topol, double *
 		nametmp[30] = 0;
 		sprintf( tree[i], "%d_%.20s", i+1, nametmp+1 );
 	}
-	
+
 	for( i=0; i<nseq; i++ )
 	{
 		ac[i].next = i+1;
@@ -8054,7 +8054,7 @@ void veryfastsupg_double_outtree( int nseq, double **eff, int ***topol, double *
 		if( k % 10 == 0 ) reporterr(       "%d / %d\r", k, nseq );
 
 		minscore = 99999.9;
-		for( i=0; ac[i].next!=-1; i=ac[i].next ) 
+		for( i=0; ac[i].next!=-1; i=ac[i].next )
 		{
 			for( j=ac[i].next; j!=-1; j=ac[j].next )
 	        {
@@ -8165,8 +8165,8 @@ void veryfastsupg_double_outtree( int nseq, double **eff, int ***topol, double *
 				(clusterfuncpt[0])( eff0, eff1 );
             }
         }
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		ac[acjmprev].next = acjmnext;
 		if( acjmnext != -1 )
 			ac[acjmnext].prev = acjmprev;
@@ -8220,10 +8220,10 @@ void veryfastsupg( int nseq, double **oeff, int ***topol, double **len )
 		tmptmplen = (double *)malloc( njob * sizeof( double ) );
 		ac = (Achain *)malloc( njob * sizeof( Achain ) );
 	}
-	
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 		{
 			eff[i][j] = (int)( oeff[i][j] * INTMTXSCALE + 0.5 );
 		}
@@ -8246,7 +8246,7 @@ void veryfastsupg( int nseq, double **oeff, int ***topol, double **len )
 		if( k % 10 == 0 ) reporterr(       "%d / %d\r", k, nseq );
 
 		minscore = INTMTXSCALE*4;
-		for( i=0; ac[i].next!=-1; i=ac[i].next ) 
+		for( i=0; ac[i].next!=-1; i=ac[i].next )
 		{
 			for( j=ac[i].next; j!=-1; j=ac[j].next )
 	        {
@@ -8371,8 +8371,8 @@ void veryfastsupg( int nseq, double **oeff, int ***topol, double **len )
 				( eff0 + eff1 ) * 0.5 * sueff_global;        // int??
             }
         }
-		acjmprev = ac[jm].prev; 
-		acjmnext = ac[jm].next; 
+		acjmprev = ac[jm].prev;
+		acjmnext = ac[jm].next;
 		ac[acjmprev].next = acjmnext;
 		if( acjmnext != -1 )
 			ac[acjmnext].prev = acjmprev;
@@ -8418,10 +8418,10 @@ void fastsupg( int nseq, double **oeff, int ***topol, double **len )
 		ac = (Achain *)calloc( njob, sizeof( Achain ) );
 	}
 #endif
-	
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 		{
 			eff[i][j] = (double)oeff[i][j];
 		}
@@ -8445,11 +8445,11 @@ void fastsupg( int nseq, double **oeff, int ***topol, double **len )
 		if( k % 10 == 0 ) reporterr(       "%d / %d\r", k, nseq );
 
 		minscore = 9999.0;
-		for( i=0; ac[i].next!=-1; i=ac[i].next ) 
-//		for( i=0; i<nseq-1; i++ ) 
+		for( i=0; ac[i].next!=-1; i=ac[i].next )
+//		for( i=0; i<nseq-1; i++ )
 		{
 			for( j=ac[i].next; j!=-1; j=ac[j].next )
-//			for( j=i+1; j<nseq; j++ ) 
+//			for( j=i+1; j<nseq; j++ )
 	        {
 				tmpdouble = eff[i][j];
 				if( tmpdouble < minscore )
@@ -8561,10 +8561,10 @@ void supg( int nseq, double **oeff, int ***topol, double **len )
 	}
 #endif
 
-	
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 		{
 			eff[i][j] = (double)oeff[i][j];
 		}
@@ -8580,7 +8580,7 @@ void supg( int nseq, double **oeff, int ***topol, double **len )
 
 
 		doubleptpt = eff;
-        for( i=0; i<nseq-1; i++ ) 
+        for( i=0; i<nseq-1; i++ )
 		{
 			doublept = *doubleptpt++ + i + 1;
 			for( j=i+1; j<nseq; j++ )
@@ -8687,7 +8687,7 @@ void spg( int nseq, double **oeff, int ***topol, double **len )
 		pair = AllocateCharMtx( njob, njob );
 	}
 #endif
-	
+
 	for( i=0; i<nseq; i++ ) for( j=0; j<nseq; j++ ) eff[i][j] = oeff[i][j];
 	for( i=0; i<nseq; i++ ) tmplen[i] = 0.0;
     for( i=0; i<nseq; i++ ) for( j=0; j<nseq; j++ ) pair[i][j] = 0;
@@ -8835,13 +8835,13 @@ void countnode_int( int nseq, int ***topol, int **node )  /* node[i][j] == node[
             node[MIN(s1,s2)][MAX(s1,s2)] = rootnode[s1] + rootnode[s2];
         }
     }
-	for( i=0; i<nseq-1; i++ ) for( j=i+1; j<nseq; j++ ) 
+	for( i=0; i<nseq-1; i++ ) for( j=i+1; j<nseq; j++ )
 		node[j][i] = node[i][j];
 #if DEBUG
 	reporterr(       "node[][] in countnode_int" );
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 		{
 			reporterr(       "%#3d", node[i][j] );
 		}
@@ -8880,7 +8880,7 @@ void counteff_simple_double( int nseq, int ***topol, double **len, double *node 
 /*
            	rootnode[s1] *= 0.5;
 */
-			
+
 		}
        	for( j=0; (s2=topol[i][1][j]) > -1; j++ )
 		{
@@ -8889,10 +8889,10 @@ void counteff_simple_double( int nseq, int ***topol, double **len, double *node 
 /*
            	rootnode[s2] *= 0.5;
 */
-				
+
 		}
 	}
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 #if 1 /* 97.9.29 */
 		rootnode[i] += GETA3;
@@ -8903,15 +8903,15 @@ void counteff_simple_double( int nseq, int ***topol, double **len, double *node 
 	}
 #if 1
 	total = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		total += rootnode[i];
 	}
 #else
 	total = 1.0;
 #endif
-		
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
 		node[i] = rootnode[i] / total;
 	}
@@ -8939,16 +8939,16 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 	eff = AllocateDoubleVec( nseq );
 	localmem = AllocateIntMtx( 2, 0 );
 	memhist = AllocateIntMtx( nseq-1, 0 );
-	for( i=0; i<nseq-1; i++ ) memhist[i] = NULL; 
+	for( i=0; i<nseq-1; i++ ) memhist[i] = NULL;
 
 	for( i=0; i<nseq; i++ ) // 2014/06/07, fu no eff wo sakeru.
 	{
-		if( len[i][0] < 0.0 ) 
+		if( len[i][0] < 0.0 )
 		{
 			reporterr( "WARNING: negative branch length %f, step %d-0\n", len[i][0], i );
 			len[i][0] = 0.0;
 		}
-		if( len[i][1] < 0.0 ) 
+		if( len[i][1] < 0.0 )
 		{
 			reporterr( "WARNING: negative branch length %f, step %d-1\n", len[i][1], i );
 			len[i][1] = 0.0;
@@ -8984,7 +8984,7 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 		localmem[1][0] = -1;
 		posinmem = topolorderz( localmem[1], topol, dep, i, 1 ) - localmem[1];
 #else
-		if( dep[i].child0 == -1 ) 
+		if( dep[i].child0 == -1 )
 		{
 			localmem[0] = calloc( sizeof( int ), 2 );
 			localmem[0][0] = topol[i][0][0];
@@ -8996,7 +8996,7 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 			localmem[0] = memhist[dep[i].child0];
 			s1 = intlen( localmem[0] );
 		}
-		if( dep[i].child1 == -1 ) 
+		if( dep[i].child1 == -1 )
 		{
 			localmem[1] = calloc( sizeof( int ), 2 );
 			localmem[1][0] = topol[i][1][0];
@@ -9033,7 +9033,7 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 /*
            	rootnode[s1] *= 0.5;
 */
-			
+
 		}
        	for( j=0; (s2=localmem[1][j]) > -1; j++ )
 		{
@@ -9042,7 +9042,7 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 /*
            	rootnode[s2] *= 0.5;
 */
-				
+
 		}
 		free( localmem[0] );
 		free( localmem[1] );
@@ -9051,7 +9051,7 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 	free( memhist[nseq-2] );
 	free( memhist );
 
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 #if 1 /* 97.9.29 */
 		rootnode[i] += GETA3;
@@ -9062,15 +9062,15 @@ void counteff_simple_double_nostatic_memsave( int nseq, int ***topol, double **l
 	}
 #if 1
 	total = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		total += rootnode[i];
 	}
 #else
 	total = 1.0;
 #endif
-		
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
 		node[i] = rootnode[i] / total;
 	}
@@ -9098,12 +9098,12 @@ void counteff_simple_double_nostatic( int nseq, int ***topol, double **len, doub
 
 	for( i=0; i<nseq; i++ ) // 2014/06/07, fu no eff wo sakeru.
 	{
-		if( len[i][0] < 0.0 ) 
+		if( len[i][0] < 0.0 )
 		{
 			reporterr( "WARNING: negative branch length %f, step %d-0\n", len[i][0], i );
 			len[i][0] = 0.0;
 		}
-		if( len[i][1] < 0.0 ) 
+		if( len[i][1] < 0.0 )
 		{
 			reporterr( "WARNING: negative branch length %f, step %d-1\n", len[i][1], i );
 			len[i][1] = 0.0;
@@ -9139,7 +9139,7 @@ void counteff_simple_double_nostatic( int nseq, int ***topol, double **len, doub
 /*
            	rootnode[s1] *= 0.5;
 */
-			
+
 		}
        	for( j=0; (s2=topol[i][1][j]) > -1; j++ )
 		{
@@ -9148,10 +9148,10 @@ void counteff_simple_double_nostatic( int nseq, int ***topol, double **len, doub
 /*
            	rootnode[s2] *= 0.5;
 */
-				
+
 		}
 	}
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 #if 1 /* 97.9.29 */
 		rootnode[i] += GETA3;
@@ -9162,15 +9162,15 @@ void counteff_simple_double_nostatic( int nseq, int ***topol, double **len, doub
 	}
 #if 1
 	total = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		total += rootnode[i];
 	}
 #else
 	total = 1.0;
 #endif
-		
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
 		node[i] = rootnode[i] / total;
 	}
@@ -9223,7 +9223,7 @@ void counteff_simple( int nseq, int ***topol, double **len, double *node )
 /*
            	rootnode[s1] *= 0.5;
 */
-			
+
 		}
        	for( j=0; (s2=topol[i][1][j]) > -1; j++ )
 		{
@@ -9232,10 +9232,10 @@ void counteff_simple( int nseq, int ***topol, double **len, double *node )
 /*
            	rootnode[s2] *= 0.5;
 */
-				
+
 		}
 	}
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 #if 1 /* 97.9.29 */
 		rootnode[i] += GETA3;
@@ -9246,15 +9246,15 @@ void counteff_simple( int nseq, int ***topol, double **len, double *node )
 	}
 #if 1
 	total = 0.0;
-	for( i=0; i<nseq; i++ ) 
+	for( i=0; i<nseq; i++ )
 	{
 		total += rootnode[i];
 	}
 #else
 	total = 1.0;
 #endif
-		
-	for( i=0; i<nseq; i++ ) 
+
+	for( i=0; i<nseq; i++ )
 	{
 		node[i] = rootnode[i] / total;
 	}
@@ -9279,17 +9279,17 @@ void counteff( int nseq, int ***topol, double **len, double **node )
 	double rootnode[M];
 	double eff[M];
 
-	if( mix ) 
+	if( mix )
 	{
 		switch( weight )
 		{
-			case( 2 ): 
+			case( 2 ):
 				weight = 3;
 				break;
-			case( 3 ): 
+			case( 3 ):
 				weight = 2;
 				break;
-			default: 
+			default:
 				ErrorExit( "mix error" );
 				break;
 		}
@@ -9325,7 +9325,7 @@ void counteff( int nseq, int ***topol, double **len, double **node )
     	}
    		for( i=0; i<nseq-1; i++ ) for( j=i+1; j<nseq; j++ )
    	   		node[i][j] = ipower( 0.5, (int)node[i][j] ) + geta2;
-		for( i=0; i<nseq-1; i++ ) for( j=i+1; j<nseq; j++ ) 
+		for( i=0; i<nseq-1; i++ ) for( j=i+1; j<nseq; j++ )
 			node[j][i] = node[i][j];
 	}
 
@@ -9354,7 +9354,7 @@ void counteff( int nseq, int ***topol, double **len, double **node )
 /*
    	        	rootnode[s1] *= 0.5;
 */
-				
+
 			}
    	    	for( j=0; (s2=topol[i][1][j]) > -1; j++ )
 			{
@@ -9363,10 +9363,10 @@ void counteff( int nseq, int ***topol, double **len, double **node )
 /*
    	        	rootnode[s2] *= 0.5;
 */
-				
+
 			}
 		}
-		for( i=0; i<nseq; i++ ) 
+		for( i=0; i<nseq; i++ )
 		{
 #if 1 /* 97.9.29 */
 			rootnode[i] += GETA3;
@@ -9375,9 +9375,9 @@ void counteff( int nseq, int ***topol, double **len, double **node )
 			reporterr(       "rootnode for %d = %f\n", i, rootnode[i] );
 #endif
 		}
-		for( i=0; i<nseq; i++ ) 
+		for( i=0; i<nseq; i++ )
 		{
-			for( j=0; j<nseq; j++ ) 
+			for( j=0; j<nseq; j++ )
 				if( j != i )
 					node[i][j] = (double)rootnode[i] * rootnode[j];
 				else node[i][i] = rootnode[i];
@@ -9388,7 +9388,7 @@ void counteff( int nseq, int ***topol, double **len, double **node )
 	printf( "weight matrix in counteff\n" );
 	for( i=0; i<nseq; i++ )
 	{
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 		{
 			printf( "%f ", node[i][j] );
 		}
@@ -9411,8 +9411,8 @@ double score_calcp( char *seq1, char *seq2, int len )
 		ms2 = (unsigned char)seq2[k];
 		if( ms1 == '-' && ms2 == '-' ) continue;
 		tmpscore += (double)amino_dis[ms1][ms2];
-	
-		if( ms1 == (int)'-' ) 
+
+		if( ms1 == (int)'-' )
 		{
 			tmpscore += (double)penalty;
 			tmpscore += (double)amino_dis[ms1][ms2];
@@ -9444,7 +9444,7 @@ double score_calc1( char *seq1, char *seq2 )   /* method 1 */
 	int len = strlen( seq1 );
 
 	for( k=0; k<len; k++ )
-	{	
+	{
 		if( seq1[k] != '-' && seq2[k] != '-' )
 		{
 			score += (double)amino_dis[(unsigned char)seq1[k]][(unsigned char)seq2[k]];
@@ -9461,7 +9461,7 @@ double substitution_nid( char *seq1, char *seq2 )
 	int k;
 	double s12;
 	int len = strlen( seq1 );
-	
+
 	s12 = 0.0;
 	for( k=0; k<len; k++ )
 		if( seq1[k] != '-' && seq2[k] != '-' )
@@ -9476,7 +9476,7 @@ double substitution_score( char *seq1, char *seq2 )
 	int k;
 	double s12;
 	int len = strlen( seq1 );
-	
+
 	s12 = 0.0;
 	for( k=0; k<len; k++ )
 		if( seq1[k] != '-' && seq2[k] != '-' )
@@ -9495,7 +9495,7 @@ double substitution_hosei( char *seq1, char *seq2 )   /* method 1 */
 	int len = strlen( seq1 );
 
 	for( k=0; k<len; k++ )
-	{	
+	{
 		if( seq1[k] != '-' && seq2[k] != '-' )
 		{
 			score += (double)( seq1[k] != seq2[k] );
@@ -9539,7 +9539,7 @@ double substitution( char *seq1, char *seq2 )   /* method 1 */
 	int len = strlen( seq1 );
 
 	for( k=0; k<len; k++ )
-	{	
+	{
 		if( seq1[k] != '-' && seq2[k] != '-' )
 		{
 			score += (double)( seq1[k] != seq2[k] );
@@ -9574,7 +9574,7 @@ void treeconstruction( char **seq, int nseq, int ***topol, double **len, double 
 			reporterr(       "distance matrix\n" );
 			for( i=0; i<nseq; i++ )
 			{
-				for( j=0; j<nseq; j++ ) 
+				for( j=0; j<nseq; j++ )
 				{
 					reporterr(       "%f ", eff[i][j] );
 				}
@@ -9591,14 +9591,14 @@ void treeconstruction( char **seq, int nseq, int ***topol, double **len, double 
 	}
 	else
 	{
-		for( i=0; i<nseq; i++ ) for( j=0; j<nseq; j++ ) 
+		for( i=0; i<nseq; i++ ) for( j=0; j<nseq; j++ )
 			eff[i][j] = 1.0;
 	}
 /*
 reporterr(       "weight matrix\n" );
 for( i=0; i<nseq; i++ )
 {
-	for( j=0; j<nseq; j++ ) 
+	for( j=0; j<nseq; j++ )
 	{
 		reporterr(       "%f ", eff[i][j] );
 	}
@@ -9631,12 +9631,12 @@ double bscore_calc( char **seq, int s, double **eff )  /* algorithm B */
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  * !gb2  *  gc2
 
                  + !gb1  *  gc1
@@ -9644,7 +9644,7 @@ double bscore_calc( char **seq, int s, double **eff )  /* algorithm B */
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
 				 + gb1   * !gc1
 				 * gb2   *  gc2      *BEFF
 
@@ -9693,18 +9693,18 @@ int isallgap( char *seq )
 	return( 1 );
 }
 
-void gappick( int nseq, int s, char **aseq, char **mseq2, 
+void gappick( int nseq, int s, char **aseq, char **mseq2,
 			  double **eff, double *effarr )
 {
 	int i, j, count, countjob, len, allgap;
 	len = strlen( aseq[0] );
-	for( i=0, count=0; i<len; i++ ) 
+	for( i=0, count=0; i<len; i++ )
 	{
 		allgap = 1;
 		for( j=0; j<nseq; j++ ) if( j != s ) allgap *= ( aseq[j][i] == '-' );
         if( allgap == 0 )
 		{
-			for( j=0, countjob=0; j<nseq; j++ ) 
+			for( j=0, countjob=0; j<nseq; j++ )
 			{
 				if( j != s )
 				{
@@ -9717,7 +9717,7 @@ void gappick( int nseq, int s, char **aseq, char **mseq2,
 	}
 	for( i=0; i<nseq-1; i++ ) mseq2[i][count] = 0;
 
-	for( i=0, countjob=0; i<nseq; i++ ) 
+	for( i=0, countjob=0; i<nseq; i++ )
 	{
 		if( i != s )
 		{
@@ -9727,7 +9727,7 @@ void gappick( int nseq, int s, char **aseq, char **mseq2,
 	}
 /*
 fprintf( stdout, "effarr in gappick s = %d\n", s+1 );
-for( i=0; i<countjob; i++ ) 
+for( i=0; i<countjob; i++ )
 	fprintf( stdout, " %f", effarr[i] );
 printf( "\n" );
 */
@@ -9739,11 +9739,11 @@ void commongappick_record( int nseq, char **seq, int *map )
 	int len = strlen( seq[0] );
 
 
-	for( i=0, count=0; i<=len; i++ ) 
+	for( i=0, count=0; i<=len; i++ )
 	{
 	/*
 		allgap = 1;
-		for( j=0; j<nseq; j++ ) 
+		for( j=0; j<nseq; j++ )
 			allgap *= ( seq[j][i] == '-' );
 		if( !allgap )
 	*/
@@ -9769,7 +9769,7 @@ void commongaprecord( int nseq, char **seq, char *originallygapped )
 	int i, j;
 	int len = strlen( seq[0] );
 
-	for( i=0; i<len; i++ ) 
+	for( i=0; i<len; i++ )
 	{
 		for( j=0; j<nseq; j++ )
 			if( seq[j][i] != '-' ) break;
@@ -9781,7 +9781,7 @@ void commongaprecord( int nseq, char **seq, char *originallygapped )
 	originallygapped[len] = 0;
 }
 #endif
-		
+
 double score_calc0( char **seq, int s, double **eff, int ex )
 {
 	double tmp;
@@ -9806,22 +9806,22 @@ double score_m_1( char **seq, int ex, double **eff )
 
 	score = 0.0;
 	nglen = 0;
-	for( i=0; i<njob; i++ ) 
+	for( i=0; i<njob; i++ )
 	{
 		double efficient = eff[MIN(i,ex)][MAX(i,ex)];
 		if( i == ex ) continue;
 
-		gc1 = 0; 
+		gc1 = 0;
 		gc2 = 0;
-		for( k=0; k<len; k++ ) 
+		for( k=0; k<len; k++ )
 		{
 			gb1 = gc1;
 			gb2 = gc2;
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[ex][k] == '-' );
-      
-            cob = 
+
+            cob =
                    !gb1  *  gc1
                  * !gb2  * !gc2
 
@@ -9833,7 +9833,7 @@ double score_m_1( char **seq, int ex, double **eff )
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
                  +  gb1  * !gc1
                  *  gb2  *  gc2      *BEFF
 
@@ -9862,17 +9862,17 @@ void sitescore( char **seq, double **eff, char sco1[], char sco2[], char sco3[] 
 	int ch;
 	double sco[N];
 
-	for( i=0; i<len; i++ ) 
+	for( i=0; i<len; i++ )
 	{
 		tmp = 0.0; count = 0;
-		for( j=0; j<njob-1; j++ ) for( k=j+1; k<njob; k++ ) 
+		for( j=0; j<njob-1; j++ ) for( k=j+1; k<njob; k++ )
 		{
 		/*
 			if( seq[j][i] != '-' && seq[k][i] != '-' )
 		*/
 			{
 				tmp += amino_dis[seq[j][i]][seq[k][i]] + 400 * !scoremtx;
-				count++; 
+				count++;
 			}
 		}
 		if( count > 0.0 ) tmp /= count;
@@ -9882,17 +9882,17 @@ void sitescore( char **seq, double **eff, char sco1[], char sco2[], char sco3[] 
 	}
 	sco1[len] = 0;
 
-    for( i=0; i<len; i++ ) 
+    for( i=0; i<len; i++ )
     {
         tmp = 0.0; count = 0;
-        for( j=0; j<njob-1; j++ ) for( k=j+1; k<njob; k++ ) 
+        for( j=0; j<njob-1; j++ ) for( k=j+1; k<njob; k++ )
         {
 		/*
             if( seq[j][i] != '-' && seq[k][i] != '-' )
 		*/
             {
                 tmp += eff[j][k] * ( amino_dis[seq[j][i]][seq[k][i]] + 400 * !scoremtx );
-                count += eff[j][k]; 
+                count += eff[j][k];
             }
         }
 		if( count > 0.0 ) tmp /= count;
@@ -9912,7 +9912,7 @@ void sitescore( char **seq, double **eff, char sco1[], char sco2[], char sco3[] 
 		{
 			tmp += sco[j];
 		}
-		for( j=0; j<njob; j++ ) 
+		for( j=0; j<njob; j++ )
 		{
 			if( seq[j][i] == '-' )
 			{
@@ -9948,7 +9948,7 @@ int isaligned( int nseq, char **seq )
 {
 	int i;
 	int len = strlen( seq[0] );
-	for( i=1; i<nseq; i++ ) 
+	for( i=1; i<nseq; i++ )
 	{
 		if( strlen( seq[i] ) != len ) return( 0 );
 	}
@@ -10042,18 +10042,18 @@ double score_calc_a( char **seq, int s, double **eff )  /* algorithm A+ */
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 +  gb1  * !gc1 
+                 +  gb1  * !gc1
                  * !gb2  * !gc2
 
 	             + !gb1  * !gc1
  		         * !gb2  *  gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  *  gb2  * !gc2
 
                  + !gb1  *  gc1
@@ -10061,13 +10061,13 @@ double score_calc_a( char **seq, int s, double **eff )  /* algorithm A+ */
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
 				 +  gb1  * !gc1
 				 *  gb2  *  gc2
 
 				 +  gb1  *  gc1
 				 *  gb2  * !gc2
-      
+
 				 + !gb1  *  gc1
 				 *  gb2  *  gc2
 
@@ -10107,18 +10107,18 @@ double score_calc_s( char **seq, int s, double **eff )  /* algorithm S, not used
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 +  gb1  * !gc1 
+                 +  gb1  * !gc1
                  * !gb2  * !gc2
 
 	             + !gb1  * !gc1
  		         * !gb2  *  gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  *  gb2  * !gc2
 
                  + !gb1  *  gc1
@@ -10126,14 +10126,14 @@ double score_calc_s( char **seq, int s, double **eff )  /* algorithm S, not used
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
 #if 0
 				 +  gb1  * !gc1
 				 *  gb2  *  gc2
 
 				 +  gb1  *  gc1
 				 *  gb2  * !gc2
-      
+
 				 + !gb1  *  gc1
 				 *  gb2  *  gc2
 
@@ -10172,18 +10172,18 @@ double score_calc_for_score_s( int s, char **seq )  /* algorithm S */
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 +  gb1  * !gc1 
+                 +  gb1  * !gc1
                  * !gb2  * !gc2
 
 	             + !gb1  * !gc1
  		         * !gb2  *  gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  *  gb2  * !gc2
 
                  + !gb1  *  gc1
@@ -10191,14 +10191,14 @@ double score_calc_for_score_s( int s, char **seq )  /* algorithm S */
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
 #if 0
 				 +  gb1  * !gc1
 				 *  gb2  *  gc2
 
 				 +  gb1  *  gc1
 				 *  gb2  * !gc2
-      
+
 				 + !gb1  *  gc1
 				 *  gb2  *  gc2
 
@@ -10243,33 +10243,33 @@ double SSPscore___( int s, char **seq, int ex )  /* algorithm S */
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 +  gb1  * !gc1 
+                 +  gb1  * !gc1
                  * !gb2  * !gc2
 
 	             + !gb1  * !gc1
  		         * !gb2  *  gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  *  gb2  * !gc2
 
                  + !gb1  *  gc1
-                 *  gb2  * !gc2 * 2.0 
+                 *  gb2  * !gc2 * 2.0
 
                  +  gb1  * !gc1
-                 * !gb2  *  gc2 * 2.0 
-      
+                 * !gb2  *  gc2 * 2.0
+
 #if 0
 				 +  gb1  * !gc1
 				 *  gb2  *  gc2
 
 				 +  gb1  *  gc1
 				 *  gb2  * !gc2
-      
+
 				 + !gb1  *  gc1
 				 *  gb2  *  gc2
 
@@ -10312,18 +10312,18 @@ double SSPscore( int s, char **seq )  /* algorithm S */
 
 			gc1 = ( seq[i][k] == '-' );
 			gc2 = ( seq[j][k] == '-' );
-			
-            cob = 
+
+            cob =
 	               !gb1  *  gc1
  		         * !gb2  * !gc2
 
-                 +  gb1  * !gc1 
+                 +  gb1  * !gc1
                  * !gb2  * !gc2
 
 	             + !gb1  * !gc1
  		         * !gb2  *  gc2
 
-                 + !gb1  * !gc1 
+                 + !gb1  * !gc1
                  *  gb2  * !gc2
 
                  + !gb1  *  gc1
@@ -10331,14 +10331,14 @@ double SSPscore( int s, char **seq )  /* algorithm S */
 
                  +  gb1  * !gc1
                  * !gb2  *  gc2
-      
+
 #if 0
 				 +  gb1  * !gc1
 				 *  gb2  *  gc2
 
 				 +  gb1  *  gc1
 				 *  gb2  * !gc2
-      
+
 				 + !gb1  *  gc1
 				 *  gb2  *  gc2
 
@@ -10557,7 +10557,7 @@ int makelocal( char *s1, char *s2, int thr )
 
 		score += ( amino_dis[(unsigned char)*pt1++][(unsigned char)*pt2++] - thr );
 //		score += ( amino_dis[(int)*pt1++][(int)*pt2++] );
-		if( score > maxscore ) 
+		if( score > maxscore )
 		{
 //			reporterr(       "score = %f\n", score );
 			maxscore = score;
@@ -10616,16 +10616,16 @@ void getkyokaigap( char *g, char **s, int pos, int n )
 void new_OpeningGapCount( double *ogcp, int clus, char **seq, double *eff, int len, char *sgappat )
 #if 0
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 
-	
+
 	for( i=0; i<len+1; i++ ) ogcp[i] = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		gc = ( sgappat[j] == '-' );
-		for( i=0; i<len; i++ ) 
+		for( i=0; i<len; i++ )
 		{
 			gb = gc;
 			gc = ( seq[j][i] == '-' );
@@ -10635,15 +10635,15 @@ void new_OpeningGapCount( double *ogcp, int clus, char **seq, double *eff, int l
 }
 #else
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = ogcp;
 	i = len;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		spt = seq[j];
@@ -10665,16 +10665,16 @@ void new_OpeningGapCount( double *ogcp, int clus, char **seq, double *eff, int l
 void new_OpeningGapCount_zure( double *ogcp, int clus, char **seq, double *eff, int len, char *sgappat, char *egappat )
 #if 0
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 
-	
+
 	for( i=0; i<len+1; i++ ) ogcp[i] = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		gc = ( sgappat[j] == '-' );
-		for( i=0; i<len; i++ ) 
+		for( i=0; i<len; i++ )
 		{
 			gb = gc;
 			gc = ( seq[j][i] == '-' );
@@ -10689,15 +10689,15 @@ void new_OpeningGapCount_zure( double *ogcp, int clus, char **seq, double *eff, 
 }
 #else
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = ogcp;
 	i = len+2;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		spt = seq[j];
@@ -10725,15 +10725,15 @@ void new_OpeningGapCount_zure( double *ogcp, int clus, char **seq, double *eff, 
 void new_FinalGapCount_zure( double *fgcp, int clus, char **seq, double *eff, int len, char *sgappat, char *egappat )
 #if 0
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
-	
+
 	for( i=0; i<len+1; i++ ) fgcp[i] = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		gc = ( sgappat[j] == '-' );
-		for( i=0; i<len; i++ ) 
+		for( i=0; i<len; i++ )
 		{
 			gb = gc;
 			gc = ( seq[j][i] == '-' );
@@ -10752,15 +10752,15 @@ void new_FinalGapCount_zure( double *fgcp, int clus, char **seq, double *eff, in
 }
 #else
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = fgcp;
 	i = len+2;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp;
@@ -10789,15 +10789,15 @@ void new_FinalGapCount_zure( double *fgcp, int clus, char **seq, double *eff, in
 void new_FinalGapCount( double *fgcp, int clus, char **seq, double *eff, int len, char *egappat )
 #if 0
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
-	
+
 	for( i=0; i<len; i++ ) fgcp[i] = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		gc = ( seq[j][0] == '-' );
-		for( i=1; i<len; i++ ) 
+		for( i=1; i<len; i++ )
 		{
 			gb = gc;
 			gc = ( seq[j][i] == '-' );
@@ -10816,15 +10816,15 @@ void new_FinalGapCount( double *fgcp, int clus, char **seq, double *eff, int len
 }
 #else
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = fgcp;
 	i = len;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp;
@@ -10853,7 +10853,7 @@ void new_FinalGapCount( double *fgcp, int clus, char **seq, double *eff, int len
 
 void st_OpeningGapAdd( double *ogcp, int clus, char **seq, double *eff, int len )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double *fpt;
 	char *spt;
 	int newmem = clus-1;
@@ -10864,9 +10864,9 @@ void st_OpeningGapAdd( double *ogcp, int clus, char **seq, double *eff, int len 
 //	fpt = ogcp;
 //	i = len;
 //	while( i-- ) *fpt++ = 0.0;
-	
+
 	j = clus-1;
-//	for( j=0; j<clus; j++ ) 
+//	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		spt = seq[j];
@@ -10895,15 +10895,15 @@ void st_OpeningGapAdd( double *ogcp, int clus, char **seq, double *eff, int len 
 
 void st_OpeningGapCount( double *ogcp, int clus, char **seq, double *eff, int len )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = ogcp;
 	i = len;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		spt = seq[j];
@@ -10926,22 +10926,22 @@ void st_OpeningGapCount( double *ogcp, int clus, char **seq, double *eff, int le
 
 void st_FinalGapCount_zure( double *fgcp, int clus, char **seq, double *eff, int len )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = fgcp;
 	i = len+1;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp+1;
 		spt = seq[j];
 		gc = ( *spt == '-' );
 		i = len;
-//		for( i=1; i<len; i++ ) 
+//		for( i=1; i<len; i++ )
 		while( i-- )
 		{
 			gb = gc;
@@ -10964,27 +10964,27 @@ void st_FinalGapCount_zure( double *fgcp, int clus, char **seq, double *eff, int
 
 void st_FinalGapAdd( double *fgcp, int clus, char **seq, double *eff, int len )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double *fpt;
 	char *spt;
 	int newmem = clus-1;
 	double neweff = eff[newmem];
 	double orieff = 1.0 - neweff;
 	double feff;
-	
+
 //	fpt = fgcp;
 //	i = len;
 //	while( i-- ) *fpt++ = 0.0;
 
 	j = clus-1;
-//	for( j=0; j<clus; j++ ) 
+//	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp;
 		spt = seq[j];
 		gc = ( *spt == '-' );
 		i = len;
-//		for( i=1; i<len; i++ ) 
+//		for( i=1; i<len; i++ )
 		while( i-- )
 		{
 			*fpt *= orieff;
@@ -11009,22 +11009,22 @@ void st_FinalGapAdd( double *fgcp, int clus, char **seq, double *eff, int len )
 
 void st_FinalGapCount( double *fgcp, int clus, char **seq, double *eff, int len )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = fgcp;
 	i = len;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp;
 		spt = seq[j];
 		gc = ( *spt == '-' );
 		i = len;
-//		for( i=1; i<len; i++ ) 
+//		for( i=1; i<len; i++ )
 		while( i-- )
 		{
 			gb = gc;
@@ -11047,15 +11047,15 @@ void st_FinalGapCount( double *fgcp, int clus, char **seq, double *eff, int len 
 
 void getGapPattern( double *fgcp, int clus, char **seq, double *eff, int len, char *xxx )
 {
-	int i, j, gc, gb; 
+	int i, j, gc, gb;
 	double feff;
 	double *fpt;
 	char *spt;
-	
+
 	fpt = fgcp;
 	i = len+1;
 	while( i-- ) *fpt++ = 0.0;
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 		feff = (double)eff[j];
 		fpt = fgcp;
@@ -11097,7 +11097,7 @@ void getdigapfreq_st( double *freq, int clus, char **seq, double *eff, int len )
 		feff = eff[i];
 		if( 0 && seq[i][0] == '-' ) // machigai kamo
 			freq[0] += feff;
-		for( j=1; j<len; j++ ) 
+		for( j=1; j<len; j++ )
 		{
 			if( seq[i][j] == '-' && seq[i][j-1] == '-' )
 				freq[j] += feff;
@@ -11119,7 +11119,7 @@ void getdiaminofreq_x( double *freq, int clus, char **seq, double *eff, int len 
 		feff = eff[i];
 		if( seq[i][0] != '-' ) // tadashii
 			freq[0] += feff;
-		for( j=1; j<len; j++ ) 
+		for( j=1; j<len; j++ )
 		{
 			if( seq[i][j] != '-' && seq[i][j-1] != '-' )
 				freq[j] += feff;
@@ -11141,7 +11141,7 @@ void getdiaminofreq_st( double *freq, int clus, char **seq, double *eff, int len
 		feff = eff[i];
 		if( seq[i][0] != '-' )
 			freq[0] += feff;
-		for( j=1; j<len; j++ ) 
+		for( j=1; j<len; j++ )
 		{
 			if( seq[i][j] != '-' && seq[i][j-1] != '-' )
 				freq[j] += feff;
@@ -11164,7 +11164,7 @@ void getdigapfreq_part( double *freq, int clus, char **seq, double *eff, int len
 //		if( seq[i][0] == '-' )
 		if( seq[i][0] == '-' && sgappat[i] == '-' )
 			freq[0] += feff;
-		for( j=1; j<len; j++ ) 
+		for( j=1; j<len; j++ )
 		{
 			if( seq[i][j] == '-' && seq[i][j-1] == '-' )
 				freq[j] += feff;
@@ -11187,7 +11187,7 @@ void getdiaminofreq_part( double *freq, int clus, char **seq, double *eff, int l
 		feff = eff[i];
 		if( seq[i][0] != '-' && sgappat[i] != '-' )
 			freq[0] += feff;
-		for( j=1; j<len; j++ ) 
+		for( j=1; j<len; j++ )
 		{
 			if( seq[i][j] != '-' && seq[i][j-1] != '-' )
 				freq[j] += feff;
@@ -11210,7 +11210,7 @@ void getgapfreq_zure_part( double *freq, int clus, char **seq, double *eff, int 
 		feff = eff[i];
 		if( sgap[i] == '-' )
 			freq[0] += feff;
-		for( j=0; j<len; j++ ) 
+		for( j=0; j<len; j++ )
 		{
 			if( seq[i][j] == '-' )
 				freq[j+1] += feff;
@@ -11230,7 +11230,7 @@ void getgapfreq_zure( double *freq, int clus, char **seq, double *eff, int len )
 	for( i=0; i<clus; i++ )
 	{
 		feff = eff[i];
-		for( j=0; j<len; j++ ) 
+		for( j=0; j<len; j++ )
 		{
 			if( seq[i][j] == '-' )
 				freq[j+1] += feff;
@@ -11249,7 +11249,7 @@ void getgapfreq( double *freq, int clus, char **seq, double *eff, int len )
 	for( i=0; i<clus; i++ )
 	{
 		feff = eff[i];
-		for( j=0; j<len; j++ ) 
+		for( j=0; j<len; j++ )
 		{
 			if( seq[i][j] == '-' )
 				freq[j] += feff;
@@ -11262,7 +11262,7 @@ void getgapfreq( double *freq, int clus, char **seq, double *eff, int len )
 
 void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len )
 {
-	int i, j, k, gb, gc; 
+	int i, j, k, gb, gc;
 	int known;
 	double feff;
 	Gappat **fpt;
@@ -11271,13 +11271,13 @@ void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len 
 
 	fpt = pat;
 	i = len+1;
-	while( i-- ) 
+	while( i-- )
 	{
 		if( *fpt ) free( *fpt );
 		*fpt++ = NULL;
 	}
 
-	for( j=0; j<clus; j++ ) 
+	for( j=0; j<clus; j++ )
 	{
 //		reporterr(       "seq[%d] = %s\n", j, seq[j] );
 		feff = (double)eff[j];
@@ -11288,13 +11288,13 @@ void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len 
 		gc = 0;
 		gaplen = 0;
 
-		for( i=0; i<len+1; i++ ) 
+		for( i=0; i<len+1; i++ )
 //		while( i-- )
 		{
 //			reporterr(       "i=%d, gaplen = %d\n", i, gaplen );
 			gb = gc;
 			gc = ( i != len && *spt++ == '-' );
-			if( gc ) 
+			if( gc )
 				gaplen++;
 			else
 			{
@@ -11304,7 +11304,7 @@ void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len 
 					known = 0;
 					if( *fpt ) for( ; (*fpt)[k].len != -1; k++ )
 					{
-						if( (*fpt)[k].len == gaplen ) 
+						if( (*fpt)[k].len == gaplen )
 						{
 //							reporterr(       "known\n" );
 							known = 1;
@@ -11357,7 +11357,7 @@ void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len 
 
 			pat[j][i].freq = 1.0 - pat[j][0].freq;
 			pat[j][i].len = 0; // imiari
-			pat[j][i+1].len = -1; 
+			pat[j][i+1].len = -1;
 		}
 		else
 		{
@@ -11367,7 +11367,7 @@ void st_getGapPattern( Gappat **pat, int clus, char **seq, double *eff, int len 
 
 			pat[j][1].freq = 1.0 - pat[j][0].freq;
 			pat[j][1].len = 0; // imiari
-			pat[j][2].len = -1; 
+			pat[j][2].len = -1;
 		}
 	}
 #endif
@@ -11412,14 +11412,14 @@ static void commongappickpairfast( char *r1, char *r2, char *i1, char *i2, int *
 //			i1++;
 //			i2++;
 //		}
-		if( *i1 != '-' ) 
+		if( *i1 != '-' )
 		{
 			skipped1 = 0;
 			skip1++;
 		}
 		else skipped1++;
 
-		if( *i2 != '-' ) 
+		if( *i2 != '-' )
 		{
 			skipped2 = 0;
 			skip2++;
@@ -11440,7 +11440,7 @@ static void commongappickpair( char *r1, char *r2, char *i1, char *i2 )
 //	return; // not SP
 	while( *i1 )
 	{
-		if( *i1 == '-' && *i2 == '-' ) 
+		if( *i1 == '-' && *i2 == '-' )
 		{
 			i1++;
 			i2++;
@@ -11771,7 +11771,7 @@ double naivepairscorefast( char *seq1, char *seq2, int *skip1, int *skip2, int p
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali += (double)penal;
-//				while( *p1 == '-' || *p2 == '-' ) 
+//				while( *p1 == '-' || *p2 == '-' )
 				while( *p1 == '-' )  // SP
 				{
 					p1++;
@@ -11783,7 +11783,7 @@ double naivepairscorefast( char *seq1, char *seq2, int *skip1, int *skip2, int p
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali +=  (double)penal;
-//				while( *p2 == '-' || *p1 == '-' ) 
+//				while( *p2 == '-' || *p1 == '-' )
 				while( *p2 == '-' )  // SP
 				{
 					p1++;
@@ -11825,7 +11825,7 @@ double naivepairscore11_dynmtx( double **mtx, char *seq1, char *seq2, int penal 
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali += (double)penal;
-//				while( *p1 == '-' || *p2 == '-' ) 
+//				while( *p1 == '-' || *p2 == '-' )
 				while( *p1 == '-' )  // SP
 				{
 					p1++;
@@ -11837,7 +11837,7 @@ double naivepairscore11_dynmtx( double **mtx, char *seq1, char *seq2, int penal 
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali +=  (double)penal;
-//				while( *p2 == '-' || *p1 == '-' ) 
+//				while( *p2 == '-' || *p1 == '-' )
 				while( *p2 == '-' )  // SP
 				{
 					p1++;
@@ -11879,7 +11879,7 @@ double naivepairscore11( char *seq1, char *seq2, int penal )
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali += (double)penal;
-//				while( *p1 == '-' || *p2 == '-' ) 
+//				while( *p1 == '-' || *p2 == '-' )
 				while( *p1 == '-' )  // SP
 				{
 					p1++;
@@ -11891,7 +11891,7 @@ double naivepairscore11( char *seq1, char *seq2, int penal )
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali +=  (double)penal;
-//				while( *p2 == '-' || *p1 == '-' ) 
+//				while( *p2 == '-' || *p1 == '-' )
 				while( *p2 == '-' )  // SP
 				{
 					p1++;
@@ -11940,7 +11940,7 @@ double naivepairscore( int n1, int n2, char **seq1, char **seq2, double *eff1, d
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali += penal;
-//				while( *p1 == '-' || *p2 == '-' ) 
+//				while( *p1 == '-' || *p2 == '-' )
 				while( *p1 == '-' )  // SP
 				{
 					p1++;
@@ -11952,7 +11952,7 @@ double naivepairscore( int n1, int n2, char **seq1, char **seq2, double *eff1, d
 			{
 //				reporterr(       "Penal! %c-%c in %d-%d, %f\n", *(p1-1), *(p2-1), i, j, feff );
 				vali +=  penal;
-//				while( *p2 == '-' || *p1 == '-' ) 
+//				while( *p2 == '-' || *p1 == '-' )
 				while( *p2 == '-' )  // SP
 				{
 					p1++;
@@ -11977,7 +11977,7 @@ double plainscore( int nseq, char **s )
 {
 	int i, j, ilim;
 	double v = 0.0;
-	
+
 	ilim = nseq-1;
 	for( i=0; i<ilim; i++ ) for( j=i+1; j<nseq; j++ )
 	{
@@ -12109,7 +12109,7 @@ int addonetip( int njobc, int ***topolc, double **lenc, double **iscorec, int **
 
 
 
-	for( i=0; i<norg; i++ ) leaf2node[i] = -1; 
+	for( i=0; i<norg; i++ ) leaf2node[i] = -1;
 	for( i=0; i<nstep; i++ )
 	{
 		mem0 = topol[i][0][0];
@@ -12118,20 +12118,20 @@ int addonetip( int njobc, int ***topolc, double **lenc, double **iscorec, int **
 		reporterr(       "\n\nstep %d (old) \n", i );
 
 		reporterr( "group0 = \n" );
-		for( j=0; topol[i][0][j]>-1; j++ ) 
+		for( j=0; topol[i][0][j]>-1; j++ )
 		{
 			reporterr( "%d ", topol[i][0][j]+1 );
 		}
 		reporterr( "\n" );
 		reporterr( "len=%f\n", len[i][0] );
 		reporterr( "group1 = \n" );
-		for( j=0; topol[i][1][j]>-1; j++ ) 
+		for( j=0; topol[i][1][j]>-1; j++ )
 		{
 			reporterr( "%d ", topol[i][1][j]+1 );
 		}
 		reporterr( "\n" );
 		reporterr( "len=%f\n", len[i][1] );
-		
+
 		reporterr(       "\n\n\nminscore = %f ? %f\n", minscore, dep[i].distfromtip*2 );
 		reporterr(       "i = %d\n", i );
 		if( leaf2node[nearest] == -1 )
@@ -12264,11 +12264,11 @@ int addonetip( int njobc, int ***topolc, double **lenc, double **iscorec, int **
 		eff1 = iscorec[mem1][norg-mem1];
 
 //		iscorec[mem0][norg-mem0] = (clusterfuncpt[0])( eff0, eff1 );
-		iscorec[mem0][norg-mem0] =  MIN( eff0, eff1 ) * sueff1_double_local + ( eff0 + eff1 ) * sueff05_double_local; 
+		iscorec[mem0][norg-mem0] =  MIN( eff0, eff1 ) * sueff1_double_local + ( eff0 + eff1 ) * sueff05_double_local;
 		iscorec[mem1][norg-mem1] = 9999.9; // sukoshi muda
 
-		acprev = ac[mem1].prev; 
-		acnext = ac[mem1].next; 
+		acprev = ac[mem1].prev;
+		acnext = ac[mem1].next;
 		acprev->next = acnext;
 		if( acnext != NULL ) acnext->prev = acprev;
 
@@ -12507,7 +12507,7 @@ int samemember( int *mem, int *cand )
 	reporterr(       "\n" );
 #endif
 
-	for( i=0, j=0; mem[i]>-1; )	
+	for( i=0, j=0; mem[i]>-1; )
 	{
 		if( mem[i++] != cand[j++] ) return( 0 );
 	}
@@ -12532,7 +12532,7 @@ int samemember( int *mem, int *cand )
 
 	if( nm != nc ) return( 0 );
 
-	for( i=0; mem[i]>-1; i++ )	
+	for( i=0; mem[i]>-1; i++ )
 	{
 		for( j=0; cand[j]>-1; j++ )
 			if( mem[i] == cand[j] ) break;
@@ -12545,7 +12545,7 @@ int samemember( int *mem, int *cand )
 		reporterr(       "mem = " );
 		for( i=0; mem[i]>-1; i++ )	reporterr(       "%d ", mem[i] );
 		reporterr(       "\n" );
-	
+
 		reporterr(       "cand = " );
 		for( i=0; cand[i]>-1; i++ )	reporterr(       "%d ", cand[i] );
 		reporterr(       "\n" );
@@ -12564,8 +12564,8 @@ int samemembern( int *mem, int *cand, int nc )
 	int i, j;
 	int nm;
 
-	nm = 0; 
-	for( i=0; mem[i]>-1; i++ ) 
+	nm = 0;
+	for( i=0; mem[i]>-1; i++ )
 	{
 		nm++;
 		if( nm > nc ) return( 0 );
@@ -12573,7 +12573,7 @@ int samemembern( int *mem, int *cand, int nc )
 
 	if( nm != nc ) return( 0 );
 
-	for( i=0; mem[i]>-1; i++ )	
+	for( i=0; mem[i]>-1; i++ )
 	{
 		for( j=0; j<nc; j++ )
 			if( mem[i] == cand[j] ) break;
@@ -12586,7 +12586,7 @@ int samemembern( int *mem, int *cand, int nc )
 		reporterr(       "mem = " );
 		for( i=0; mem[i]>-1; i++ )	reporterr(       "%d ", mem[i] );
 		reporterr(       "\n" );
-	
+
 		reporterr(       "cand = " );
 		for( i=0; cand[i]>-1; i++ )	reporterr(       "%d ", cand[i] );
 		reporterr(       "\n" );
@@ -12600,7 +12600,7 @@ int samemembern( int *mem, int *cand, int nc )
 }
 
 
-int includemember( int *mem, int *cand ) // mem in cand 
+int includemember( int *mem, int *cand ) // mem in cand
 {
 	int i, j;
 
@@ -12728,7 +12728,7 @@ void makedynamicmtx( double **out, double **in, double offset )
 {
 	int i, j, ii, jj;
 	double av;
- 
+
 	offset = dist2offset( offset * 2.0 ); // offset 0..1 -> 0..2
 
 //	if( offset > 0.0 ) offset = 0.0;
@@ -12740,7 +12740,7 @@ void makedynamicmtx( double **out, double **in, double offset )
 	}
 	if( offset == 0.0 ) return;
 
-	for( i=0; i<nalphabets; i++ ) 
+	for( i=0; i<nalphabets; i++ )
 	{
 		ii = (int)amino[i];
 		if( ii == '-' ) continue; // text no toki arieru
@@ -12764,14 +12764,14 @@ void makedynamicmtx( double **out, double **in, double offset )
 // Hitaikaku youso ga ookiku narisugi.
 
 	av = 0.0;
-	for( i=0; i<nalphabets; i++ ) 
+	for( i=0; i<nalphabets; i++ )
 	{
 		if( ii == '-' ) continue; // text no toki arieru
 		av += out[i][i];
 	}
 	av /= (double)nalphabets;
 
-	for( i=0; i<nalphabets; i++ ) 
+	for( i=0; i<nalphabets; i++ )
 	{
 		if( amino[i] == '-' ) continue; // text no toki arieru
 		for( j=0; j<nalphabets; j++ )
@@ -12784,7 +12784,7 @@ void makedynamicmtx( double **out, double **in, double offset )
 }
 void FreeCommonIP()
 {
-	if( commonIP ) FreeIntMtx( commonIP ); 
+	if( commonIP ) FreeIntMtx( commonIP );
 	commonIP = NULL;
 	commonAlloc1 = 0;
 	commonAlloc2 = 0;
@@ -12870,7 +12870,7 @@ int generatesubalignmentstable( int nseq, int ***tablept, int *nsubpt, int *maxm
 		{
 //			reporterr( "HIT 0!\n" );
 			*tablept = realloc( *tablept, sizeof( char * ) * (*nsubpt+2) );
-			for( j=0, nmem=0; (mem=topol[i][0][j])!=-1; j++ ) 
+			for( j=0, nmem=0; (mem=topol[i][0][j])!=-1; j++ )
 				nmem++;
 //			reporterr( "allocating %d\n", nmem+1 );
 			(*tablept)[*nsubpt] = calloc( nmem+1, sizeof( int ) );
@@ -12896,7 +12896,7 @@ int generatesubalignmentstable( int nseq, int ***tablept, int *nsubpt, int *maxm
 
 	}
 
-	if( distfromtip[0] <= threshold ) 
+	if( distfromtip[0] <= threshold )
 	{
 		free( distfromtip );
 		return( 1 );
@@ -12961,7 +12961,7 @@ int commonsextet_p( int *table, int *pointt )
 		if( tmp == 0 ) *cp++ = point;
 	}
 	*cp = END_OF_VEC;
-	
+
 	cp =  ct;
 	while( *cp != END_OF_VEC )
 		memo[*cp++] = 0;
@@ -12980,7 +12980,7 @@ double distcompact_msa( char *seq1, char *seq2, int *skiptable1, int *skiptable2
 		return( 2.0 );
 	else
 	{
-		value = ( 1.0 - (double)naivepairscorefast( seq1, seq2, skiptable1, skiptable2, penalty_dist ) / bunbo ) * 2.0; // 2014/Aug/15 fast 
+		value = ( 1.0 - (double)naivepairscorefast( seq1, seq2, skiptable1, skiptable2, penalty_dist ) / bunbo ) * 2.0; // 2014/Aug/15 fast
 		if( value > 10 ) value = 10.0;  // 2015/Mar/17
 		return( value );
 	}

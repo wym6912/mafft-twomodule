@@ -7,14 +7,14 @@
 #include <pthread.h>
 #endif
 
-//å°è£…ä¸€ä¸ªäº’æ–¥é‡å’Œæ¡ä»¶å˜é‡ä½œä¸ºçŠ¶æ€
+//·â×°Ò»¸ö»¥³âÁ¿ºÍÌõ¼ş±äÁ¿×÷Îª×´Ì¬
 typedef struct condition
 {
     pthread_mutex_t pmutex;
     pthread_cond_t pcond;
 }condition_t;
 
-//å¯¹çŠ¶æ€çš„æ“ä½œå‡½æ•°
+//¶Ô×´Ì¬µÄ²Ù×÷º¯Êı
 int condition_init(condition_t *cond);
 int condition_lock(condition_t *cond);
 int condition_unlock(condition_t *cond);

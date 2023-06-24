@@ -1,12 +1,11 @@
 #include "Kband.h"
-#include <stdio.h>
-#include <stddef.h>
 
 #define DEBUG 0
 
 extern int nalphabets;
 extern unsigned char amino[];
 #define INF (1e+100)
+#define ULLMAX (0xffffffffffffffff)
 
 long long __min__(long long x, long long y) { return x > y ? y : x; }
 long long __max__(long long x, long long y) { return x > y ? x : y; }
@@ -40,12 +39,12 @@ double protein_score(char a, char b, double **mtx)
 
 size_t query_place(int x, int y, int band, int n, int m)
 {
-	/* Query the place in the array 
+	/* Query the place in the array
 	 * Now the complexity of the segment is O(1)
 	 * see https://gitee.com/wym6912/grad_learn/blob/master/kband_mapping/mapping_rectangle_O1.py
 	 */
 	if(! insideband(x, y, band, n, m)) return -1;
-	else 
+	else
 	{
 		if(x == 0) return (size_t)__abs__(y - x);
 		size_t longest = right_band(n, m, n / 2, band) - left_band(n, m, n / 2, band) + 1, \
@@ -53,9 +52,9 @@ size_t query_place(int x, int y, int band, int n, int m)
 		if(firstline == longest)
 		{
 #if DEBUG
-			fprintf(stderr, "A %lld\n", (longest * x + y - left_band(n, m, 0, band)));
+			fprintf(stderr, "A %lld\n", (longest * x + y - left_band(n, m, x, band)));
 #endif
-			return (size_t)(longest * x + y - left_band(n, m, 0, band));
+			return (size_t)(longest * x + y - left_band(n, m, x, band));
 		}
 		size_t ans = 0, thisline = right_band(n, m, x, band) - left_band(n, m, x, band) + 1;
 		size_t beforeall, firstm, alllinesum, lastm, afterall;
@@ -69,7 +68,7 @@ size_t query_place(int x, int y, int band, int n, int m)
 			ans += alllinesum * longest + y - left_band(n, m, x, band);
 #if DEBUG
 			fprintf(stderr, "B %llu\n", ans);
-#endif			
+#endif
 			return ans;
 		}
 		if(thisline - firstline == x) // on [0, band]
@@ -81,7 +80,7 @@ size_t query_place(int x, int y, int band, int n, int m)
 			return ans;
 		}
 		beforeall = longest - firstline + 1;
-		ans += beforeall * (longest + firstline) / 2;	
+		ans += beforeall * (longest + firstline) / 2;
 		firstm = longest - firstline;
 		lastm = n - 1 - (longest - firstline);
 		ans += longest * (lastm - firstm);
@@ -92,7 +91,10 @@ size_t query_place(int x, int y, int band, int n, int m)
 #endif
 		return ans;
 	}
-	return -1;
+#if _DEBUG
+	assert(0);
+#endif
+	return ULLMAX;
 }
 
 int matrix_set(int x, int y, int band, double val, double *mtx, int n, int m)
@@ -155,7 +157,7 @@ int matrix_set_INT(int x, int y, int band, int val, int *mtx, int n, int m)
 
 int matrix_query_INT(int x, int y, int band, int *mtx, int n, int m)
 {
-	/* query node by matrix 
+	/* query node by matrix
 	   type: int
 	 */
 	size_t q = query_place(x, y, band, n, m);

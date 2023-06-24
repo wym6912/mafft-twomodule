@@ -80,7 +80,7 @@ static void mymergesort( int first, int last, Segment **seg )
 
 	if( seg == NULL )
 	{
-		if( work ) free( work ); 
+		if( work ) free( work );
 		work = NULL;
 		allo = 0;
 		return;
@@ -103,7 +103,7 @@ static void mymergesort( int first, int last, Segment **seg )
 		i = middle + 1; j = 0; k = first;
 		while( i <= last && j < p )
 		{
-			if( work[j]->center <= seg[i]->center ) 
+			if( work[j]->center <= seg[i]->center )
 				seg[k++] = work[j++];
 			else
 				seg[k++] = seg[i++];
@@ -113,8 +113,8 @@ static void mymergesort( int first, int last, Segment **seg )
 }
 
 double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
-			  char  **seq1, char  **seq2, 
-			  double *eff1, double *eff2, 
+			  char  **seq1, char  **seq2,
+			  double *eff1, double *eff2,
 			  double **eff1s, double **eff2s,
 			  int    clus1, int    clus2,
 			  int alloclen, int *fftlog,
@@ -134,8 +134,8 @@ double Falign( int **whichmtx, double ***scoringmatrices, double **n_dynamicmtx,
 
 	static TLS Fukusosuu **seqVector1 = NULL;
 	static TLS Fukusosuu **seqVector2 = NULL;
-	static TLS Fukusosuu **naiseki = NULL;   
-	static TLS Fukusosuu *naisekiNoWa = NULL; 
+	static TLS Fukusosuu **naiseki = NULL;
+	static TLS Fukusosuu *naisekiNoWa = NULL;
 	static TLS double *soukan = NULL;
 	static TLS double **crossscore = NULL;
 	int nlentmp;
@@ -285,7 +285,7 @@ system( "less input_of_Falign < /dev/tty > /dev/tty" );
 #if DEBUG
 fftfp = fopen( "seqVec", "w" );
 fprintf( fftfp, "before transform\n" );
-for( k=0; k<n20or4or2; k++ ) 
+for( k=0; k<n20or4or2; k++ )
 {
    fprintf( fftfp, "nlen=%d\n", nlen );
    fprintf( fftfp, "%c\n", amino[k] );
@@ -316,7 +316,7 @@ fclose( fftfp );
 #if DEBUG
 fftfp = fopen( "seqVec2", "w" );
 fprintf( fftfp, "before fft\n" );
-for( k=0; k<n20or4or2; k++ ) 
+for( k=0; k<n20or4or2; k++ )
 {
    fprintf( fftfp, "%c\n", amino[k] );
    for( l=0; l<nlen; l++ )
@@ -337,7 +337,7 @@ fclose( fftfp );
 #if DEBUG
 fftfp = fopen( "seqVec3", "w" );
 fprintf( fftfp, "after fft\n" );
-for( k=0; k<n20or4or2; k++ ) 
+for( k=0; k<n20or4or2; k++ )
 {
    fprintf( fftfp, "%c\n", amino[k] );
    for( l=0; l<nlen; l++ )
@@ -347,43 +347,43 @@ fclose( fftfp );
 //system( "less seqVec2 < /dev/tty > /dev/tty" );
 #endif
 
-		for( k=0; k<n20or4or2; k++ ) 
+		for( k=0; k<n20or4or2; k++ )
 		{
-			for( l=0; l<nlen; l++ ) 
+			for( l=0; l<nlen; l++ )
 				calcNaiseki( naiseki[k]+l, seqVector1[k]+l, seqVector2[k]+l );
 		}
-		for( l=0; l<nlen; l++ ) 
+		for( l=0; l<nlen; l++ )
 		{
 			naisekiNoWa[l].R = 0.0;
 			naisekiNoWa[l].I = 0.0;
-			for( k=0; k<n20or4or2; k++ ) 
+			for( k=0; k<n20or4or2; k++ )
 			{
 				naisekiNoWa[l].R += naiseki[k][l].R;
 				naisekiNoWa[l].I += naiseki[k][l].I;
 			}
 		}
-	
+
 #if DEBUG
 	fftfp = fopen( "naisekiNoWa", "w" );
 	fprintf( fftfp, "#Before fft\n" );
 	for( l=0; l<nlen; l++ )
-		fprintf( fftfp, "%d  %f %f\n", l, naisekiNoWa[l].R, naisekiNoWa[l].I ); 
+		fprintf( fftfp, "%d  %f %f\n", l, naisekiNoWa[l].R, naisekiNoWa[l].I );
 	fclose( fftfp );
 	//system( "less naisekiNoWa < /dev/tty > /dev/tty " );
 #endif
 
 		fft( -nlen, naisekiNoWa, 0 );
-	
-		for( m=0; m<=nlen2; m++ ) 
+
+		for( m=0; m<=nlen2; m++ )
 			soukan[m] = naisekiNoWa[nlen2-m].R;
-		for( m=nlen2+1; m<nlen; m++ ) 
+		for( m=nlen2+1; m<nlen; m++ )
 			soukan[m] = naisekiNoWa[nlen+nlen2-m].R;
 
 #if DEBUG
 	fftfp = fopen( "naisekiNoWa", "a" );
 	fprintf( fftfp, "#After fft\n" );
 	for( l=0; l<nlen; l++ )
-		fprintf( fftfp, "%d  %f\n", l, naisekiNoWa[l].R ); 
+		fprintf( fftfp, "%d  %f\n", l, naisekiNoWa[l].R );
 	fclose( fftfp );
 	fftfp = fopen( "list.plot", "w"  );
 	fprintf( fftfp, "plot 'naisekiNoWa'\npause -1" );
@@ -394,7 +394,7 @@ fclose( fftfp );
 	fftfp = fopen("soukan", "w");
 	fprintf( fftfp, "soukan\n" );
 	for( l=0; l<nlen; l++ )
-		fprintf( fftfp, "%d  %f\n", l-nlen2, soukan[l] ); 
+		fprintf( fftfp, "%d  %f\n", l-nlen2, soukan[l] );
 #if DEBUG
 	fftfp = fopen( "list.plot", "w"  );
 	fprintf( fftfp, "plot 'frt'\n pause +1" );
@@ -414,7 +414,7 @@ fclose( fftfp );
 	{
 		maxk = NKOUHO;
 	}
-	for( k=0; k<maxk; k++ ) 
+	for( k=0; k<maxk; k++ )
 	{
 		lag = kouho[k];
 		if( lag <= -len1 || len2 <= lag ) continue;
@@ -486,8 +486,8 @@ fclose( fftfp );
 		sortedseg1[i] = &segment1[i];
 		sortedseg2[i] = &segment2[i];
 	}
-	mymergesort( 0, count-1, sortedseg1 ); 
-	mymergesort( 0, count-1, sortedseg2 ); 
+	mymergesort( 0, count-1, sortedseg1 );
+	mymergesort( 0, count-1, sortedseg2 );
 	for( i=0; i<count; i++ ) sortedseg1[i]->number = i;
 	for( i=0; i<count; i++ ) sortedseg2[i]->number = i;
 
@@ -540,14 +540,14 @@ fclose( fftfp );
 #endif
 
 		crossscore[0][0] = 10000000.0;
-		cut1[0] = 0; 
+		cut1[0] = 0;
 		cut2[0] = 0;
 		crossscore[count+1][count+1] = 10000000.0;
 		cut1[count+1] = len1;
 		cut2[count+1] = len2;
 		count += 2;
 		count0 = count;
-	
+
 		blockAlign2( cut1, cut2, sortedseg1, sortedseg2, crossscore, &count );
 
 //		if( count-count0 )
@@ -559,7 +559,7 @@ fclose( fftfp );
 		{
 			if( count0 > count )
 			{
-				fprintf( stderr, "REPEAT!? \n" ); 
+				fprintf( stderr, "REPEAT!? \n" );
 				if( fftRepeatStop ) exit( 1 );
 			}
 #if KEIKA
@@ -617,11 +617,11 @@ fclose( fftfp );
 
 		if( cut1[i+1] != len1 )
 			getkyokaigap( egap1, seq1, cut1[i+1], clus1 );
-		else    
+		else
 			for( j=0; j<clus1; j++ ) egap1[j] = 'o';
 		if( cut2[i+1] != len2 )
 			getkyokaigap( egap2, seq2, cut2[i+1], clus2 );
-		else    
+		else
 			for( j=0; j<clus2; j++ ) egap2[j] = 'o';
 #if DEBUG
 		{
@@ -680,12 +680,12 @@ fclose( fftfp );
 		fprintf( stderr, "i=%d, before alignment", i );
 		fprintf( stderr, "%4d\n", totallen );
 		fprintf( stderr, "\n\n" );
-		for( j=0; j<clus1; j++ ) 
+		for( j=0; j<clus1; j++ )
 		{
 			fprintf( stderr, "%s\n", tmpres1[j] );
 		}
 		fprintf( stderr, "-------\n" );
-		for( j=0; j<clus2; j++ ) 
+		for( j=0; j<clus2; j++ )
 		{
 			fprintf( stderr, "%s\n", tmpres2[j] );
 		}
@@ -711,6 +711,7 @@ fclose( fftfp );
 				totalscore += Aalign( tmpres1, tmpres2, eff1, eff2, clus1, clus2, alloclen );
 				break;
 			case( 'A' ): // Normal mode
+			case( 'M' ): // memsave mode
 				if( clus1 == 1 && clus2 == 1 ) // two sequences alignment
 					totalscore += G__align11( n_dynamicmtx, tmpres1, tmpres2, alloclen, headgp, tailgp );
 				else // Multiple sequence alignment
@@ -766,12 +767,12 @@ fclose( fftfp );
 	for( j=0; j<clus1; j++ ) strcpy( seq1[j], result1[j] );
 	for( j=0; j<clus2; j++ ) strcpy( seq2[j], result2[j] );
 #if DEBUG
-	for( j=0; j<clus1; j++ ) 
+	for( j=0; j<clus1; j++ )
 	{
 		fprintf( stderr, "in Falign, %s\n", result1[j] );
 	}
 	fprintf( stderr, "- - - - - - - - - - -\n" );
-	for( j=0; j<clus2; j++ ) 
+	for( j=0; j<clus2; j++ )
 	{
 		fprintf( stderr, "in Falign, %s\n", result2[j] );
 	}

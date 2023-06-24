@@ -10,12 +10,12 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 	*/
 //	char locaminod[] = "ARNDCQEGHILKMFPSTWYVBZX.-U";
 	char locaminod[] = "ARNDCQEGHILKMFPSTWYVBZX.-J";
-	char locgrpd[] = 
+	char locgrpd[] =
 	{
 		0, 3, 2, 2, 5, 2, 2, 0, 3, 1, 1, 3, 1, 4, 0, 0, 0, 4, 4, 1, 2, 2,
 		6, 6, 6, 1,
 	};
-	double freqd[20] = 
+	double freqd[20] =
 	{
 	    0.077,
 	    0.051,
@@ -39,7 +39,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 	    0.066,
 	};
 
-	double tmpmtx30[] = 
+	double tmpmtx30[] =
 	{
     4,
    -1,     8,
@@ -65,8 +65,8 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
     0,     0,    -1,     0,     0,     4,     5,    -2,     0,    -3,    -1,     1,    -1,    -4,     0,    -1,    -1,    -1,    -2,    -3,     0,     4,
     0,    -1,     0,    -1,    -2,     0,    -1,    -1,    -1,     0,     0,     0,     0,    -1,    -1,     0,     0,    -2,    -1,     0,    -1,     0,    -1,
 	};
-	
-	double tmpmtx45[] = 
+
+	double tmpmtx45[] =
 	{
       5,
      -2,      7,
@@ -89,7 +89,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
      -2,     -1,     -2,     -2,     -3,     -1,     -2,     -3,      2,      0,      0,     -1,      0,      3,     -3,     -2,     -1,      3,      8,
       0,     -2,     -3,     -3,     -1,     -3,     -3,     -3,     -3,      3,      1,     -2,      1,      0,     -3,     -1,      0,     -3,     -1,      5,
 	};
-    double tmpmtx50[] = 
+    double tmpmtx50[] =
     {
        5,
       -2,      7,
@@ -113,7 +113,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
        0,     -3,     -3,     -4,     -1,     -3,     -3,     -4,     -4,      4,      1,     -3,      1,     -1,     -3,     -2,      0,     -3,     -1,      5,
     };
 #if 0
-	double tmpmtx62[] = 
+	double tmpmtx62[] =
 	{
       6,
      -2,      8,
@@ -137,7 +137,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
       0,     -4,     -4,     -5,     -1,     -3,     -4,     -5,     -5,      4,      1,     -3,      1,     -1,     -4,     -2,      0,     -4,     -2,      6,
 	};
 #else
-	double tmpmtx62[] = 
+	double tmpmtx62[] =
 	{ 5.893685,
 	 -2.120252,  8.210189,
 	 -2.296072, -0.659672,  8.479856,
@@ -160,7 +160,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 	 -0.284140, -3.753871, -4.314525, -4.713963, -1.211518, -3.297575, -3.663425, -4.708118, -4.676220,  3.820569,  1.182672, -3.393535,  1.030861, -1.273542, -3.523054, -2.469318, -0.083276, -4.251392, -1.811267,  5.653391,
 	};
 #endif
-	double tmpmtx80[] = 
+	double tmpmtx80[] =
 	{
       7,
      -3,      9,
@@ -183,7 +183,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
      -4,     -4,     -4,     -6,     -5,     -3,     -5,     -6,      3,     -3,     -2,     -4,     -3,      4,     -6,     -3,     -3,      3,     11,
      -1,     -4,     -5,     -6,     -2,     -4,     -4,     -6,     -5,      4,      1,     -4,      1,     -2,     -4,     -3,      0,     -5,     -3,      7,
 	};
-	double tmpmtx90[] = 
+	double tmpmtx90[] =
 	{
  5,
 -2,  6,
@@ -206,7 +206,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 -3, -3, -3, -4, -4, -3, -4, -5,  1, -2, -2, -3, -2,  3, -4, -3, -2,  2,  8,
 -1, -3, -4, -5, -2, -3, -3, -5, -4,  3,  0, -3,  0, -2, -3, -2, -1, -3, -3,  5,
 	};
-	double tmpmtx100[] = 
+	double tmpmtx100[] =
 	{
  8,
 -3,10,
@@ -229,7 +229,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 -5,-5,-5,-7,-6,-4,-7,-8, 1,-4,-4,-5,-5, 4,-7,-5,-5, 2,12,
 -2,-6,-7,-8,-3,-5,-5,-8,-7, 4, 0,-5, 0,-3,-6,-4,-1,-5,-5, 8,
 	};
-	double tmpmtx0[] = 
+	double tmpmtx0[] =
 	{
      2.4,
     -0.6,    4.7,
@@ -280,7 +280,7 @@ void BLOSUMmtx( int n, double **matrix, double *freq, unsigned char *amino, char
 			matrix[i][j] = matrix[j][i] = (double)tmpmtx[count++];
 		}
 	}
-	if( n == -1 && tmpmtx[400] != -1.0 ) 
+	if( n == -1 && tmpmtx[400] != -1.0 )
 	{
 		for( i=0; i<20; i++ ) freq[i] = tmpmtx[400+i];
 		av = 0.0;
@@ -404,7 +404,7 @@ void extendedmtx( double **matrix, double *freq, unsigned char *amino, char *ami
 	int i;
 	int j;
 
-	for( i=0; i<nalphabets; i++ ) 
+	for( i=0; i<nalphabets; i++ )
 	{
 //		fprintf( stderr, "i=%d, i=%c\n", i, i );
 		amino[i] = (unsigned char)i;
@@ -424,7 +424,7 @@ void extendedmtx( double **matrix, double *freq, unsigned char *amino, char *ami
 
 	overridematrix( matrix );
 #if 0 // user-defined matrix + user-defined freqency ga aru toki fukkatsu saseru.
-	if( tmpmtx[400] != -1.0 ) 
+	if( tmpmtx[400] != -1.0 )
 	{
 		for( i=0; i<20; i++ ) freq[i] = tmpmtx[400+i];
 		av = 0.0;

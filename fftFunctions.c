@@ -22,7 +22,7 @@ double maxItch( double *soukan, int size )
 	int i;
 	double value = 0.0;
 	double cand;
-	for( i=0; i<size; i++ ) 
+	for( i=0; i<size; i++ )
 		if( ( cand = soukan[i] ) > value ) value = cand;
 	return( value );
 }
@@ -44,19 +44,19 @@ Fukusosuu *AllocateFukusosuuVec( int l1 )
 	}
 	return( value );
 }
-	
+
 Fukusosuu **AllocateFukusosuuMtx( int l1, int l2 )
 {
 	Fukusosuu **value;
 	int j;
 //	fprintf( stderr, "allocating %d x %d FukusosuuMtx\n", l1, l2 );
 	value = (Fukusosuu **)calloc( l1+1, sizeof( Fukusosuu * ) );
-	if( !value ) 
+	if( !value )
 	{
 		fprintf( stderr, "Cannot allocate %d x %d FukusosuuVecMtx\n", l1, l2 );
 		exit( 1 );
 	}
-	for( j=0; j<l1; j++ ) 
+	for( j=0; j<l1; j++ )
 	{
 		value[j] = AllocateFukusosuuVec( l2 );
 		if( !value[j] )
@@ -89,7 +89,7 @@ void FreeFukusosuuMtx( Fukusosuu **mtx )
 {
 	int i;
 
-	for( i=0; mtx[i]; i++ ) 
+	for( i=0; mtx[i]; i++ )
 		free( (void *)mtx[i] );
 	free( (void *)mtx );
 }
@@ -101,10 +101,10 @@ int getKouho( int *kouho, int nkouho, double *soukan, int nlen2 )
 	double max;
 	double tmp;
 	int ikouho = 0; // by D.Mathog, iinoka?
-	for( j=0; j<nkouho; j++ ) 
+	for( j=0; j<nkouho; j++ )
 	{
 		max = -9999.9;
-		for( i=0; i<nlen2; i++ ) 
+		for( i=0; i<nlen2; i++ )
 		{
 			if( ( tmp = soukan[i] ) > max )
 			{
@@ -127,8 +127,8 @@ int getKouho( int *kouho, int nkouho, double *soukan, int nlen2 )
 	return( j );
 }
 
-void zurasu2( int lag, int    clus1, int    clus2, 
-                       char  **seq1, char  **seq2, 
+void zurasu2( int lag, int    clus1, int    clus2,
+                       char  **seq1, char  **seq2,
 		 			   char **aseq1, char **aseq2 )
 {
 	int i;
@@ -147,8 +147,8 @@ void zurasu2( int lag, int    clus1, int    clus2,
 	}
 }
 
-void zurasu( int lag, int    clus1, int    clus2, 
-                      char  **seq1, char  **seq2, 
+void zurasu( int lag, int    clus1, int    clus2,
+                      char  **seq1, char  **seq2,
 					  char **aseq1, char **aseq2 )
 {
 	int i;
@@ -168,7 +168,7 @@ void zurasu( int lag, int    clus1, int    clus2,
 }
 
 
-int alignableReagion( int    clus1, int    clus2, 
+int alignableReagion( int    clus1, int    clus2,
 					   char  **seq1, char  **seq2,
 					   double *eff1, double *eff2,
 					   Segment *seg )
@@ -280,8 +280,8 @@ int alignableReagion( int    clus1, int    clus2,
 
 		/* make site score */
 		stra[i] = 0.0;
-		for( k=hat1[nalphabets]; k!=-1; k=hat1[k] ) 
-			for( j=hat2[nalphabets]; j!=-1; j=hat2[j] ) 
+		for( k=hat1[nalphabets]; k!=-1; k=hat1[k] )
+			for( j=hat2[nalphabets]; j!=-1; j=hat2[j] )
 //				stra[i] += n_dis[k][j] * prf1[k] * prf2[j];
 				stra[i] += n_disFFT[k][j] * prf1[k] * prf2[j];
 		stra[i] /= totaleff;
@@ -293,6 +293,15 @@ int alignableReagion( int    clus1, int    clus2,
 	cumscore = 0.0;
 	score = 0.0;
 	for( j=0; j<fftWinSize; j++ ) score += stra[j];
+
+	// determine the first block can be determined
+	if( score > threshold )
+	{
+		status = 1; // status must be 0
+		starttmp = 0;
+		length = 0;
+		cumscore = score;
+	}
 
 	for( i=1; i<len-fftWinSize; i++ )
 	{
@@ -316,10 +325,10 @@ int alignableReagion( int    clus1, int    clus2,
 				status = 1;
 				starttmp = i;
 				length = 0;
-				cumscore = 0.0;
+				cumscore = score - stra[i + fftWinSize - 1];
 			}
 			length++;
-			cumscore += score;
+			cumscore += stra[i + fftWinSize - 1];
 #endif
 		}
 		if( score <= threshold || length > SEGMENTSIZE )
@@ -397,7 +406,7 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 	static TLS double maxj, maxi;
 	static TLS int pointj, pointi;
 
-	if( cut1 == NULL) 
+	if( cut1 == NULL)
 	{
 		if( result1 )
 		{
@@ -436,7 +445,7 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 
 	for( i=0; i<*ncut; i++ )
 		fprintf( stderr, "i=%d, cut1 = %d, cut2 = %d\n", i, cut1[i], cut2[i] );
-	for( i=0; i<*ncut; i++ ) 
+	for( i=0; i<*ncut; i++ )
 	{
 		for( j=0; j<*ncut; j++ )
 			fprintf( stderr, "%#4.0f ", ocrossscore[i][j] );
@@ -446,7 +455,7 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 
 	for( i=0; i<*ncut; i++ ) for( j=0; j<*ncut; j++ )  /* mudadanaa */
 		crossscore[i][j] = ocrossscore[i][j];
-	for( i=0; i<*ncut; i++ ) 
+	for( i=0; i<*ncut; i++ )
 	{
 		ocut1[i] = cut1[i];
 		ocut2[i] = cut2[i];
@@ -466,8 +475,8 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 /*
 				fprintf( stderr, "k=%d, i=%d\n", k, i );
 */
-				if( k && k<*ncut-1 && j<*ncut-1 && !permit( seg1[k-1], seg1[j-1] ) ) continue;
-				if( crossscore[i-1][k] > maxj )
+				if( !k || k>=*ncut-1 || j>=*ncut-1 ) continue;
+				if( crossscore[i-1][k] > maxi )
 				{
 					pointi = k;
 					maxi = crossscore[i-1][k];
@@ -478,13 +487,13 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 			klim = i-2;
 			for( k=0; k<klim; k++ )
 			{
-				if( k && k<*ncut-1 && i<*ncut-1 && !permit( seg2[k-1], seg2[i-1] ) ) continue;
+				if( !k || k>=*ncut-1 || i>=*ncut-1 ) continue;
 				if( crossscore[k][j-1] > maxj )
 				{
 					pointj = k;
 					maxj = crossscore[k][j-1];
 				}
-			}	
+			}
 
 			maxi += penalty;
 			maxj += penalty;
@@ -508,7 +517,7 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 		}
 	}
 #if 0
-	for( i=0; i<*ncut; i++ ) 
+	for( i=0; i<*ncut; i++ )
 	{
 		for( j=0; j<*ncut; j++ )
 			fprintf( stderr, "%3d ", track[i][j] );
@@ -552,7 +561,7 @@ void blockAlign2( int *cut1, int *cut2, Segment **seg1, Segment **seg2, double *
 		if( result1[j] == result1[j-1] || result2[j] == result2[j-1] )
 			if( ocrossscore[result1[j]][result2[j]] > ocrossscore[result1[j-1]][result2[j-1]] )
 				count--;
-				
+
 		cut1[count] = ocut1[result1[j]];
 		cut2[count] = ocut2[result2[j]];
 

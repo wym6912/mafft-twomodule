@@ -6,42 +6,12 @@
 #include <assert.h>
 #endif
 
-
 #define REPORTCOSTS 1
 
 #define DEBUG 0
 #define IODEBUG 0
 #define SCOREOUT 0
 #define SKIP 1
-
-#define ITERATIVECYCLE 2
-
-#define END_OF_VEC -1
-
-
-#if 0
-#define PLENFACA 0.0123
-#define PLENFACB 10252
-#define PLENFACC 10822
-#define PLENFACD 0.5
-#define DLENFACA 0.01
-#define DLENFACB 2445
-#define DLENFACC 2412
-#define DLENFACD 0.1
-#else
-#define PLENFACA 0.01
-#define PLENFACB 10000
-#define PLENFACC 10000
-#define PLENFACD 0.1
-#define D6LENFACA 0.01
-#define D6LENFACB 2500
-#define D6LENFACC 2500
-#define D6LENFACD 0.1
-#define D10LENFACA 0.01
-#define D10LENFACB 1000000
-#define D10LENFACC 1000000
-#define D10LENFACD 0.0
-#endif
 
 #ifdef enablemultithread
 typedef struct _Falign_arg
@@ -64,25 +34,29 @@ void print_help_message()
 	reporterr("Fragment Align %d.%d.%d.%d%s\n", VER_MAJOR, VER_MINOR, VER_RELEASE_FRAG, VER_BUILD, VERSION);
 	reporterr("This program is based on MAFFT, only give one file to the program:\n");
 	reporterr("- The fragment file, which the file has more than two sequences.\n");
-	reporterr("We align this file using FFT local alignment.\n");
-	reporterr("Arguments: \n");
-	reporterr("-i: file with FASTA format\n");
-	reporterr("-f, -g, -h: ppenalty, ppenalty_ex(not used), poffset(not used)\n");
-	reporterr("-Q, -V: penalty_shift_factor (not used), ppenalty_dist\n");
-	reporterr("-b: BLOSUM Matrix\n");
-	reporterr("-j: use jtt/kimura model, pamN is needed\n");
-	reporterr("-m: use tm model, pamN is needed\n");
-	reporterr("-a: 0 is default model, 1 is fmodel, -1 is raw model\n");
-	reporterr("-D, -P: -D the sequence is DNA, -P the sequence is Protein\n");
+	reporterr("Arguments: \nInput: \n");
+	reporterr("-i FileName: file with FASTA format\n");
+    reporterr("Align mode: \n");
+    reporterr("-F: use FFT align (default)\n");
+    reporterr("-G: do not use FFT align, just make it simpler\n");
+    reporterr("-L: Use legacy gap cost in order to get less gaps\n");
+    reporterr("-e: use memsave mode for alignment\n");
+    reporterr("Alignment arugments: \n");
+	reporterr("-f p: ppenalty\n");
+    reporterr("-D, -P: -D the sequence is DNA, -P the sequence is Protein\n");
+    reporterr("-z threshold, -w Winsize: FFT align arguments: fftthreshold, fftWinSize\n");
+    reporterr("-B band: Kband in calcuating DP-matrix during the alignment. If not defined this varible, use auto double\n");
+    reporterr("Scoring matrix: \n");
+	reporterr("-b pamN: BLOSUM[pamN] Matrix\n");
+	reporterr("-j pamN: use jtt/kimura model, pamN is needed\n");
+	reporterr("-m pamN: use tm model, pamN is needed\n");
+    reporterr("Other arugments: \n");
 	reporterr("-S: Calcuate SP Scores after alignment\n");
 	reporterr("-d: Print Score Matrix fits the common file and exit\n");
-	reporterr("-z, -w: FFT align arguments: fftthreshold, fftWinSize\n");
-	reporterr("-B: Kband in calcuating DP-matrix during the alignment. If not defined this varible, use auto double\n");
 	reporterr("-T: Use T threads to run this program\n");
 	reporterr("-s: nmax shift factor, it means the times of the max length\n");
-	reporterr("-L: Use legacy gap cost in order to get less gaps\n");
 	reporterr("-v: show program version\n");
-	reporterr("-H, -?: Print this help message and exit\n");
+	reporterr("-H, -?: Print help message and exit\n");
 }
 
 void print_version()
@@ -99,24 +73,15 @@ void arguments( int argc, char *argv[] )
 	constraint = 0;
 	nblosum = 62;
 	fmodel = 0;
-	devide = 0;
 	use_fft = 1;
-	fftscore = 1;
-	utree = 1;
-	tbutree = 1;
-	refine = 0;
-	check = 1;
-	cut = 0.0;
 	disp = 0;
 	outgap = 1;
 	alg = 'A';
 	mix = 0;
-	kobetsubunkatsu = 0;
-	sueff_global = 0.1;
 	scoremtx = 1;
 	dorp = NOTSPECIFIED;
 	ppenalty_dist = NOTSPECIFIED;
-	ppenalty = -1530;
+	ppenalty = -470;
 	ppenalty_ex = NOTSPECIFIED;
 	penalty_shift_factor = 1000.0;
 	poffset = -123;
@@ -128,6 +93,7 @@ void arguments( int argc, char *argv[] )
 	TMorJTT = JTT;
 	spscoreout = 0;
 	nmax_shift_factor = 1;
+	nevermemsave = 1;
 	legacygapcost = 0;
 	alignband = NOTSPECIFIED;
 
@@ -137,44 +103,54 @@ void arguments( int argc, char *argv[] )
 		{
 			switch( c )
 			{
+                // File I/O
 				case 'i':
 					inputfile = *++argv;
 					reporterr("inputfile = %s\n", inputfile );
 					--argc;
 					goto nextoption;
-				case 'V':
-					ppenalty_dist = (int)( atof( *++argv ) * 1000 - 0.5 );
-//					fprintf( stderr, "ppenalty = %d\n", ppenalty );
-					--argc;
-					goto nextoption;
+                // Align mode
+                case 'F':
+                    use_fft = 1;
+                    break;
+                case 'G':
+                    use_fft = 0;
+                    break;
+                case 'L':
+					legacygapcost = 1;
+					break;
+				case 'e':
+					nevermemsave = 0;
+					break;
+                // Alignment arugments
 				case 'f':
 					ppenalty = (int)( atof( *++argv ) * 1000 - 0.5 );
-//					reporterr(       "ppenalty = %d\n", ppenalty );
+					reporterr(       "ppenalty = %d\n", ppenalty );
 					--argc;
 					goto nextoption;
-				case 'Q':
-					penalty_shift_factor = atof( *++argv );
+                case 'D':
+					dorp = 'd';
+					break;
+				case 'P':
+					dorp = 'p';
+					break;
+                case 'z':
+					fftThreshold = myatoi( *++argv );
 					--argc;
 					goto nextoption;
-				case 'g':
-					ppenalty_ex = (int)( atof( *++argv ) * 1000 - 0.5 );
-					reporterr(       "ppenalty_ex = %d\n", ppenalty_ex );
+				case 'w':
+					fftWinSize = myatoi( *++argv );
 					--argc;
 					goto nextoption;
-				case 'h':
-					poffset = (int)( atof( *++argv ) * 1000 - 0.5 );
-//					reporterr(       "poffset = %d\n", poffset );
-					--argc;
+				case 'B':
+					alignband = myatoi(* ++ argv);
+					-- argc;
 					goto nextoption;
-				case 'k':
-					kimuraR = myatoi( *++argv );
-					reporterr(       "kappa = %d\n", kimuraR );
-					--argc;
-					goto nextoption;
+                // Scoring matrix
 				case 'b':
 					nblosum = myatoi( *++argv );
 					scoremtx = 1;
-//					reporterr(       "blosum %d / kimura 200 \n", nblosum );
+					reporterr(       "blosum %d / kimura 200 \n", nblosum );
 					--argc;
 					goto nextoption;
 				case 'j':
@@ -191,35 +167,13 @@ void arguments( int argc, char *argv[] )
 					reporterr(       "tm %d\n", pamN );
 					--argc;
 					goto nextoption;
-#if 1
-				case 'a':
-					fmodel = 1;
-					break;
-#endif
-				case 'D':
-					dorp = 'd';
-					break;
-				case 'P':
-					dorp = 'p';
-					break;
+                // Other arugments
 				case 'S' :
 					spscoreout = 1; // 2014/Dec/30, sp score
 					break;
 				case 'd':
 					disp = 1;
 					break;
-				case 'z':
-					fftThreshold = myatoi( *++argv );
-					--argc; 
-					goto nextoption;
-				case 'w':
-					fftWinSize = myatoi( *++argv );
-					--argc;
-					goto nextoption;
-				case 'B':
-					alignband = myatoi(* ++ argv);
-					-- argc;
-					goto nextoption;
 				case 'T':
 					nthread = myatoi(*++argv);
 					-- argc;
@@ -228,9 +182,6 @@ void arguments( int argc, char *argv[] )
 					nmax_shift_factor = myatoi(*++ argv);
 					-- argc;
 					goto nextoption;
-				case 'L':
-					legacygapcost = 1;
-					break;
 				case 'H':
 				case '?':
 					print_help_message();
@@ -247,12 +198,7 @@ void arguments( int argc, char *argv[] )
 		nextoption:
 			;
 	}
-	if( argc == 1 )
-	{
-		cut = atof( (*argv) );
-		argc--;
-	}
-	if( argc != 0 ) 
+	if( argc != 0 )
 	{
 		reporterr(       "options: Check source file !\n" );
 		exit( 1 );
@@ -282,12 +228,7 @@ static void WriteOptions( FILE *fp )
 		if( dorp == 'd' )
 			fprintf( fp, "Basis : 4 nucleotides\n" );
 		else
-		{
-			if( fftscore )
-				fprintf( fp, "Basis : Polarity and Volume\n" );
-			else
-				fprintf( fp, "Basis : 20 amino acids\n" );
-		}
+			fprintf( fp, "Basis : Polarity and Volume\n" );
 		fprintf( fp, "Threshold   of anchors = %d%%\n", fftThreshold );
 		fprintf( fp, "window size of anchors = %dsites\n", fftWinSize );
 	}
@@ -328,6 +269,20 @@ void* dispatch_Falign(void* arg)
 {
 #define F(X) (((Falign_arg *)arg) -> X)
 	Falign(NULL, NULL, n_dis_consweight_multi, F(mseq1), F(mseq2), F(eff), F(eff), NULL, NULL, 1, 1, F(alloclen), &F(fftlog), NULL, 0, NULL);
+	if (strlen(F(mseq1)[0]) != strlen(F(mseq2)[0]))
+	{
+		reporterr("assert failed: %s != %s\n(%llu != %llu)\n", F(mseq1)[0], F(mseq2)[0], strlen(F(mseq1)[0]), strlen(F(mseq2)[0]));
+	}
+#undef F
+
+	++ cnt_OK;
+	if (cnt_OK % 100 == 0 || cnt_OK >= njob - 1 || cnt_OK == 1) reporterr("\rSTEP %d / %d ", cnt_OK, njob - 1);
+	return NULL;
+}
+void* dispatch_Galign(void* arg)
+{
+#define F(X) (((Falign_arg *)arg) -> X)
+    G__align11(n_dis_consweight_multi, F(mseq1), F(mseq2), F(alloclen), 1, 1);
 	if (strlen(F(mseq1)[0]) != strlen(F(mseq2)[0]))
 	{
 		reporterr("assert failed: %s != %s\n(%llu != %llu)\n", F(mseq1)[0], F(mseq2)[0], strlen(F(mseq1)[0]), strlen(F(mseq2)[0]));
@@ -426,7 +381,7 @@ char** mergeallresult(char** resultseq, char** common, char** center, int njob, 
 			}
 		}
 		insertgaplist(resultseq[i + 1], common[i], list2);
-#if DEBUG
+#if _DEBUG
 		reporterr("After align, resultseq = \n");
 		for (l = 0; l <= i + 1; ++l) reporterr("%s\n", resultseq[l]);
 		reporterr("After align, centerseq = \n");
@@ -450,7 +405,7 @@ char** mergeallresult(char** resultseq, char** common, char** center, int njob, 
 
 int main(int argc, char** argv)
 {
-	int* nlen = NULL; // the length of common file and center file	
+	int* nlen = NULL; // the length of common file and center file
 	char** name = NULL, ** seq = NULL, ** centerseq = NULL;
 	char** bseq = NULL;
 	int i, j;
@@ -528,7 +483,7 @@ int main(int argc, char** argv)
 	fclose(infp);
 	constants(njob, seq);
 
-	
+
 #if 0 //maybe useless now (2021/09/14)
 	initSignalSM();
 
@@ -559,8 +514,8 @@ int main(int argc, char** argv)
 
 	if (longest_id == -1) { reporterr("Not found longest sequence???\n"); exit(1); }
 
-	if (strlen(seq[i]) == 0) 
-	{ 
+	if (nlen[longest_id] == 0)
+	{
 		reporterr("Info: The longest length of sequence file %s is 0. There is no need to use Fragment alignment.\n", inputfile);
 		infp = fopen(inputfile, "rb");
 		if (!infp)
@@ -568,9 +523,9 @@ int main(int argc, char** argv)
 			reporterr("Cannot open sequence file %s\n", inputfile);
 			exit(1);
 		}
-		Filecopy(infp, stdout); 
+		Filecopy(infp, stdout);
 		fclose(infp);
-		exit(0); 
+		exit(0);
 	}
 
 	// copy the longest fragment sequence to center sequence, and make center star alignment!
@@ -587,6 +542,7 @@ int main(int argc, char** argv)
 	cnt_OK = 0;
 	Falign_arg *_Falign_arg_;
 	_Falign_arg_ = malloc(njob * sizeof(Falign_arg));
+    if(_Falign_arg_ == NULL) ErrorExit("Allocate error (Falign arg)\n");
 	threadpool_t tp;
 	threadpool_init(&tp, nthread);
 	for(i = 0; i < njob; ++ i)
@@ -596,7 +552,8 @@ int main(int argc, char** argv)
 		_Falign_arg_[i].mseq2 = &centerseq[i];
 		_Falign_arg_[i].eff = eff;
 		_Falign_arg_[i].alloclen = alloclen;
-		threadpool_add_task(&tp, dispatch_Falign, _Falign_arg_ + i);
+		if(use_fft) threadpool_add_task(&tp, dispatch_Falign, _Falign_arg_ + i);
+        else threadpool_add_task(&tp, dispatch_Galign, _Falign_arg_ + i);
 	}
 	threadpool_destroy(&tp);
 	free(_Falign_arg_);
@@ -606,14 +563,11 @@ int main(int argc, char** argv)
 	{
 		if (i == longest_id) continue;
 		// reporterr("seq1 = %s, centerseq = %s\n", seq[i], centerseq[i]);
-#if SAFE
-		strcpy(mseq1[0], seq[i]);  strcpy(mseq2[0], centerseq[i]);
-		Falign(NULL, NULL, n_dis_consweight_multi, mseq1, mseq2, eff, eff, NULL, NULL, 1, 1, alloclen, &fftlog, NULL, 0, NULL);
-		strcpy(seq[i], mseq1[0]);  strcpy(centerseq[i], mseq2[0]);
-#else
-		Falign(NULL, NULL, n_dis_consweight_multi, &seq[i], &centerseq[i], eff, eff, NULL, NULL, 1, 1, alloclen, &fftlog, NULL, 0, NULL);
-#endif
-		// reporterr("After align, seq1 = %s, center = %s\n", seq[i], centerseq[i]);
+        if(use_fft)
+		    Falign(NULL, NULL, n_dis_consweight_multi, &seq[i], &centerseq[i], eff, eff, NULL, NULL, 1, 1, alloclen, &fftlog, NULL, 0, NULL);
+        else
+            G__align11(n_dis_consweight_multi, &seq[i], &centerseq[i], alloclen, 1, 1);
+        // reporterr("After align, seq1 = %s, center = %s\n", seq[i], centerseq[i]);
 	}
 #endif
 	reporterr("done. OK on aligning.\n");
@@ -659,10 +613,10 @@ int main(int argc, char** argv)
 	}
 
 	free(_merge_arg_);
-	
+
 	strcpy(bseq[0], centerseq[0]);
 	// for(i = 0; i < njob; ++ i) gapireru(bseq[i + 1], seq[i], centerseq[i]);
-#else	
+#else
 	bseq = mergeallresult(bseq, seq, centerseq, njob, alloclen);
 #endif
 #endif
@@ -703,7 +657,7 @@ int main(int argc, char** argv)
 	FreeCharMtx(centerseq);
 	FreeCharMtx( name );
 	FreeIntVec( nlen );
-	FreeDoubleVec(eff);	
+	FreeDoubleVec(eff);
 	FreeCharMtx( seq );
 #if SAFE
 	free( mseq1 );

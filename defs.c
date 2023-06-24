@@ -165,7 +165,7 @@ void initglobalvariables()
 	specificityconsideration = 0.0;
 	ndistclass = 10;
 	maxdistclass = -1;
-	
+
 	gmsg = 0;
 }
 

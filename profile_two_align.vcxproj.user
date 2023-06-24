@@ -2,5 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>-p .\test\twoprofilealign-test2\test\A.fasta -q .\test\twoprofilealign-test2\test\B.fasta -M -P -G -s -a</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
