@@ -75,7 +75,7 @@ BEGIN
             VALUE "InternalName", "fragalign.exe"
             VALUE "LegalCopyright", "Copyright (C) 2022"
             VALUE "OriginalFilename", "fragalign.exe"
-            VALUE "ProductVersion", VERSION_FRAG
+            //VALUE "ProductVersion", VERSION_FRAG
         END
     END
     BLOCK "VarFileInfo"

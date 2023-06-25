@@ -38,7 +38,6 @@ void print_help_message()
     reporterr("Align mode: \n");
     reporterr("-F: use FFT align (default)\n");
     reporterr("-G: do not use FFT align, just make it simpler\n");
-    reporterr("-L: Use legacy gap cost in order to get less gaps\n");
     reporterr("-e: use memsave mode for alignment\n");
     reporterr("Alignment arugments: \n");
 	reporterr("-f p: ppenalty\n");
@@ -94,7 +93,6 @@ void arguments( int argc, char *argv[] )
 	spscoreout = 0;
 	nmax_shift_factor = 1;
 	need_align_center = 0;
-	legacygapcost = 0;
 	alignband = NOTSPECIFIED;
     nevermemsave = 1;
 
@@ -122,9 +120,6 @@ void arguments( int argc, char *argv[] )
                 case 'G':
                     use_fft = 0;
                     break;
-                case 'L':
-					legacygapcost = 1;
-					break;
 				case 'e':
 					nevermemsave = 0;
 					break;
