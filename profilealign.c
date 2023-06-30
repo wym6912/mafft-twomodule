@@ -411,7 +411,7 @@ void *merge_multithread(void *arg)
 		while(! dep[dep[floor].child1].done)
 			pthread_cond_wait(cond, deplock);
 	pthread_mutex_unlock(deplock);
-	// reporterr("Task %d: %s, %s\n", floor, f1name, f2name);
+	reporterr("Task %d: %s, %s\n", floor, f1name, f2name);
 	FILE *f1fp = fopen(f1name, "r"), *f2fp = fopen(f2name, "r");
 	getnumlen_nocommonnjob(f1fp, &f1seq, &len1);
 	rewind(f1fp);
@@ -434,17 +434,33 @@ void *merge_multithread(void *arg)
 	if(f1seq > 0) for(j = 0; j < f1seq; ++ j) eff[j] = 1.0 / f1seq;
 	else
 	{
-		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f1name);
+		reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f1name);
 		exit(1);
 		return (void *)-1;
 	}
 	if(f2seq > 0) for(j = 0; j < f2seq; ++ j) eff2[j] = 1.0 / f2seq;
 	else
 	{
-		reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f2name);
+		reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", f2name);
 		exit(1);
 		return (void *)-1;
 	}
+	for(j = 0; j < f1seq; ++ j)
+    {
+        if(len1 != nlen[j])
+        {
+            reporterr("\nERROR: the profile %s has different length. Program will exit.\n", f1name);
+            ErrorExit("");
+        }
+    }
+	for(j = 1; j < f2seq; ++ j) 
+    {
+        if(len2 != nlen22[j])
+        {
+            reporterr("\nERROR: the profile %s has different length. Program will exit.\n", f2name);
+            ErrorExit("");
+        }
+    }
 	alloclen = len1 + len2 + 10;
 	if(! force_fft)
 	{
@@ -473,11 +489,11 @@ void *merge_multithread(void *arg)
 	}
 	else
 		Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
-	f1fp = fopen(f1name, "w");
+	f1fp = fopen(f1name, "wb");
 	writeData_pointer(f1fp, f1seq, name, nlen, seq);
 	writeData_pointer(f1fp, f2seq, name2, nlen22, seq2);
 	fclose(f1fp);
-	f2fp = fopen(f2name, "w");
+	f2fp = fopen(f2name, "wb");
 	fclose(f2fp);
 
 	pthread_mutex_lock(deplock);
@@ -758,13 +774,27 @@ int main(int argc, char **argv)
 		eff = AllocateDoubleVec(f1seq);
 		eff2 = AllocateDoubleVec(f2seq);
 		if(f1seq > 0) for(j = 0; j < f1seq; ++ j) eff[j] = 1.0 / f1seq;
-		else { reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", realfilename2d[f1]); exit(1); }
+		else { reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", realfilename2d[f1]); exit(1); }
 		if(f2seq > 0) for(j = 0; j < f2seq; ++ j) eff2[j] = 1.0 / f2seq;
-		else { reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", realfilename2d[f2]); exit(1); }
+		else { reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", realfilename2d[f2]); exit(1); }
 		f1len = nlen[0];
-		for(j = 1; j < f1seq; ++ j) f1len = MAX(nlen[j], f1len);
-		f2len = nlen22[0];
-		for(j = 1; j < f2seq; ++ j) f2len = MAX(nlen22[j], f2len);
+        for(j = 1; j < f1seq; ++ j)
+        {
+            if(f1len != nlen[j])
+            {
+                reporterr("\nERROR: the profile %s has different length. Program will exit.\n", realfilename2d[f1]);
+                ErrorExit("");
+            }
+        }
+        f2len = nlen22[0];
+        for(j = 1; j < f2seq; ++ j) 
+        {
+            if(f2len != nlen22[j])
+            {
+                reporterr("\nERROR: the profile %s has different length. Program will exit.\n", realfilename2d[f2]);
+                ErrorExit("");
+            }
+        }
 		alloclen = f1len + f2len + 10;
 		if(! force_fft)
 		{
@@ -790,11 +820,11 @@ int main(int argc, char **argv)
 		else
 			Falign(NULL, NULL, n_dis_consweight_multi, seq, seq2, eff, eff2, NULL, NULL, f1seq, f2seq, alloclen, &fftlog, NULL, 0, NULL);
 
-		f1fp = fopen(realfilename2d[f1], "w");
+		f1fp = fopen(realfilename2d[f1], "wb");
 		writeData_pointer(f1fp, f1seq, name, nlen, seq);
 		writeData_pointer(f1fp, f2seq, name2, nlen22, seq2);
 		fclose(f1fp);
-		f2fp = fopen(realfilename2d[f2], "w");
+		f2fp = fopen(realfilename2d[f2], "wb");
 		fclose(f2fp);
 		FreeDoubleVec(eff);
 		FreeDoubleVec(eff2);

@@ -2,7 +2,7 @@
 #include "dp.h"
 #include "Kband.h"
 
-//#define NOTPRINT
+#define NOTPRINT
 #define DEBUG 0
 #define NOTPRINTLEN
 #define PENALTY_EX 0

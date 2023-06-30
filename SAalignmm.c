@@ -7,9 +7,10 @@
 double Aalign_traceback(char* r1, char* r2, int len1, int len2, int band, int *move_vec, double *val_vec)
 {
 	/* Traceback */
-	char *tmpr1, *tmpr2;
-	int nowi, nowj, val, tari, tarj, h, i, first1, first2, j;
-	double first_score = matrix_query(len1, len2, band, val_vec, len1 + 1, len2 + 1), this_score;
+	static TLS char *tmpr1, *tmpr2;
+	static TLS int nowi, nowj, val, tari, tarj, h, i, first1, first2, j;
+	static TLS double first_score, this_score;
+	first_score = matrix_query(len1, len2, band, val_vec, len1 + 1, len2 + 1);
     // determine the start place
 	first1 = len1, first2 = len2;
     for(i = len1 - 1; ~i; -- i)
@@ -115,17 +116,9 @@ double Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, doub
 	//fprintf(stderr, "In Kband, len1 = %d, len2 = %d, band = %d\n", len1, len2, band);
 	//printf( "In Kband, len1 = %d, len2 = %d\n", len1, len2);
 	int i, j, h, k;
-	static TLS int len, swapped, minlen;
+	static TLS int len, minlen;
 	static TLS char *s;
-	swapped = 0;
-	if(len1 > len2)
-	{
-		swapped = 1;
-		len = len2; len2 = len1; len1 = len;
-		s = r1; r1 = r2; r2 = s;
-		minlen = len2;
-	}
-	else minlen = len1;
+	minlen = __min__(len1, len2);
 	/*
 	   insert node: matrix_set(key, val)
 	   find node: map_t *data = matrix_query(&tree, key)
@@ -165,7 +158,7 @@ double Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, doub
 	}
 	for(i = 1; i <= len1; ++ i)
 	{
-		reporterr("%f\n\n", matrix_query(i, 0, band, val_vec, len1 + 1, len2 + 1));
+		// reporterr("%f\n\n", matrix_query(i, 0, band, val_vec, len1 + 1, len2 + 1));
 		max_data_i = matrix_query(i - 1, MAX(i - 1 - band, 0), band, val_vec, len1 + 1, len2 + 1);
 		max_place_i = MAX(i - 1 - band, 0);
 		if(insideband(i - 1, 0, band, len1 + 1, len2 + 1))
@@ -306,11 +299,6 @@ double Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, doub
 #if DEBUG
 	printf("%s %s\n", r1, r2);
 #endif
-	if(swapped)
-	{
-		len = len2; len2 = len1; len1 = len;
-		s = r1; r1 = r2; r2 = s;
-	}
 
 	return score;
 
@@ -319,9 +307,10 @@ double Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, doub
 double MS_Aalign_traceback(char* r1, char* r2, int len1, int len2, int band, int *move_vec, double *last_len1, double *last_len2)
 {
 	/* Traceback */
-	char *tmpr1, *tmpr2;
-	int nowi, nowj, val, tari, tarj, h, i, first1, first2, j;
-	double first_score = last_len2[len2], this_score;
+	static TLS char *tmpr1, *tmpr2;
+	static TLS int nowi, nowj, val, tari, tarj, h, i, first1, first2, j;
+	static TLS double first_score, this_score;
+	first_score = last_len2[len2];
     // determine the start place
 	first1 = len1, first2 = len2;
     for(i = len1 - 1; ~i; -- i)
@@ -426,18 +415,10 @@ double MS_Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, d
 	*/
 	//fprintf(stderr, "In Kband, len1 = %d, len2 = %d, band = %d\n", len1, len2, band);
 	//printf( "In Kband, len1 = %d, len2 = %d\n", len1, len2);
-	int i, j, h, k;
-	static TLS int len, swapped, minlen;
+	static TLS int i, j, h, k;
+	static TLS int len, minlen;
 	static TLS char *s;
-	swapped = 0;
-	if(len1 > len2)
-	{
-		swapped = 1;
-		len = len2; len2 = len1; len1 = len;
-		s = r1; r1 = r2; r2 = s;
-		minlen = len2;
-	}
-	else minlen = len1;
+	minlen = __min__(len1, len2);
 	/*
 	   insert node: matrix_set(key, val)
 	   find node: map_t *data = matrix_query(&tree, key)
@@ -630,14 +611,8 @@ double MS_Aalign_Kband(int icyc, int jcyc, int len1, int len2, double **cpmx1, d
 #if DEBUG
 	printf("%s %s\n", r1, r2);
 #endif
-	if(swapped)
-	{
-		len = len2; len2 = len1; len1 = len;
-		s = r1; r1 = r2; r2 = s;
-	}
 
 	return score;
-
 }
 
 double twogroupAalign(int icyc, int jcyc, int len1, int len2, double **cpmx1, double **cpmx2, char *r1, char *r2, int band, double penalty, double score_before)
@@ -668,11 +643,36 @@ double Aalign( char **seq1, char **seq2, double *eff1, double *eff2, int icyc, i
 	static TLS double **cpmx1, **cpmx2; // Every amino in every place
 	char *rev, *rev2;
 
+	length1 = strlen(seq1[0]);
+	length2 = strlen(seq2[0]);
+	oldval = -inf;
+
+	if (length1 == 0 || length2 == 0)
+	{
+		if (length1 == 0 && length2 == 0) return 0.0;
+		else if (length1 == 0)
+		{
+			for (i = 0; i < icyc; ++i)
+			{
+				for (j = 0; j < length2; ++j) seq1[i][j] = *newgapstr;
+				seq1[i][length2] = 0;
+			}
+			return 0.0;
+		}
+		else //len2 == 0
+		{
+			for (i = 0; i < jcyc; ++i)
+			{
+				for (j = 0; j < length1; ++j) seq2[i][j] = *newgapstr;
+				seq2[i][length1] = 0;
+			}
+			return 0.0;
+		}
+	}
+
     /* Part 3: Give initial varibles of the varibles of Part 1 */
 	band = alignband;
 	gappenalty = (double)penalty * 0.5;
-    length1 = strlen(seq1[0]);
-    length2 = strlen(seq2[0]);
 	mxlength = MAX(length1, length2);
 	gaplen1 = 0;
 	gaplen2 = 0;

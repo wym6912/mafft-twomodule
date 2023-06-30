@@ -281,13 +281,27 @@ int main(int argc, char **argv)
 	eff = AllocateDoubleVec(f1seq);
 	eff2 = AllocateDoubleVec(f2seq);
 	if(f1seq > 0) for(j = 0; j < f1seq; ++ j) eff[j] = 1.0 / f1seq;
-	else { reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", profilename1); exit(1); }
+	else { reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", profilename1); exit(1); }
 	if(f2seq > 0) for(j = 0; j < f2seq; ++ j) eff2[j] = 1.0 / f2seq;
-	else { reporterr("Error: the sequence file %s has no sequences! It may coursed by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", profilename2); exit(1); }
+	else { reporterr("Error: the sequence file %s has no sequences! It may caused by the smaller value of fftWinsize, please make it larger. The arugment of fftWinsize is -w.\n", profilename2); exit(1); }
 	f1len = nlen[0];
-	for(j = 1; j < f1seq; ++ j) f1len = MAX(nlen[j], f1len);
+	for(j = 1; j < f1seq; ++ j)
+    {
+        if(f1len != nlen[j])
+        {
+            reporterr("\nERROR: the profile %s has different length. Program will exit.\n", profilename1);
+            ErrorExit("");
+        }
+    }
 	f2len = nlen22[0];
-	for(j = 1; j < f2seq; ++ j) f2len = MAX(nlen22[j], f2len);
+	for(j = 1; j < f2seq; ++ j) 
+    {
+        if(f2len != nlen22[j])
+        {
+            reporterr("\nERROR: the profile %s has different length. Program will exit.\n", profilename2);
+            ErrorExit("");
+        }
+    }
 
 	// if one profile length is 0, print gaps
 	if(f1len == 0 || f2len == 0)

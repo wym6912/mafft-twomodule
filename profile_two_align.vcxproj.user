@@ -4,4 +4,8 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>-p .\test\twoprofilealign-test2\test\A.fasta -q .\test\twoprofilealign-test2\test\B.fasta -M -P -G -s -a</LocalDebuggerCommandArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>-p .\test\twoprofilealign-test5\cluster_19.fasta -q .\test\twoprofilealign-test5\cluster_34.fasta -N -G -e -D</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
